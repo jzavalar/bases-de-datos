@@ -5,7 +5,7 @@ University of Wisconsin--Milwaukee
 Bolton Hall, Room 582, P.O. Box 413, Milwaukee, WI 53201-0413  
 thaigh@computer.org
 
-Haigh, T. (2006). "A Veritable Bucket of Facts": Origins of the Data Base Management System. *SIGMOD Record*, *35*(2), 33-49.
+Haigh, T. (2006). "A Veritable Bucket of Facts": Origins of the Data Base Management System. *SIGMOD Record*, *35*(2), 33-49. [https://dl.acm.org/doi/epdf/10.1145/1147376.1147382](https://dl.acm.org/doi/epdf/10.1145/1147376.1147382)
 
 ---
 
