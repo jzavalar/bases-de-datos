@@ -1,4 +1,5 @@
 # Capítulo 1: Bases de Datos y Usuarios de Bases de Datos
+** (Traducción libre del inglés)**
 
 **Fuente: Elmasri, R., & Navathe, S. B. (2016). Databases and database users. In *Fundamentals of database systems* (pp. 3-29). Pearson.**
 
