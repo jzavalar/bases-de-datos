@@ -1,4 +1,5 @@
-# Capítulo 1: Introducción (Traducción libre del inglés)
+# Capítulo 1: Introducción 
+**(Traducción libre del inglés)**
 
 **Fuente: Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). Introduction. In *Database system concepts* (pp. 1-34). McGraw-Hill Education.**
 
