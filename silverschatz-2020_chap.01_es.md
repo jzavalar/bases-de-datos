@@ -1,4 +1,6 @@
-# Capítulo 1: Introducción
+# Capítulo 1: Introducción (Traducción libre del inglés)
+
+**Fuente: Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). Introduction. In *Database system concepts* (pp. 1-34). McGraw-Hill Education.**
 
 Un *database-management system* (DBMS) o sistema de gestión de bases de datos es una colección de datos interrelacionados y un conjunto de programas para acceder a dichos datos. La colección de datos, usualmente referida como la *database* o base de datos, contiene información relevante para una empresa. El objetivo principal de un DBMS es proporcionar una manera de almacenar y recuperar información de la base de datos que sea tanto conveniente como eficiente.
 
