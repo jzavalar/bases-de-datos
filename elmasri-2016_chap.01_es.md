@@ -43,13 +43,13 @@ No es absolutamente necesario utilizar software de DBMS de propósito general pa
 
 Para completar nuestras definiciones iniciales, llamaremos a la base de datos y al software del DBMS conjuntamente un **sistema de bases de datos**. La Figura 1.1 ilustra algunos de los conceptos que hemos discutido hasta ahora.
 
-![Figura 1.1: Un entorno simplificado de sistema de bases de datos](./imagenes/elmasri-fig1.1.png)
+![Figura 1.1: Un entorno simplificado de sistema de bases de datos](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/elmasri_2016_figure_1.1.png)
 
 ## 1.2 Un Ejemplo
 
 Consideremos un ejemplo sencillo con el que la mayoría de los lectores pueden estar familiarizados: una base de datos UNIVERSITY para mantener información concerniente a estudiantes, cursos y calificaciones en un entorno universitario. La Figura 1.2 muestra la estructura de la base de datos y algunos registros de datos de muestra.
 
-![Figura 1.2: Una base de datos que almacena información de estudiantes y cursos](imagenes/elmasri-fig1.2.png)
+![Figura 1.2: Una base de datos que almacena información de estudiantes y cursos](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/elmasri-figure_1.2.png)
 
 La base de datos está organizada como cinco archivos, cada uno de los cuales [p. 7] almacena registros de datos del mismo tipo.³ El archivo STUDENT almacena datos sobre cada estudiante, el archivo COURSE almacena datos sobre cada curso, el archivo SECTION almacena datos sobre cada sección de un curso, el archivo GRADE_REPORT almacena las calificaciones que los estudiantes reciben en las diversas secciones que han completado, y el archivo PREREQUISITE almacena los prerrequisitos de cada curso.
 
@@ -88,7 +88,7 @@ En el procesamiento tradicional de archivos, la definición de datos es típicam
 
 Para el ejemplo mostrado en la Figura 1.2, el catálogo del DBMS almacenará las definiciones de todos los archivos mostrados. La Figura 1.3 muestra algunas entradas en un catálogo de base de datos.
 
-![Figura 1.3: Un ejemplo de catálogo de base de datos para la base de datos de la Figura 1.2](imagenes/elmasri-fig1.3.png)
+![Figura 1.3: Un ejemplo de catálogo de base de datos para la base de datos de la Figura 1.2](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/elmasri-figure_1.3.png)
 
 Cada vez que se realiza una solicitud para acceder, digamos, al Name de un registro STUDENT, el software del DBMS se refiere al catálogo para determinar la estructura del archivo STUDENT y la posición y tamaño del elemento de datos Name dentro de un registro STUDENT. Por el contrario, en una aplicación típica de procesamiento de archivos, la estructura del archivo y, en el caso extremo, la ubicación exacta de Name dentro de un registro STUDENT ya están codificadas dentro de cada programa que accede a este elemento de datos.
 
@@ -98,7 +98,7 @@ En el procesamiento tradicional de archivos, la estructura de los archivos de da
 
 Por ejemplo, un programa de acceso a archivos puede escribirse de tal manera que pueda acceder solo a registros STUDENT de la estructura mostrada en la Figura 1.4. 
 
-![Figura 1.4 Formato de almacenamiento interno para un registro de STUDENT, basado en el catálogo de la base de datos en Figura 1.3](imagenes/elmasri_2016_figure_1.4.png)
+![Figura 1.4 Formato de almacenamiento interno para un registro de STUDENT, basado en el catálogo de la base de datos en Figura 1.3](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/elmasri_2016_figure_1.4.png)
 
 Si queremos agregar otro dato a cada registro STUDENT, digamos el Birth_date, tal programa ya no funcionará y deberá cambiarse. Por el contrario, en un entorno de DBMS, solo necesitamos cambiar la descripción de los registros STUDENT en el catálogo (Figura 1.3) para reflejar la inclusión del nuevo elemento de datos Birth_date; no se cambian programas. La próxima vez que un programa del DBMS se refiera al catálogo, se accederá y utilizará la nueva estructura de los registros STUDENT.
 
@@ -116,7 +116,7 @@ En las bases de datos orientadas a objetos y objeto-relacionales, el proceso de 
 
 Una base de datos típicamente tiene muchos tipos de usuarios, cada uno de los cuales puede requerir una perspectiva o vista diferente de la base de datos. Una vista puede ser un subconjunto de la base de datos o puede contener datos virtuales que se derivan de los archivos de la base de datos pero que no se almacenan explícitamente. Algunos usuarios pueden no necesitar estar conscientes de si los datos a los que se refieren se almacenan o se derivan. Un DBMS multiusuario cuyos usuarios tienen una variedad de aplicaciones distintas debe proporcionar facilidades para definir múltiples vistas. Por ejemplo, un usuario de la base de datos de la Figura 1.2 puede estar interesado solo en acceder e imprimir el expediente académico de cada estudiante; la vista para este usuario se muestra en la Figura 1.5(a). Un segundo usuario, que está interesado solo en verificar que los estudiantes hayan tomado todos los prerrequisitos de cada curso para el cual el estudiante se registra, puede requerir la vista mostrada en la Figura 1.5(b).
 
-![Figura 1.5: Dos vistas derivadas de la base de datos de la Figura 1.2. (a) La vista TRANSCRIPT. (b) La vista COURSE_PREREQUISITES](imagenes/elmasri-fig1.5.png) *Figura 1.5. Dos vistas derivadas de la base de datos de la Figura 1.2. (a) La vista TRANSCRIPT. (b) La vista COURSE_PREREQUISITES.*
+![Figura 1.5: Dos vistas derivadas de la base de datos de la Figura 1.2. (a) La vista TRANSCRIPT. (b) La vista COURSE_PREREQUISITES](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/elmasri-figure_1.5.png) *Figura 1.5. Dos vistas derivadas de la base de datos de la Figura 1.2. (a) La vista TRANSCRIPT. (b) La vista COURSE_PREREQUISITES.*
 
 ### 1.3.4 Compartición de Datos y Procesamiento de Transacciones Multiusuario
 
@@ -187,7 +187,7 @@ En el enfoque de bases de datos, las vistas de diferentes grupos de usuarios se 
 
 Sin embargo, en la práctica, a veces es necesario utilizar **redundancia controlada** para mejorar el rendimiento de las consultas. Por ejemplo, podemos almacenar Student_name y Course_number de manera redundante en un archivo GRADE_REPORT (Figura 1.6(a)) porque cada vez que recuperamos un registro GRADE_REPORT, queremos recuperar el nombre del estudiante y el número del curso junto con la calificación, el número de estudiante y el identificador de sección. Al colocar todos los datos juntos, no tenemos que buscar en múltiples archivos para recopilar estos datos. Esto se conoce como **desnormalización** (denormalization). En tales casos, el DBMS debe tener la capacidad de controlar esta redundancia para prohibir inconsistencias entre los archivos. Esto puede hacerse verificando automáticamente que los valores Student_name–Student_number en cualquier registro GRADE_REPORT en la Figura 1.6(a) coincidan con uno de los valores Name–Student_number de un registro STUDENT (Figura 1.2). De manera similar, los valores Section_identifier–Course_number en GRADE_REPORT pueden verificarse contra registros SECTION. Tales verificaciones pueden especificarse al DBMS durante el diseño de la base de datos y hacerse cumplir automáticamente por el DBMS cada vez que se actualiza el archivo GRADE_REPORT. La Figura 1.6(b) muestra un registro GRADE_REPORT que es inconsistente con el archivo STUDENT en la Figura 1.2; este tipo de error puede ingresarse si la redundancia no se controla. ¿Puede decir qué parte es inconsistente?
 
-![Figura 1.6: Almacenamiento redundante de Student_name y Course_name en GRADE_REPORT. (a) Datos consistentes. (b) Registro inconsistente](imagenes/elmasri-fig1.6.png)
+![Figura 1.6: Almacenamiento redundante de Student_name y Course_name en GRADE_REPORT. (a) Datos consistentes. (b) Registro inconsistente](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/elmasri-figure_1.6.png)
 
 ### 1.6.2 Restricción de Acceso No Autorizado
 
