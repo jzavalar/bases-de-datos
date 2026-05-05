@@ -133,7 +133,7 @@ Una gran parte de este texto se enfoca en el modelo relacional porque sirve como
 
 En el modelo relacional, los datos se representan en forma de tablas. Cada tabla tiene múltiples columnas, y cada columna tiene un nombre único. Cada fila de la tabla representa una pieza de información. 
 
-![Figura 1.1 Una base de datos relacional ejemplo.](imagenes/silberschatz-2020_figure_1.1.png)
+![Figura 1.1 Una base de datos relacional ejemplo.](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/silberschatz-2020_figure_1.1.png)
 
 La Figura 1.1 presenta una base de datos relacional de ejemplo que comprende dos tablas: una muestra detalles de instructores universitarios y la otra muestra detalles de los diversos departamentos universitarios.
 
@@ -149,7 +149,7 @@ Para que el sistema sea utilizable, debe recuperar datos eficientemente. La nece
 
 - **Nivel de vista**. El nivel más alto de abstracción describe solo una parte de toda la base de datos. Aunque el nivel lógico utiliza estructuras más simples, la complejidad permanece debido a la variedad de información almacenada en una base de datos grande. Muchos usuarios del sistema de bases de datos no necesitan toda esta información; en cambio, necesitan acceder solo a una parte de la base de datos. El nivel de vista de abstracción existe para simplificar su interacción con el sistema. El sistema puede proporcionar muchas vistas para la misma base de datos.
 
-![Figura 1.2 muestra la relación entre los tres niveles de abstracción.](imagenes/silberschatz-2020_figure_1.2.png)
+![Figura 1.2 muestra la relación entre los tres niveles de abstracción.](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/silberschatz-2020_figure_1.2.png)
 
 Una característica importante de los modelos de datos, como el modelo relacional, es que ocultan tales detalles de implementación de bajo nivel no solo a los usuarios de bases de datos, sino incluso a los desarrolladores de aplicaciones de bases de datos. El sistema de bases de datos permite a los desarrolladores de aplicaciones almacenar y recuperar datos utilizando las abstracciones del modelo de datos, y convierte las operaciones abstractas en operaciones sobre la implementación de bajo nivel.
 
@@ -353,7 +353,7 @@ El concepto de una transacción ha sido aplicado ampliamente en sistemas y aplic
 
 Estamos ahora en posición de proporcionar una imagen única de los diversos componentes de un sistema de bases de datos y las conexiones entre ellos. 
 
-![Figure 1.3 Estructura del Sistema](imagenes/silberschatz-2020_figure_1.3.png)
+![Figure 1.3 Estructura del Sistema](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/silberschatz-2020_figure_1.3.png)
 
 La Figura 1.3 muestra la arquitectura de un sistema de bases de datos que se ejecuta en una máquina servidora centralizada. La figura resume cómo diferentes tipos de usuarios interactúan con una base de datos, y cómo los diferentes componentes de un motor de bases de datos están conectados entre sí.
 
@@ -364,7 +364,7 @@ En el Capítulo 20, cubrimos la estructura general de los sistemas de computador
 
 Ahora consideramos la arquitectura de aplicaciones que utilizan bases de datos como su *back-end*. Las aplicaciones de bases de datos pueden particionarse en dos o tres partes, como se muestra en la Figura 1.4. 
 
-![Figure 1.4 Two-tier and three-tier architectures](imagenes/silberschatz-2020_figure_1.4.png)
+![Figure 1.4 Two-tier and three-tier architectures](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/silberschatz-2020_figure_1.4.png)
 
 Las aplicaciones de bases de datos de generaciones anteriores utilizaban una arquitectura de dos niveles (*two-tier architecture*), donde la aplicación reside en la máquina cliente, e invoca funcionalidad del sistema de bases de datos en la máquina servidora mediante sentencias de lenguaje de consultas.
 
