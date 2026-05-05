@@ -43,7 +43,7 @@ No es absolutamente necesario utilizar software de DBMS de propósito general pa
 
 Para completar nuestras definiciones iniciales, llamaremos a la base de datos y al software del DBMS conjuntamente un **sistema de bases de datos**. La Figura 1.1 ilustra algunos de los conceptos que hemos discutido hasta ahora.
 
-![Figura 1.1: Un entorno simplificado de sistema de bases de datos](imagenes/elmasri-fig1.1.png)
+![Figura 1.1: Un entorno simplificado de sistema de bases de datos](./imagenes/elmasri-fig1.1.png)
 
 ## 1.2 Un Ejemplo
 
