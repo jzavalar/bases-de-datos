@@ -1,5 +1,6 @@
-## Programación Semanal Definitiva - Unidad de Enseñanza-Aprendizaje: Bases de Datos (2151106)
-### Versión 3.1 | Trimestre 26-P | 11 semanas efectivas
+## Programación Semanal 
+## Unidad de Enseñanza-Aprendizaje: Bases de Datos (2151106)
+### Trimestre 26-P | 11 semanas efectivas
 
 ---
 
