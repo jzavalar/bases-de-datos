@@ -26,8 +26,9 @@ calificaciones y observaciones en cada sesión.
 | **Carácter** | Obligatoria - Formación Disciplinar |
 | **Trimestre curricular** | V |
 | **Créditos** | 11 |
-| **Horario** | Lunes 17:00-19:00 (Lab)<br>• Miércoles 17:00-18:00 (Teoría) • Viernes 16:00-18:00 (Teoría) |
+| **Horario** | • Lunes 17:00-19:00 (Lab)<br>• Miércoles 17:00-18:00 (Teoría)<br>• Viernes 16:00-18:00 (Teoría) |
 | **Periodo** | 6 de mayo - 17 de julio de 2026 (11 semanas) |
+| **Exámenes teóricos parciales** | Lunes 20 de julio de 2026, 17:00-20:00 hrs |
 | **Examen práctico final** | Lunes 20 de julio de 2026, 17:00-20:00 hrs |
 | **Plataforma de entregas** | GitHub Classroom: [enlace por proporcionar] |
 
