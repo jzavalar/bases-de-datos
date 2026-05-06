@@ -1,9 +1,9 @@
-# Programación Semanal Definitiva - Unidad de Enseñanza-Aprendizaje: Bases de Datos (2151106)
-## Versión 3.1 | Trimestre 26-P | 11 semanas efectivas
+## Programación Semanal Definitiva - Unidad de Enseñanza-Aprendizaje: Bases de Datos (2151106)
+### Versión 3.1 | Trimestre 26-P | 11 semanas efectivas
 
 ---
 
-## Parámetros Operativos Confirmados
+### Parámetros Operativos Confirmados
 
 | Parámetro | Especificación |
 |-----------|---------------|
@@ -16,7 +16,7 @@
 
 ---
 
-## Calendario Maestro de Sesiones
+### Calendario Maestro de Sesiones
 
 | Semana | Fechas (Mié-Vie-Lun) | Sesiones | Contenido Sintético | Evaluación / Nota |
 |:---:|:---|:---|:---|:---|
@@ -34,79 +34,79 @@
 
 ---
 
-## Distribución Detallada por Semana
+### Distribución Detallada por Semana
 
-### SEMANA 1 (6-11 de mayo) - Bloque I: Fundamentos
+#### SEMANA 1 (6-11 de mayo) - Bloque I: Fundamentos
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T1 | Mié 6 may | Teoría | 1.1: Conceptos básicos de BD | Presentación del programa + dato vs. información vs. conocimiento |
 | T2 | Vie 8 may | Teoría | 1.2-1.4: SGBD y modelos de datos | Arquitectura de SGBD + evolución de modelos |
 | P1 | Lun 11 may | Práctica | Instalación y exploración de entorno | PostgreSQL/MySQL + pgAdmin/Workbench + ejercicio básico |
 
-### SEMANA 2 (13-18 de mayo) - Bloque II: SGBD
+#### SEMANA 2 (13-18 de mayo) - Bloque II: SGBD
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T3 | Mié 13 may | Teoría | 2.1-2.2: Usuarios y componentes de SGBD | Capas de abstracción + independencia de datos |
 | T4 | Vie 15 may | ASUETO | - | Compensación: Lectura Elmasri Cap. 2 + foro asincrónico |
 | P2 | Lun 18 may | Práctica | 2.3 + administración de usuarios | Roles, privilegios + debate ventajas/desventajas SGBD |
 
-### SEMANA 3 (20-25 de mayo) - Bloque III.1: Diseño ER
+#### SEMANA 3 (20-25 de mayo) - Bloque III.1: Diseño ER
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T5 | Mié 20 may | Teoría | 3.1: Modelo Entidad-Relación | Entidades, atributos, relaciones + notación Chen/Crow's Foot |
 | T6 | Vie 22 may | Teoría | 3.2: Procedimiento de diseño ER | Fases del diseño conceptual + errores frecuentes |
 | P3 | Lun 25 may | Práctica | Modelado conceptual con papel y lápiz | Caso: Plataforma de gestión académica |
 
-### SEMANA 4 (27 de mayo-1 de junio) - Bloque III.2: Modelo Relacional
+#### SEMANA 4 (27 de mayo-1 de junio) - Bloque III.2: Modelo Relacional
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T7 | Mié 27 may | Teoría | 3.3: Modelo relacional | Tuplas, atributos, claves, integridad |
 | T8 | Vie 29 may | Teoría | 3.4: Correspondencia ER-Relacional | Reglas canónicas de mapeo y casos especiales |
 | P4 | Lun 1 jun | Práctica | Transformación ER a DDL | Script CREATE TABLE + matriz de trazabilidad |
 
-### SEMANA 5 (3-8 de junio) - Bloque III.3 + IV.1: Normalización y DDL
+#### SEMANA 5 (3-8 de junio) - Bloque III.3 + IV.1: Normalización y DDL
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T9 | Mié 3 jun | Teoría | 3.5: Redundancias y normalización (1NF-3NF) | Dependencias funcionales + axiomas de Armstrong |
 | T10 | Vie 5 jun | Teoría | 3.5: BCNF + 4.1: Definición de tablas | Algoritmos de descomposición + tipos de datos SQL |
 | P5 | Lun 8 jun | Práctica | Normalización aplicada + DDL | Identificación de DF + implementación física en SGBD |
 
-### SEMANA 6 (10-15 de junio) - Bloque IV.2-3: Restricciones y Vistas
+#### SEMANA 6 (10-15 de junio) - Bloque IV.2-3: Restricciones y Vistas
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T11 | Mié 10 jun | Teoría | 4.2: Restricciones de integridad | PRIMARY KEY, FOREIGN KEY, CHECK, UNIQUE |
 | T12 | Vie 12 jun | Teoría | 4.3: Vistas + repaso integrado | CREATE VIEW + limitaciones de actualizabilidad |
 | P6 | Lun 15 jun | Práctica | Integración DDL completo | Script con restricciones + validación operativa |
 
-### SEMANA 7 (17-22 de junio) - Examen Teórico 1 + Bloque V.1
+#### SEMANA 7 (17-22 de junio) - Examen Teórico 1 + Bloque V.1
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T13 | Mié 17 jun | Examen Teórico 1 | Evaluación Bloques I-IV | Examen escrito (2 h) |
 | T14 | Vie 19 jun | Teoría | 5.1: Consultas simples (SELECT, WHERE) | Sintaxis fundamental + operadores lógicos |
 | P7 | Lun 22 jun | Práctica | Consultas a una tabla | WHERE, ORDER BY, LIMIT, funciones escalares |
 
-### SEMANA 8 (24-29 de junio) - Bloque V.2-3: Consultas Complejas y DML
+#### SEMANA 8 (24-29 de junio) - Bloque V.2-3: Consultas Complejas y DML
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T15 | Mié 24 jun | Teoría | 5.2: JOINs y combinaciones | INNER, LEFT/RIGHT OUTER JOIN + alias |
 | T16 | Vie 26 jun | Teoría | 5.2-5.3: Subconsultas y operaciones de escritura | Agregaciones, HAVING, INSERT/UPDATE/DELETE |
 | P8 | Lun 29 jun | Práctica | Consultas multitable y DML | Subconsultas correlacionadas + transacciones básicas |
 
-### SEMANA 9 (1-6 de julio) - Bloque VI.1: Disparadores
+#### SEMANA 9 (1-6 de julio) - Bloque VI.1: Disparadores
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T17 | Mié 1 jul | Teoría | 6.1: Arquitectura de disparadores | BEFORE/AFTER, ROW/STATEMENT LEVEL |
 | T18 | Vie 3 jul | Teoría | 6.1: Casos de uso y mejores prácticas | Auditoría, validación cruzada y manejo de excepciones |
 | P9 | Lun 6 jul | Práctica | Implementación de triggers | Scripts funcionales + pruebas de activación |
 
-### SEMANA 10 (8-13 de julio) - Bloque VI.2 + Examen Práctico P1
+#### SEMANA 10 (8-13 de julio) - Bloque VI.2 + Examen Práctico P1
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T19 | Mié 8 jul | Teoría | 6.2: Procedimientos almacenados (sintaxis) | CREATE PROCEDURE, parámetros IN/OUT/INOUT |
 | T20 | Vie 10 jul | Teoría | 6.2: Estructuras de control y excepciones | IF, LOOP, BEGIN...EXCEPTION + cursores |
 | P10 | Lun 13 jul | Examen Práctico P1 | Diseño, DDL/DML y consultas complejas | Evaluación en laboratorio (3 h) |
 
-### SEMANA 11 (15-20 de julio) - Examen Teórico 2 + Examen Práctico P2 + Cierre
+#### SEMANA 11 (15-20 de julio) - Examen Teórico 2 + Examen Práctico P2 + Cierre
 | Sesión | Fecha | Tipo | Contenido | Actividad Principal |
 |--------|-------|------|-----------|-------------------|
 | T21 | Mié 15 jul | Examen Teórico 2 | Evaluación Bloques V-VI | Examen escrito (2 h) |
@@ -115,7 +115,7 @@
 
 ---
 
-## Esquema de Evaluación
+### Esquema de Evaluación
 
 | Componente | Fecha | Tipo | Ponderación | Contenido Evaluado |
 |------------|-------|------|-------------|-------------------|
@@ -131,3 +131,5 @@ Requisitos mínimos de acreditación:
 - Promedio mayor o igual a 6.0
 - Entregas conforme a lineamientos APA 7a edición
 - Examen práctico aprobado (mínimo 6.0 en cada parte)
+
+---
