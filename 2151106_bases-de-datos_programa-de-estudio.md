@@ -64,9 +64,9 @@ El profesor utilizará la clase magistral para exponer los temas del curso propi
 
 ### MODALIDADES DE EVALUACIÓN
 **Evaluación Global:**  
-La evaluación global de esta UEA incluirá evaluaciones periódicas y, a juicio del profesor, una evaluación terminal. Se sugiere que las evaluaciones periódicas sean un mínimo de dos escritas y una oral.  
+La **evaluación global** de esta UEA incluirá evaluaciones periódicas y, a juicio del profesor, una evaluación terminal. Se sugiere que las **evaluaciones periódicas** sean un mínimo de **dos escritas** y **una oral**.  
 
-El profesor seleccionará los elementos de evaluación periódica de entre los siguientes: exámenes, participación en clase, tareas de programación, trabajos de investigación, presentaciones de temas y programas realizados en el laboratorio. Los factores de ponderación quedarán a juicio del profesor y se darán a conocer al inicio del curso.  
+El profesor seleccionará los elementos de evaluación periódica de entre los siguientes: **exámenes**, **participación** en clase, **tareas** de programación, trabajos de **investigación**, **presentaciones** de temas y programas realizados en el **laboratorio**. Los factores de ponderación quedarán a juicio del profesor y se darán a conocer al inicio del curso.  
 
 **Evaluación de Recuperación:**  
 La evaluación de recuperación de esta UEA podrá ser global o complementaria, a juicio del profesor.
@@ -80,9 +80,6 @@ La evaluación de recuperación de esta UEA podrá ser global o complementaria, 
 
 ---
 **VALIDACIÓN INSTITUCIONAL**  
-UNIVERSIDAD AUTÓNOMA METROPOLITANA  
-*Casa abierta al tiempo*  
-ADECUACIÓN PRESENTADA AL COLEGIO ACADÉMICO EN SU SESIÓN NÚM. 383V  
-EL SECRETARIO DEL COLEGIO  
+ADECUACIÓN PRESENTADA AL COLEGIO ACADÉMICO EN SU SESIÓN NÚM. 383  
 
-*(Fin del documento)*
+Fuente: [Programa de estudio de la UEA Bases de datos 2151106](http://lc.izt.uam.mx/wp-content/uploads/2018/10/2151106-Bases-de-Datos.pdf)
