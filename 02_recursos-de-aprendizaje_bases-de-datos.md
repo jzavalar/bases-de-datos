@@ -1,6 +1,6 @@
 ### Recursos Educativos para la UEA Bases de Datos (2151106)
 
-*dr. Jesús Zavala Ruiz*  
+*Elaborado por: dr. Jesús Zavala Ruiz*  
 *Mayo 2026*
 
 ---
@@ -84,7 +84,7 @@
 | **[FreeCodeCamp: Relational Database Certification](https://www.freecodecamp.org/learn/relational-database/)** | Currículo completo de bases de datos relacionales con proyectos prácticos y certificación gratuita | Inglés | Gratuito, acceso abierto | Práctica intensiva de SQL, diseño y administración en entorno interactivo |
 | **[PostgreSQL Official Tutorial](https://www.postgresqltutorial.com/)** | Tutorial estructurado con ejemplos ejecutables y ejercicios progresivos para PostgreSQL | Inglés | Gratuito, acceso abierto | Complemento práctico a la documentación oficial; aprendizaje autodirigido |
 | **[MySQL Official Tutorial](https://dev.mysql.com/doc/)** | Tutorial oficial de MySQL con casos de uso y mejores prácticas de implementación | Inglés | Gratuito, acceso abierto | Práctica guiada de administración y desarrollo con MySQL |
-| **Base de Datos de Prueba<br>[Pagila en Neon](https://neon.com/postgresql/getting-started/sample-database)<br>[Pagila](https://github.com/JamesRonsonOp/SQL_Training_with_Pagila)** | Base de datos de ejemplo pre-cargada con datos reales para práctica inmediata en PostgreSQL serverless | Inglés  | Gratuito, acceso abierto  | Práctica contextualizada de consultas DQL/DML sin configuración previa; ideal para ejercicios de laboratorio y validación de scripts | 
+| **Base de Datos de Prueba<br>[Pagila en Neon](https://neon.com/postgresql/getting-started/sample-database)<br>[Pagila](https://github.com/JamesRonsonOp/SQL_Training_with_Pagila)** | Base de datos de ejemplo pre-cargada con datos reales para práctica inmediata en PostgreSQL serverless | Inglés  | Gratuito, acceso abierto  | Práctica contextualizada de consultas DDL/DML sin configuración previa; ideal para ejercicios de laboratorio y validación de scripts | 
 
 #### Criterios de Selección de Recursos
 
