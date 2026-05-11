@@ -1,6 +1,6 @@
 ### Recursos Educativos para la UEA Bases de Datos (2151106)
 
-*Elaborado por: dr. Jesús Zavala Ruiz*  
+*dr. Jesús Zavala Ruiz*  
 *Mayo 2026*
 
 ---
