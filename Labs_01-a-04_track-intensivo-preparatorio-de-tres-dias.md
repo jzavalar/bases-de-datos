@@ -22,8 +22,8 @@ Este track comprimido está diseñado para que estudiantes sin experiencia previ
 | Día | Laboratorios | Objetivo del Día | Resultado Esperado |
 |---------------|---------------|--------------------|----------------------|
 | **Día 1** | Lab 01 + inicio Lab 02 | Instalar Fedora y preparar virtualización | Fedora operativo + KVM/libvirt configurado |
-| **Día 2** | Lab 02 (completar) + Lab 03 | Desplegar VM con PostgreSQL y herramientas | VM con PostgreSQL 16 + DBeaver/pgAdmin listos |
-| **Día 3** | Lab 04 + sandbox online | Cargar Pagila y practicar administración básica | Pagila operativa localmente + acceso a sandbox online |
+| **Día 2** | Lab 02 (completar) +<br>Lab 03 | Desplegar VM con PostgreSQL y herramientas | VM con PostgreSQL 16 + DBeaver/pgAdmin listos |
+| **Día 3** | Lab 04 +<br>sandbox online | Cargar Pagila y practicar administración básica | Pagila operativa localmente + acceso a sandbox online |
 
 **Requisitos transversales**: Computadora con ≥ 8 GB RAM, ≥ 40 GB de almacenamiento libre, procesador con extensiones de virtualización (VT-x/AMD-V), conexión a internet estable, USB de ≥ 8 GB.
 
