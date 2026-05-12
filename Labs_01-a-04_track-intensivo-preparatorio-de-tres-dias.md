@@ -1,4 +1,5 @@
-### Track Intensivo de 3 Días Preparación de Entorno para Explorar DBMS con Pagila
+### Track Intensivo de 3 Días 
+### Preparación de Entorno para Explorar DBMS con la Base de Datos Pagila
 
 ### Laboratorios 01 a 04
 
