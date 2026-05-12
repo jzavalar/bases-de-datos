@@ -59,7 +59,7 @@ Este track comprimido está diseñado para que estudiantes sin experiencia previ
 
 Desde Windows:
 
-1. Verificar requisitos mínimos
+1. Verificar requisitos mínimos en la línea de comandos: 
 
 ```         
 systeminfo | Select-String "System Type"  ### Debe decir: x64-based PC
@@ -68,7 +68,7 @@ Get-PSDrive C | Select-Object Free        ### Mínimo 20 GB libres
 
 2. Crear USB de instalación
 
-   - Descargar Fedora Media Writer: <https://fedoraproject.org/workstation/download>  
+   - Descargar Fedora Media Writer: <https://fedoraproject.org/fmw/FedoraMediaWriter-win32-latest.exe>  
    - Ejecutar y seguir asistente para crear USB booteable (USB ≥ 8 GB)  
 
 3. Respaldar archivos importantes
@@ -89,7 +89,7 @@ Get-PSDrive C | Select-Object Free        ### Mínimo 20 GB libres
     - Dual Boot: seleccionar disco → "Personalizado"  
       - ESP existente: /boot/efi, NO formatear  
       - Espacio no asignado: 
-      - crear /boot (1 GB, ext4) y / (resto, ext4) 
+          - crear /boot (1 GB, ext4) y / (resto, ext4) 
     - Reemplazo Total: marcar "Cifrar mis datos" → establecer passphrase LUKS  
       - Confirmar cambios → "Comenzar instalación" (15-20 min)  
 
