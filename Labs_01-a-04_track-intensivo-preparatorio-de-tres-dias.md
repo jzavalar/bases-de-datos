@@ -2,9 +2,9 @@
 ### Laboratorios 01 a 04.
 ### Licenciatura en Computación - UAM Iztapalapa
 
-**UEA:** Bases de Datos
-**Profesor:** dr. Jesús Zavala Ruiz
-**Fecha:** 12 de Mayo de 2026
+**UEA:** Bases de Datos  
+**Profesor:** dr. Jesús Zavala Ruiz  
+**Fecha:** 12 de Mayo de 2026  
 
 
 **Objetivo: Tener listo el sistema local y acceso a sandbox online para comenzar a explorar qué es un DBMS con la base de datos Pagila**
