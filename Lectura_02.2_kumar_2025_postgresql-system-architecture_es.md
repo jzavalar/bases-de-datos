@@ -54,10 +54,8 @@ El proceso del servidor se representa en la figura siguiente.
 
 [Interpretación de imagen - Figura 1-1: Proceso del servidor PostgreSQL. Diagrama que muestra el proceso Postmaster en el centro, con flechas apuntando a múltiples procesos backend etiquetados como P1, P2, P3. Cada proceso backend (P1/P2/P3) tiene procesos de trabajo en segundo plano correspondientes etiquetados como BW1, BW2, BW3 respectivamente. El diagrama ilustra la relación jerárquica donde el Postmaster genera procesos backend, los cuales a su vez pueden generar trabajadores en segundo plano.]
 
-![**Figura 1-1. Proceso del servidor PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png width="60%")
-
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png" width="40%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png" width="30%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-1. Proceso del servidor PostgreSQL</div>
 </div>
 
@@ -91,7 +89,10 @@ La Figura 1-2 muestra la colección de todos los procesos auxiliares.
 
 [Interpretación de imagen - Figura 1-2: Proceso de utilidad de PostgreSQL. Diagrama que muestra un concentrador central con flechas conectando a múltiples cajas etiquetadas que representan procesos auxiliares: Escritor en segundo plano, Checkpoint, Escritor WAL, Autovacuum (con iniciador de Autovacuum), Archivador, Recolector de estadísticas, Escritor de registros, e Iniciador de replicación lógica. El diagrama ilustra cómo estos procesos de utilidad operan en paralelo para soportar las operaciones principales del servidor.]
 
-![**Figura 1-2. Proceso de utilidad de PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-2.png)
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-1. Proceso del servidor PostgreSQL</div>
+</div>
 
 ##### **3. Memoria del sistema**
 
@@ -181,7 +182,10 @@ La figura siguiente representa los diversos componentes involucrados en la arqui
 
 [Interpretación de imagen - Figura 1-3: Memoria del sistema PostgreSQL. Diagrama dividido en dos secciones principales: Memoria Local y Memoria Compartida. La sección de Memoria Local muestra subáreas: Memoria de trabajo, Memoria de trabajo de mantenimiento, Memoria de trabajo de autovacuum, Búferes temporales, Tamaño efectivo de caché, Caché de catálogo, Caché del sistema operativo. La sección de Memoria Compartida muestra: Búferes compartidos, Búferes WAL, Búferes temporales, Otros búferes. Las flechas indican accesibilidad: la memoria local es privada para cada proceso backend, mientras que la memoria compartida es accesible por todos los procesos en segundo plano.]
 
-![**Figura 1-3. Memoria del sistema PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-3.png)
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-3.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-3. Memoria del sistema PostgreSQL</div>
+</div>
 
 ##### **4. Archivos físicos**
 
@@ -213,7 +217,10 @@ postgres=# SHOW data_directory;
 
 [Interpretación de imagen - Figura 1-4: Estructura del directorio de datos de PostgreSQL. Diagrama que muestra la estructura del directorio PGDATA con subdirectorios: base/, global/, pg_wal/, pg_log/, archive/, pg_stat/, pg_subtrans/, pg_tblspc/, pg_twophase/, pg_xact/, y archivos de configuración: postgresql.conf, pg_hba.conf, pg_ident.conf, postmaster.opts, postmaster.pid. El diagrama ilustra la organización jerárquica del almacenamiento físico de PostgreSQL.]
 
-![**Figura 1-4. Estructura del directorio de datos de PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-4.png)
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-4.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-4. Estructura del directorio de datos de PostgreSQL</div>
+</div>
 
 [p. 10]
 
@@ -322,7 +329,10 @@ La figura siguiente muestra los archivos físicos almacenados en el directorio b
 
 [Interpretación de imagen - Figura 1-5: Archivos físicos de PostgreSQL. Diagrama que muestra cuatro categorías de archivos físicos: Archivos de datos (con subdirectorios como base/, global/), Archivos de registro WAL (directorio pg_wal/ con archivos de segmento), Archivos de registro (directorio log/ con archivos postgresql-\*.log), y Archivos de registro archivados (directorio archive/ con segmentos WAL archivados). Las flechas indican el flujo de archivos WAL desde pg_wal/ hacia archive/ mediante el proceso archivador.]
 
-![**Figura 1-5. Archivos físicos de PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-5.png)
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-5.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-5. Archivos físicos de PostgreSQL</div>
+</div>
 
 [p. 14]
 
@@ -334,7 +344,10 @@ Un árbol de procesos del servidor PostgreSQL típico se ve como sigue:
 
 [Interpretación de imagen - Figura 1-6: Árbol de procesos del servidor PostgreSQL. Diagrama de árbol jerárquico con Postmaster (postgres -D /data) en la raíz. Las ramas muestran: logger, checkpointer, background writer, walwriter, autovacuum launcher, archiver, logical replication launcher como hijos directos de Postmaster. Ramas adicionales muestran procesos backend (postgres: usuario base_de_datos) generados para conexiones de cliente, cada uno potencialmente con sus propios trabajadores en segundo plano.]
 
-![**Figura 1-6. Árbol de procesos del servidor PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-6.png)
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-6.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-6. Árbol de procesos del servidor PostgreSQL</div>
+</div>
 
 Aquí hay una salida de muestra del árbol de procesos del servidor PostgreSQL:
 
@@ -415,7 +428,10 @@ Por favor, siga el flujo observando los números en la Figura 1-7 para comprende
 
 [Interpretación de imagen - Figura 1-7: Flujo de arquitectura de PostgreSQL. Diagrama de flujo numerado que muestra: (1) Cliente inicia conexión a Postmaster en el puerto 5432; (2) Postmaster genera proceso Backend para la conexión; (3) Backend genera trabajadores en segundo plano según sea necesario; (4) Áreas de memoria (Búferes compartidos, Memoria de trabajo) asignadas para procesamiento; (5) Procesos de utilidad (Escritor en segundo plano, Escritor WAL, etc.) realizan tareas en segundo plano; (6) Datos confirmados persistidos en Archivos físicos (Archivos de datos, Archivos WAL). Las flechas indican flujo de datos y relaciones de procesos.]
 
-![**Figura 1-7. Flujo de arquitectura de PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-7.png)
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-7.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-7. Flujo de arquitectura de PostgreSQL</div>
+</div>
 
 [p. 18]
 
