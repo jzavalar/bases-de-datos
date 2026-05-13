@@ -77,7 +77,7 @@ Get-PSDrive C | Select-Object Free        ### Mínimo 20 GB libres
 
 2. Crear USB de instalación
 
-   - Descargar Fedora Media Writer: <https://fedoraproject.org/fmw/FedoraMediaWriter-win32-latest.exe>  
+   - Descargar Fedora Media Writer: <https://github.com/FedoraQt/MediaWriter/releases/download/5.3.1/FedoraMediaWriter-win64-5.3.1.exe>  
    - Ejecutar y seguir asistente para crear USB booteable (Memoria USB ≥ 16 GB)  
 
 3. Respaldar archivos importantes
