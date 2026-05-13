@@ -77,8 +77,9 @@ Get-PSDrive C | Select-Object Free        ### Mínimo 20 GB libres
 
 2. Crear USB de instalación
 
-   - Descargar Fedora Media Writer: <https://github.com/FedoraQt/MediaWriter/releases/download/5.3.1/FedoraMediaWriter-win64-5.3.1.exe>  
-   - Ejecutar y seguir asistente para crear USB booteable (Memoria USB ≥ 16 GB)  
+   - Descargar el ISO de Fedora o descargar durante instalación: <https://fedoraproject.org/>   
+   - Descargar Fedora Media Writer: <https://github.com/FedoraQt/MediaWriter/releases/download/5.3.1/FedoraMediaWriter-win64-5.3.1.exe>
+   - Ejecutar Fedora Media Writer y seguir asistente para crear USB booteable (Memoria USB ≥ 16 GB)  
 
 3. Respaldar archivos importantes
 
@@ -93,47 +94,45 @@ Get-PSDrive C | Select-Object Free        ### Mínimo 20 GB libres
     Configuración en Anaconda: 
     - Idioma: Español (México)  
     - Teclado: Latinoamericano  
-    - Usuario: [tu_nombre] con contraseña segura + marcar "administrador"  
+    - Usuario: `user` o tu nombre con contraseña segura + marcar "administrador"  
     Destino de instalación: 
     - Dual Boot: seleccionar disco → "Personalizado"  
       - ESP existente: /boot/efi, NO formatear  
       - Espacio no asignado: 
-          - crear /boot (1 GB, ext4) y / (resto, ext4) 
-    - Reemplazo Total: marcar "Cifrar mis datos" → establecer passphrase LUKS  
+          - crear /boot (1 GB, ext4) y / (resto, ext4) o elegir particionado automático 
+    - Reemplazo Total: marcar "Cifrar mis datos" → establecer passphrase (contraseña) para LUKS  
       - Confirmar cambios → "Comenzar instalación" (15-20 min)  
 
-5.  Reiniciar, retirar USB, seleccionar "Fedora Linux" en GRUB  
+5.  Reiniciar, retirar USB, seleccionar "Fedora Linux" en GRUB (primer opción)  
 6.  Iniciar sesión con tu usuario  
 
 ##### Módulo 3: Validación Inmediata (30 min)
 
-Abrir terminal y ejecutar:
-
-Verificar instalación
+Verificar instalación al abrir una terminal y ejecutar:
 
 ```         
 cat /etc/fedora-release  ### Esperado: Fedora release 40 (Workstation Edition)
 ```
 
-Actualizar sistema (rápido)
+Actualizar sistema:
 
 ```         
 sudo dnf update -y --refresh
 ```
 
-Verificar conectividad
+Verificar conectividad:
 
 ```         
 ping -c 2 getfedora.org  ### Debe responder
 ```
 
-Preparar para virtualización
+Preparar para virtualización:
 
 ```         
 lscpu | grep Virtualization  ### Confirmar VT-x o AMD-V
 ```
 
-[Solo dual boot] Verificar acceso a Windows
+[Solo dual boot] Verificar acceso a Windows:
 
 ```         
 lsblk -o NAME,FSTYPE | grep ntfs  ### Debe listar partición de Windows
@@ -201,9 +200,9 @@ En terminal de Fedora:
    sudo virsh net-info default  ### Debe mostrar: Active: yes
    ```
 
-##### Módulo 2: Crear VM con Rocky Linux 10.1 (Día 1 - Tarde, 60 min)
+##### Módulo 2: Crear VM (Día 1 - Tarde, 60 min)
 
-1. Descargar imagen ISO (si no se hizo previamente) y verificar integridad:
+1. Descargar imagen ISO de Rocky Linux 10.1 mínima (si no se hizo previamente) y verificar integridad:
 
    ```         
    mkdir -p ~/Download/isos && cd /Download/isos
@@ -214,9 +213,7 @@ En terminal de Fedora:
 
 2. Crear VM con virt-manager (interfaz gráfica):
 
-   ```         
-   virt-manager
-   ```
+   Instalar Virt Manager con la tienda de aplicaciones.
 
    Nueva VM → ISO local → seleccionar Rocky-10.1-minimal.iso
 
@@ -224,28 +221,28 @@ En terminal de Fedora:
 
    - Nombre: rocky-postgres-lab \| Red: default (NAT)
 
-     Iniciar instalación → Minimal Install → usuario "practicante" con sudo
+   Iniciar instalación → Minimal Install → usuario "user" con sudo
 
-   Alternativa línea de comandos:
+4. Opcionalmente, crear otra VM con Gnome Boxes (interfaz gráfica):
 
-   ```         
-   sudo virt-install --name rocky-postgres-lab --memory 2048 --vcpus 2 \
-     --disk size=20,format=qcow2 --cdrom ~/Download/Rocky-10.1-x86_64-minimal.iso \
-     --network network=default --graphics none --noautoconsole
-   ```
+   Instalar Gnome Boxes de la tienda de aplicaciones.
+
+   Crear la VM con las mismas especificaciones de la anterior.
 
 ##### Módulo 3: Instalar PostgreSQL 16 en la VM (Día 2 - Mañana, 60 min)
 
-1. Conectarse a la VM:
+1. Arrancar la VM desde Nirt Manager
+
+2. Conectarse a la VM desde la terminal de Fedora:
 
    ```         
    virsh domifaddr rocky-postgres-lab  ### Obtener IP
-   ssh practicante@<IP_DE_LA_VM>
+   ssh user@<IP_DE_LA_VM>
    ```
 
-2. Dentro de la VM Rocky Linux:
+3. Dentro de la VM Rocky Linux:
 
-   1. Actualizar e instalar PostgreSQL desde PGDG
+   1. Actualizar e instalar PostgreSQL 16 desde el repositorio PGDG (PostgreSQL Global Development Group)
 
       ```         
       sudo dnf update -y
@@ -270,13 +267,28 @@ En terminal de Fedora:
       sudo nano /var/lib/pgsql/16/data/pg_hba.conf
       ```
 
-      Cambiar líneas locales a: scram-sha-256
+   4. Cambiar líneas locales a: scram-sha-256:
+  
+      ```
+      # TYPE  DATABASE        USER            ADDRESS                 METHOD
+      local   all             all                                     scram-sha-256
+      host    all             all             127.0.0.1/32            scram-sha-256
+      host    all             all             ::1/128                 scram-sha-256
+      ```
+      Guardar y salir>
+      `Ctrl + O` (letra O) → Presiona Enter para confirmar el nombre del archivo y `Ctrl + X` → Salir del editor    
+
+   5. Recargar PostgreSQL para aplicar los cambios (sin reiniciar el servicio):
+      `sudo systemctl reload postgresql-16`
+
+   6. Verificar que las líneas se aplicaron correctamente:  
+      `sudo grep -E "^local|^host" /var/lib/pgsql/16/data/pg_hba.conf | grep -v "^#"`
 
       ```         
       sudo systemctl reload postgresql-16
       ```
 
-   4. Crear usuario y base para prácticas
+   7. Crear usuario `practicante_db` y base de datos para prácticas `pagila_lab`
 
       ```         
       sudo -u postgres psql << 'EOF'
@@ -343,7 +355,7 @@ Bitácora (`lab02_03.md`) con: parámetros de VM, comandos de instalación de Po
 1. Conectarse a la VM
 
    ```         
-   ssh practicante@<IP_DE_LA_VM>
+   ssh user@<IP_DE_LA_VM>
    cd ~
    ```
 
@@ -448,23 +460,14 @@ Conectarse a pagila_lab
 
 ##### Módulo 4: Sandbox Online - Alternativa y Complemento (Día 3 - Mañana, 30 min)
 
-Para estudiantes con hardware limitado o como complemento:
+Para estudiantes con hardware limitado o como complemento para trabajar en el salón:
 
 - Opción 1: PostgreSQL en la nube (gratuito)
    - <https://neon.tech/> → cuenta gratuita con PostgreSQL 16  
    - Crear proyecto → conectar con psql o DBeaver  
    - Cargar Pagila usando los scripts del repositorio GitHub
 
-- Opción 2: Contenedor Docker en cualquier sistema (Ver guía [aquí](https://github.com/devrimgunduz/pagila))  
-   - Instalar Docker Desktop (Windows/Mac/Linux)  
-   - Ejecutar: 
-   `docker run -d --name pagila-sandbox \     
-   -e POSTGRES_PASSWORD=Pract2026 \     
-   -p 5432:5432 postgres:16`\
-
-      Conectar: `psql -h localhost -U postgres -d postgres`
-
-- Opción 3: Entorno web interactivo 
+- Opción 2: Entorno web interactivo 
    - <https://pgexercises.com/> → ejercicios con base de datos de ejemplo  
    - <https://www.db-fiddle.com/> → probar consultas SQL sin instalación
 
@@ -663,7 +666,10 @@ Ahora que tienen Pagila cargada y herramientas como DBeaver o pgAdmin a su dispo
 
 Recuerden: el entorno que prepararon es una herramienta. Su valor como futuros profesionales de la computación está en saber usarla para resolver problemas reales con ética, creatividad y rigor técnico.
 
-¡Éxito en la exploración de DBMS!
+¡Éxito!
 
 Dr. Jesús Zavala Ruiz Profesor
+
+---
+
 *Nota: Este track está optimizado para aprendizaje acelerado. Si algún paso requiere más tiempo, priorice la comprensión sobre la velocidad. El sandbox online está disponible como alternativa válida para estudiantes con limitaciones de hardware.*
