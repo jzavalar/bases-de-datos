@@ -429,7 +429,7 @@ Por favor, siga el flujo observando los números en la Figura 1-7 para comprende
 [Interpretación de imagen - Figura 1-7: Flujo de arquitectura de PostgreSQL. Diagrama de flujo numerado que muestra: (1) Cliente inicia conexión a Postmaster en el puerto 5432; (2) Postmaster genera proceso Backend para la conexión; (3) Backend genera trabajadores en segundo plano según sea necesario; (4) Áreas de memoria (Búferes compartidos, Memoria de trabajo) asignadas para procesamiento; (5) Procesos de utilidad (Escritor en segundo plano, Escritor WAL, etc.) realizan tareas en segundo plano; (6) Datos confirmados persistidos en Archivos físicos (Archivos de datos, Archivos WAL). Las flechas indican flujo de datos y relaciones de procesos.]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-7.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-7.jpg" width="30%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-7. Flujo de arquitectura de PostgreSQL</div>
 </div>
 
