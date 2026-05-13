@@ -21,13 +21,22 @@ Este track comprimido está diseñado para que estudiantes sin experiencia previ
 
 | Día | Laboratorios | Objetivo del Día | Resultado Esperado |
 |---------------|---------------|--------------------|----------------------|
-| **Día 1** | Lab 01 + inicio Lab 02 | Instalar Fedora y preparar virtualización | Fedora operativo + KVM/libvirt configurado |
-| **Día 2** | Lab 02 (completar) +<br>Lab 03 | Desplegar VM con PostgreSQL y herramientas | VM con PostgreSQL 16 + DBeaver/pgAdmin listos |
-| **Día 3** | Lab 04 +<br>sandbox online | Cargar Pagila y practicar administración básica | Pagila operativa localmente + acceso a sandbox online |
+| **Día 1** | Lab 01 + inicio Lab 02 | Instalar [Fedora](https://fedoraproject.org/) y preparar [virtualización](https://www.redhat.com/en/topics/virtualization/what-is-virtualization) | Fedora operativo + [KVM](https://linux-kvm.org/page/Main_Page)/[libvirt](https://libvirt.org/) configurado |
+| **Día 2** | Lab 02 (completar) +<br>Lab 03 | Desplegar VM con PostgreSQL y herramientas | VM con [PostgreSQL](https://www.postgresql.org/) 16 + [DBeaver](https://dbeaver.io/)/[pgAdmin](https://www.pgadmin.org/) listos |
+| **Día 3** | Lab 04 +<br>sandbox online | Cargar Pagila y<br>practicar [administración básica](https://neon.com/postgresql/administration) | Base de datos [Pagila](https://github.com/JamesRonsonOp/SQL_Training_with_Pagila) operativa localmente + acceso a sandbox online |
 
-**Requisitos transversales**: Computadora con ≥ 8 GB RAM, ≥ 40 GB de almacenamiento libre, procesador con extensiones de virtualización (VT-x/AMD-V), conexión a internet estable, USB de ≥ 8 GB.
+**Requisitos transversales**: 
+- Computadora con ≥ 8 GB RAM,
+- Espacio en dico ≥ 40 GB de almacenamiento libre,
+- procesador con extensiones de virtualización (VT-x/AMD-V),
+- conexión a internet estable,
+- Memoria USB de ≥ 16 GB.
 
-**Alternativa para hardware limitado**: Si tu equipo no cumple los requisitos, podrás usar exclusivamente el sandbox online proporcionado. El track está diseñado para que ambos caminos (local y online) converjan en los mismos ejercicios de aprendizaje.
+**Alternativa para hardware limitado**: Si tu equipo no cumple los requisitos, podrás usar exclusivamente cualquiera de los [sandboxes online](https://github.com/jzavalar/bases-de-datos/blob/main/02_recursos-de-aprendizaje_bases-de-datos.md) proporcionados. El track está diseñado para que ambos caminos (local y online) converjan en los mismos ejercicios de aprendizaje.
+
+**Recomendaciones:** 
+1. Mantenga una bitácora de lo que le da resultado y de lo que le da error para que pueda ir resolviendo los problemas. Se sugiere utilizar cualquier chatbot de IA, como [Qwen.ai](https://chat.qwen.ai/), como tutor, para resolver sus dudas de manera inmediata, conforme progrese.  
+2. Conforme progrese vaya elaborando su lista de términos estilo vocabulario, para que haga su propio acordeón.  
 
 ------------------------------------------------------------------------
 
@@ -69,7 +78,7 @@ Get-PSDrive C | Select-Object Free        ### Mínimo 20 GB libres
 2. Crear USB de instalación
 
    - Descargar Fedora Media Writer: <https://fedoraproject.org/fmw/FedoraMediaWriter-win32-latest.exe>  
-   - Ejecutar y seguir asistente para crear USB booteable (USB ≥ 8 GB)  
+   - Ejecutar y seguir asistente para crear USB booteable (Memoria USB ≥ 16 GB)  
 
 3. Respaldar archivos importantes
 
@@ -336,14 +345,17 @@ Bitácora (`lab02_03.md`) con: parámetros de VM, comandos de instalación de Po
    cd ~
    ```
 
-2. Descargar y cargar Pagila
+2. Descargar Pagila de alguno de los dos repositorios y cargar Pagila
 
-   ```         
+   ```
+   git clone --depth 1 https://github.com/devrimgunduz/pagila.git
+   cd pagila
+         
    git clone --depth 1 https://github.com/JamesRonsonOp/SQL_Training_with_Pagila.git
    cd SQL_Training_with_Pagila
    ```
 
-3. Cargar esquema y datos
+3. Cargar esquema y luego datos
 
    ```         
    psql -U practicante_db -d pagila_lab -f pagila-schema.sql
@@ -412,7 +424,7 @@ Conectarse a pagila_lab
    psql -U practicante_db -d pagila_lab
    
    -- 1. Verificar tamaño de tablas principales
-   SELECT relname, pg_size_pretty(pg_total_relation_size(relid)) AS tamaño
+   SELECT relname, pg_size_pretty(pg_total_relation_size(relid)) AS tamano
    FROM pg_stat_user_tables
    WHERE schemaname = 'public'
    ORDER BY pg_total_relation_size(relid) DESC
@@ -441,7 +453,7 @@ Para estudiantes con hardware limitado o como complemento:
    - Crear proyecto → conectar con psql o DBeaver  
    - Cargar Pagila usando los scripts del repositorio GitHub
 
-- Opción 2: Contenedor Docker en cualquier sistema  
+- Opción 2: Contenedor Docker en cualquier sistema (Ver guía [aquí](https://github.com/devrimgunduz/pagila))  
    - Instalar Docker Desktop (Windows/Mac/Linux)  
    - Ejecutar: 
    `docker run -d --name pagila-sandbox \     
@@ -535,7 +547,7 @@ DÍA 1 - Instalación y Virtualización
 │ • Validación y actualización (30 min)               │
 ├─────────────────────────────────────────────────────┤
 │ 14:00-16:00 | Lab 02 (parte 1): Virtualización      │
-│ • Instalación de KVM/libvirt (30 min)               │
+│ • Instalación de Gnome Boxes/KVM/libvirt (30 min)   │
 │ • Configuración de permisos y red (30 min)          │
 │ • Descarga de ISO Rocky Linux (inicio)              │
 └─────────────────────────────────────────────────────┘
