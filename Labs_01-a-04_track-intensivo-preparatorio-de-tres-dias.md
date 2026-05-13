@@ -206,7 +206,7 @@ En terminal de Fedora:
 1. Descargar imagen ISO (si no se hizo previamente) y verificar integridad:
 
    ```         
-   mkdir -p ~/isos && cd ~/isos
+   mkdir -p ~/Download/isos && cd /Download/isos
    wget -q https://download.rockylinux.org/pub/rocky/10.1/isos/x86_64/Rocky-10.1-x86_64-minimal.iso
    wget -q https://download.rockylinux.org/pub/rocky/10.1/isos/x86_64/Rocky-10.1-x86_64-minimal.iso.CHECKSUM
    sha256sum -c Rocky-10.1-x86_64-minimal.iso.CHECKSUM
@@ -230,7 +230,7 @@ En terminal de Fedora:
 
    ```         
    sudo virt-install --name rocky-postgres-lab --memory 2048 --vcpus 2 \
-     --disk size=20,format=qcow2 --cdrom ~/isos/Rocky-10.1-x86_64-minimal.iso \
+     --disk size=20,format=qcow2 --cdrom ~/Download/Rocky-10.1-x86_64-minimal.iso \
      --network network=default --graphics none --noautoconsole
    ```
 
