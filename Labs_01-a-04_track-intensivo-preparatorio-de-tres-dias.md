@@ -203,11 +203,13 @@ En terminal de Fedora:
 
 ##### Módulo 2: Crear VM con Rocky Linux 10.1 (Día 1 - Tarde, 60 min)
 
-1. Descargar imagen ISO (si no se hizo previamente)
+1. Descargar imagen ISO (si no se hizo previamente) y verificar integridad:
 
    ```         
    mkdir -p ~/isos && cd ~/isos
    wget -q https://download.rockylinux.org/pub/rocky/10.1/isos/x86_64/Rocky-10.1-x86_64-minimal.iso
+   wget -q https://download.rockylinux.org/pub/rocky/10.1/isos/x86_64/Rocky-10.1-x86_64-minimal.iso.CHECKSUM
+   sha256sum -c Rocky-10.1-x86_64-minimal.iso.CHECKSUM
    ```
 
 2. Crear VM con virt-manager (interfaz gráfica):
@@ -247,8 +249,8 @@ En terminal de Fedora:
 
       ```         
       sudo dnf update -y
-      sudo rpm --import https://www.postgresql.org/media/keys/PGDG-RPM-GPG-KEY-RHEL
-      sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      sudo rpm --import https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-RHEL
+      sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-10.1-x86_64/pgdg-redhat-repo-42.0-64.rhel10.1PGDG.noarch.rpm
       sudo dnf -qy module disable postgresql
       sudo dnf install -y postgresql16-server postgresql16-contrib postgresql16
       ```
