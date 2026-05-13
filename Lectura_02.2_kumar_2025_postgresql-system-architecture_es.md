@@ -54,7 +54,7 @@ El proceso del servidor se representa en la figura siguiente.
 
 [Interpretación de imagen - Figura 1-1: Proceso del servidor PostgreSQL. Diagrama que muestra el proceso Postmaster en el centro, con flechas apuntando a múltiples procesos backend etiquetados como P1, P2, P3. Cada proceso backend (P1/P2/P3) tiene procesos de trabajo en segundo plano correspondientes etiquetados como BW1, BW2, BW3 respectivamente. El diagrama ilustra la relación jerárquica donde el Postmaster genera procesos backend, los cuales a su vez pueden generar trabajadores en segundo plano.]
 
-![**Figura 1-1. Proceso del servidor PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png)
+![**Figura 1-1. Proceso del servidor PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png width="60%")
 
 En la Figura 1-1, P1/P2/P3 son los procesos backend, y BW1/BW2/BW3 son los procesos de trabajo en segundo plano correspondientes.
 
