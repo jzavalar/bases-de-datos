@@ -57,7 +57,7 @@ El proceso del servidor se representa en la figura siguiente.
 ![**Figura 1-1. Proceso del servidor PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png width="60%")
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png" width="60%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png" width="40%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-1. Proceso del servidor PostgreSQL</div>
 </div>
 
