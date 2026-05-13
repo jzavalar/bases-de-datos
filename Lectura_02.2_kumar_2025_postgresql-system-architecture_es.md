@@ -2,7 +2,7 @@
 
 ### CAPÍTULO 1. Arquitectura del Sistema PostgreSQL
 
-**Fuente:** Kumar, Y. V. R., Samayam, A. K., & Kadambari, P. (2025). *Mastering PostgreSQL Administration: Internals, Operations, Monitoring, and Oracle Migration Strategies*. Apress/Springer.
+**Fuente:** Kumar, Y. V. R., Samayam, A. K., & Kadambari, P. (2025). PostgreSQL system architecture In *Mastering PostgreSQL administration: Internals, operations, monitoring, and Oracle migration strategies* (pp. 1-18). Apress/Springer.
 
 #### Introducción
 
