@@ -56,6 +56,11 @@ El proceso del servidor se representa en la figura siguiente.
 
 ![**Figura 1-1. Proceso del servidor PostgreSQL**](https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png width="60%")
 
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/kumar_2025_figure_1-1.png" width="60%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-1. Proceso del servidor PostgreSQL</div>
+</div>
+
 En la Figura 1-1, P1/P2/P3 son los procesos backend, y BW1/BW2/BW3 son los procesos de trabajo en segundo plano correspondientes.
 
 ##### **2. Proceso de utilidad**
