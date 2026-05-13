@@ -223,11 +223,16 @@ En terminal de Fedora:
 
    Iniciar instalación → Minimal Install → usuario "user" con sudo
 
-4. Opcionalmente, crear otra VM con Gnome Boxes (interfaz gráfica):
+4. Opcionalmente, crear otra VM (vm2) con Gnome Boxes (interfaz gráfica):
 
    Instalar Gnome Boxes de la tienda de aplicaciones.
 
    Crear la VM con las mismas especificaciones de la anterior.
+
+5. Opcionalmente, crear otra VM (vm3) con Virsh en modo CLI:
+
+   Guía [en inglés](https://docs.redhat.com/es/documentation/red_hat_enterprise_linux/9/html-single/configuring_and_managing_virtualization/index).
+   Guía [en español](https://docs.redhat.com/es/documentation/red_hat_enterprise_linux/8/html-single/configuring_and_managing_virtualization/index).
 
 ##### Módulo 3: Instalar PostgreSQL 16 en la VM (Día 2 - Mañana, 60 min)
 
