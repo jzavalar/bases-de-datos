@@ -1,4 +1,4 @@
-### CAPÍTULO 1: Una visión general de los DBMS y la arquitectura de sistemas de bases de datos
+### **Una visión general de los DBMS y la arquitectura de sistemas de bases de datos**
 
 **Fuente:** Mata-Toledo, R., & Cushman, P. (2000). An overview of DBMS and DB systems architecture. In *Schaum's outline of fundamentals of relational databases* (pp. 1-25). McGraw-Hill.
 
@@ -596,11 +596,12 @@ La vista externa dependería del usuario. El empleado de envíos entendería que
 
 **1.27.** La independencia de datos es importante por tres razones. Primero, a nivel físico, el DBA debería poder cambiar la estructura interna de una base de datos sin alterar la vista de la comunidad o las vistas externas. Segundo, a nivel lógico, el código de aplicación o las consultas de usuario no deberían necesitar ser alteradas debido a cambios en la representación o almacenamiento de los datos. Tercero, la gestión de los datos es más fácil cuando el software del DBMS está separado de los datos reales. Diferentes usuarios pueden acceder a los datos concurrentemente y sentirse confiados de que el DBMS está manteniendo la integridad y precisión de los datos.
 
+------------------------------------------------------------------------
+
+**Nota sobre derechos de autor:** Esta traducción se proporciona exclusivamente con fines educativos y de investigación académica. El contenido original está protegido por derechos de autor © Mata-Toledo, R., & Cushman, P. (2000). *Schaum's outline of fundamentals of relational databases*. McGraw-Hill.
+
 ---
 
 [^1]: E. F. Codd, *The Relational Model of Data for Large Shared Data Banks*. This model is further explained in E. F. Codd, *The Relational Model for Database Management Version 2*, Addison-Wesley, Reading, MA, 1990. <> 
 [^2]: Dionysios C. Tsichritzis y Anthonly Klug (eds.), *The ANSI/X3/SPARC DBMS Framework: Report of the Study Group on Data Base Management Systems, Information Systems* 3, 1978. <https://sigmodrecord.org/publications/sigmodRecord/8207/pdfs/984555.1108830.pdf> 
 
-------------------------------------------------------------------------
-
-**Nota sobre derechos de autor:** Esta traducción se proporciona exclusivamente con fines educativos y de investigación académica. El contenido original está protegido por derechos de autor © Mata-Toledo, R., & Cushman, P. (2000). *Schaum's outline of fundamentals of relational databases*. McGraw-Hill.
