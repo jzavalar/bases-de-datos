@@ -83,7 +83,7 @@ El auge de las computadoras personales en los negocios durante la década de 198
 [Ilustración de la Figura 1-2: a. Una sola capa: Un gran bloque rectangular que representa la máquina principal contiene "Software del DBMS" y "Datos". Flechas apuntan desde este bloque a cuatro bloques cuadrados más pequeños que representan terminales. Leyenda: "a. Una sola capa: Todo en una máquina. Accesado por terminales". b. Dos capas: Un bloque rectangular central etiquetado "Software del Servidor del DBMS" y "Datos" está conectado mediante flechas a dos bloques más pequeños etiquetados "Software del Cliente del DBMS". Leyenda: "b. Dos capas: Servidor con muchos Clientes". c. Tres capas: Dos grandes bloques etiquetados "Software del Servidor del DBMS I/Datos" y "Software del Servidor del DBMS II/Datos" están conectados en el medio por un círculo etiquetado "Middleware". Los clientes de cada DBMS se conectan a sus respectivos servidores. Leyenda: "c. Tres capas: Dos tipos de DBMS conectados por Middleware".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-2.png" width="50%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-2.png" width="40%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-2. Configuraciones de una, dos y tres capas.</div>
 </div>
 
@@ -276,7 +276,7 @@ La figura 1-5 muestra una representación gráfica de los tres niveles. El nivel
 [Interpretación de imagen: Un diagrama que ilustra la arquitectura de tres niveles del DBMS. En la parte inferior está "Hardware" conectado al "Nivel Interno". El Nivel Interno conecta hacia arriba al "Nivel Conceptual", que se describe como manejando "mostrando vistas al nivel externo" y "mapeando definición al nivel interno". El Nivel Conceptual conecta hacia arriba al "Nivel Externo". Desde el Nivel Externo, flechas apuntan a varios íconos de usuarios: "Usuario Final 1", "Usuario Final n", "Programador de Aplicaciones 1" y "Programador de Aplicaciones n". Una etiqueta indica "Vistas diferentes para diferentes usuarios".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-5.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-5.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-5. Arquitectura de tres niveles del DBMS.</div>
 </div>
 
@@ -321,7 +321,7 @@ Datos: "Sistema y Diccionario de Datos" -\> "Gestor de Datos Almacenados" "Gesto
 
 Fig. 1-7. Módulos del DBMS.
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-7.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-7.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-7. Flujo de arquitectura de PostgreSQL</div>
 </div>
 
@@ -401,7 +401,7 @@ Primero, se le ayudaría con el mantenimiento adecuado de sus datos. Actualmente
 
 [Figura p.1-8]
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-8.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-8.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;"></div>
 </div>
 
@@ -518,7 +518,7 @@ d.  Empleado de nómina
 [Descripción del diagrama: Una estructura de árbol jerárquico. La caja superior está etiquetada como "NOMBRE_DE_PARTE". Flechas apuntan hacia abajo desde "NOMBRE_DE_PARTE" a tres cajas: "COLOR", "COSTO" y "NOMBRE_DEL_PROVEEDOR". Flechas apuntan hacia abajo desde "NOMBRE_DEL_PROVEEDOR" a dos cajas: "DIRECCIÓN_DEL_PROVEEDOR" y "TELÉFONO_DEL_PROVEEDOR".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_p-1.22.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_p-1.22.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;"></div>
 </div>
 
