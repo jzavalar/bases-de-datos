@@ -94,7 +94,7 @@ Existen varias disposiciones posibles para conectar los nodos de un sistema dist
 [Ilustración de la Figura 1-3: Estrella: Una caja central etiquetada "Servidor Central" está conectada a cinco cajas periféricas mediante líneas. Anillo: Seis cajas están conectadas en un círculo, con flechas que indican un bucle. Red: Una malla de cajas conectadas por múltiples líneas que se intersectan, mostrando varios caminos entre nodos.]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-3.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-3.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-3. Configuraciones de red.</div>
 </div>
 
