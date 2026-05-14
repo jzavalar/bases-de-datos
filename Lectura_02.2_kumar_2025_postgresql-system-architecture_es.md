@@ -1,6 +1,6 @@
 [p. 1]
 
-### CAPÍTULO 1. Arquitectura del Sistema PostgreSQL
+### **Arquitectura del Sistema PostgreSQL**
 
 **Fuente:** Kumar, Y. V. R., Samayam, A. K., & Kadambari, P. (2025). PostgreSQL system architecture In *Mastering PostgreSQL administration: Internals, operations, monitoring, and Oracle migration strategies* (pp. 1-18). Apress/Springer.
 
