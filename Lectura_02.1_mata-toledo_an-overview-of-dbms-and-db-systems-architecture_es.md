@@ -83,7 +83,7 @@ El auge de las computadoras personales en los negocios durante la década de 198
 [Ilustración de la Figura 1-2: a. Una sola capa: Un gran bloque rectangular que representa la máquina principal contiene "Software del DBMS" y "Datos". Flechas apuntan desde este bloque a cuatro bloques cuadrados más pequeños que representan terminales. Leyenda: "a. Una sola capa: Todo en una máquina. Accesado por terminales". b. Dos capas: Un bloque rectangular central etiquetado "Software del Servidor del DBMS" y "Datos" está conectado mediante flechas a dos bloques más pequeños etiquetados "Software del Cliente del DBMS". Leyenda: "b. Dos capas: Servidor con muchos Clientes". c. Tres capas: Dos grandes bloques etiquetados "Software del Servidor del DBMS I/Datos" y "Software del Servidor del DBMS II/Datos" están conectados en el medio por un círculo etiquetado "Middleware". Los clientes de cada DBMS se conectan a sus respectivos servidores. Leyenda: "c. Tres capas: Dos tipos de DBMS conectados por Middleware".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-2.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-2.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-2. Configuraciones de una, dos y tres capas.</div>
 </div>
 
@@ -94,7 +94,7 @@ Existen varias disposiciones posibles para conectar los nodos de un sistema dist
 [Ilustración de la Figura 1-3: Estrella: Una caja central etiquetada "Servidor Central" está conectada a cinco cajas periféricas mediante líneas. Anillo: Seis cajas están conectadas en un círculo, con flechas que indican un bucle. Red: Una malla de cajas conectadas por múltiples líneas que se intersectan, mostrando varios caminos entre nodos.]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-3.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-3.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-3. Configuraciones de red.</div>
 </div>
 
