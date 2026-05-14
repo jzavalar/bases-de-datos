@@ -9,7 +9,7 @@ Un ***Sistema de Gestión de Bases de Datos*** (***Database Management System***
 [Descripción de imagen: Un círculo etiquetado como "Sistema de Cómputo Completo" que contiene cinco íconos: Hardware (representado por un monitor/terminal) Software (representado por un disco) Datos (representado por un cilindro de base de datos) Usuarios (representado por un ícono de rostro) Procedimientos (representado por una pila de papeles)]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-1.png" width="50%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-1.png" width="30%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-1. Sistema de cómputo completo</div>
 </div>
 
