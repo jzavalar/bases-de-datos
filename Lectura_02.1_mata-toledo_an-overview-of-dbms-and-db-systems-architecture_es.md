@@ -287,7 +287,7 @@ Para entender la diferencia entre los tres niveles, considere nuevamente el esqu
 [Descripción de la Figura 1-6: Un diagrama que muestra la jerarquía de niveles de base de datos. Arriba: "Nivel Externo" conectado a "Usuario Final 1" (quien dice "Mantengo información sobre el empleado Alex Bell") y "Programador de Aplicaciones 1" (quien dice "Mi programa puede procesar pedidos de los clientes de Alex Bell"). Medio: "Nivel Conceptual" conectado a una caja que muestra "ID Empleado Dept ... Alex Bell 19 43 ...". Abajo: "Nivel Interno" conectado a "Hardware" (una caja) y una caja que muestra "BYTES = 20 FF52 BYTE 1 FF68 BYTE 2".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-6.png" width="80%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-6.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-6. Información en diferentes niveles.</div>
 </div>
 
