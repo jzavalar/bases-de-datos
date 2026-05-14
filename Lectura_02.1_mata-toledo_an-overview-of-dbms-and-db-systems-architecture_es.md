@@ -175,8 +175,8 @@ En 1970, el Dr. E. F. Codd describió un nuevo tipo de modelo, el ***modelo rela
 > Figura ej-1.7
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-4_ej-1-7.png" width="60%">
-  <div style="font-size: 0.9em; margin-top: 0.5em;"></div>
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-4_ej-1-7.png" width="40%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura Ejemplo 1.7</div>
 </div>
 
 Este sería un modelo jerárquico porque, aunque cada nodo puede apuntar a varios otros nodos, cada nivel solo tiene un nodo apuntando a él desde arriba. Para averiguar la cantidad de luz necesaria, uno necesitaría acceder primero al nombre de la flor y luego a las condiciones. Sería difícil acceder a las instrucciones de siembra solo para aquellas flores que necesitan plantarse a pleno sol.
@@ -319,10 +319,9 @@ Software: "DDL" -\> "Compilador DDL" -\> "Sistema y Diccionario de Datos" "Coman
 
 Datos: "Sistema y Diccionario de Datos" -\> "Gestor de Datos Almacenados" "Gestor de Datos Almacenados" -\> "Base de Datos Almacenada"]
 
-Fig. 1-7. Módulos del DBMS.
 <div style="text-align: center;">
   <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-7.png" width="50%">
-  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-7. Flujo de arquitectura de PostgreSQL</div>
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-7. Módulos del DBMS.</div>
 </div>
 
 [p. 18]
