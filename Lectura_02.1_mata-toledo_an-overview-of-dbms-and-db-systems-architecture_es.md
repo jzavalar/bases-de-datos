@@ -9,7 +9,7 @@ Un ***Sistema de Gestión de Bases de Datos*** (***Database Management System***
 [Descripción de imagen: Un círculo etiquetado como "Sistema de Cómputo Completo" que contiene cinco íconos: Hardware (representado por un monitor/terminal) Software (representado por un disco) Datos (representado por un cilindro de base de datos) Usuarios (representado por un ícono de rostro) Procedimientos (representado por una pila de papeles)]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-1.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-1.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-1. Sistema de cómputo completo</div>
 </div>
 
@@ -44,15 +44,15 @@ Una parte integral de cualquier sistema es el conjunto de ***procedimientos*** q
 
 a.  Escribir un programa de aplicación para generar e imprimir los cheques.
 
-    Un programador de aplicaciones o un equipo de programadores diseñaría e implementaría dicho programa de aplicación.
+Un programador de aplicaciones o un equipo de programadores diseñaría e implementaría dicho programa de aplicación.
 
 b.  Cambiar la dirección en la base de datos de un empleado que se ha mudado.
 
-    Un usuario final podría tomar la información del empleado por teléfono y acceder directamente a la base de datos para cambiarla. Sin embargo, modificar dicha información a partir de conversaciones telefónicas puede resultar en datos incorrectos debido a errores tipográficos o malentendidos. Para verificar que las actualizaciones se realicen correctamente, los procedimientos en muchas organizaciones requieren que los cambios en la base de datos se presenten por escrito.
+Un usuario final podría tomar la información del empleado por teléfono y acceder directamente a la base de datos para cambiarla. Sin embargo, modificar dicha información a partir de conversaciones telefónicas puede resultar en datos incorrectos debido a errores tipográficos o malentendidos. Para verificar que las actualizaciones se realicen correctamente, los procedimientos en muchas organizaciones requieren que los cambios en la base de datos se presenten por escrito.
 
 c.  Crear un nuevo ID de usuario para el empleado de nómina recién contratado.
 
-    El DBA o un asistente del DBA que trabaje bajo la supervisión del DBA sería la persona encargada de crear los nuevos IDs de usuario. En una organización pequeña, podría haber solo una persona que realice toda la administración del sistema. En organizaciones más grandes, los asistentes del DBA en el equipo de administración de bases de datos tendrían asignados diferentes trabajos. Una persona podría encargarse de todas las cuentas de usuario y otra podría estar a cargo del mantenimiento de la base de datos.
+El DBA o un asistente del DBA que trabaje bajo la supervisión del DBA sería la persona encargada de crear los nuevos IDs de usuario. En una organización pequeña, podría haber solo una persona que realice toda la administración del sistema. En organizaciones más grandes, los asistentes del DBA en el equipo de administración de bases de datos tendrían asignados diferentes trabajos. Una persona podría encargarse de todas las cuentas de usuario y otra podría estar a cargo del mantenimiento de la base de datos.
 
 #### 1.1.1 DATOS
 
@@ -83,7 +83,7 @@ El auge de las computadoras personales en los negocios durante la década de 198
 [Ilustración de la Figura 1-2: a. Una sola capa: Un gran bloque rectangular que representa la máquina principal contiene "Software del DBMS" y "Datos". Flechas apuntan desde este bloque a cuatro bloques cuadrados más pequeños que representan terminales. Leyenda: "a. Una sola capa: Todo en una máquina. Accesado por terminales". b. Dos capas: Un bloque rectangular central etiquetado "Software del Servidor del DBMS" y "Datos" está conectado mediante flechas a dos bloques más pequeños etiquetados "Software del Cliente del DBMS". Leyenda: "b. Dos capas: Servidor con muchos Clientes". c. Tres capas: Dos grandes bloques etiquetados "Software del Servidor del DBMS I/Datos" y "Software del Servidor del DBMS II/Datos" están conectados en el medio por un círculo etiquetado "Middleware". Los clientes de cada DBMS se conectan a sus respectivos servidores. Leyenda: "c. Tres capas: Dos tipos de DBMS conectados por Middleware".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-2.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-2.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-2. Configuraciones de una, dos y tres capas.</div>
 </div>
 
@@ -94,7 +94,7 @@ Existen varias disposiciones posibles para conectar los nodos de un sistema dist
 [Ilustración de la Figura 1-3: Estrella: Una caja central etiquetada "Servidor Central" está conectada a cinco cajas periféricas mediante líneas. Anillo: Seis cajas están conectadas en un círculo, con flechas que indican un bucle. Red: Una malla de cajas conectadas por múltiples líneas que se intersectan, mostrando varios caminos entre nodos.]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-3.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-3.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-3. Configuraciones de red.</div>
 </div>
 
@@ -175,7 +175,7 @@ En 1970, el Dr. E. F. Codd describió un nuevo tipo de modelo, el ***modelo rela
 > Figura ej-1.7
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-4_ej-1-7.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-4_ej-1-7.png" width="60%">
   <div style="font-size: 0.9em; margin-top: 0.5em;"></div>
 </div>
 
@@ -276,7 +276,7 @@ La figura 1-5 muestra una representación gráfica de los tres niveles. El nivel
 [Interpretación de imagen: Un diagrama que ilustra la arquitectura de tres niveles del DBMS. En la parte inferior está "Hardware" conectado al "Nivel Interno". El Nivel Interno conecta hacia arriba al "Nivel Conceptual", que se describe como manejando "mostrando vistas al nivel externo" y "mapeando definición al nivel interno". El Nivel Conceptual conecta hacia arriba al "Nivel Externo". Desde el Nivel Externo, flechas apuntan a varios íconos de usuarios: "Usuario Final 1", "Usuario Final n", "Programador de Aplicaciones 1" y "Programador de Aplicaciones n". Una etiqueta indica "Vistas diferentes para diferentes usuarios".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-5.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-5.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-5. Arquitectura de tres niveles del DBMS.</div>
 </div>
 
@@ -287,7 +287,7 @@ Para entender la diferencia entre los tres niveles, considere nuevamente el esqu
 [Descripción de la Figura 1-6: Un diagrama que muestra la jerarquía de niveles de base de datos. Arriba: "Nivel Externo" conectado a "Usuario Final 1" (quien dice "Mantengo información sobre el empleado Alex Bell") y "Programador de Aplicaciones 1" (quien dice "Mi programa puede procesar pedidos de los clientes de Alex Bell"). Medio: "Nivel Conceptual" conectado a una caja que muestra "ID Empleado Dept ... Alex Bell 19 43 ...". Abajo: "Nivel Interno" conectado a "Hardware" (una caja) y una caja que muestra "BYTES = 20 FF52 BYTE 1 FF68 BYTE 2".]
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-6.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-6.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1-6. Información en diferentes niveles.</div>
 </div>
 
@@ -321,7 +321,7 @@ Datos: "Sistema y Diccionario de Datos" -\> "Gestor de Datos Almacenados" "Gesto
 
 Fig. 1-7. Módulos del DBMS.
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-7.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-7.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 1-7. Flujo de arquitectura de PostgreSQL</div>
 </div>
 
@@ -401,7 +401,7 @@ Primero, se le ayudaría con el mantenimiento adecuado de sus datos. Actualmente
 
 [Figura p.1-8]
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-8.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_1-8.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;"></div>
 </div>
 
@@ -517,10 +517,8 @@ d.  Empleado de nómina
 
 [Descripción del diagrama: Una estructura de árbol jerárquico. La caja superior está etiquetada como "NOMBRE_DE_PARTE". Flechas apuntan hacia abajo desde "NOMBRE_DE_PARTE" a tres cajas: "COLOR", "COSTO" y "NOMBRE_DEL_PROVEEDOR". Flechas apuntan hacia abajo desde "NOMBRE_DEL_PROVEEDOR" a dos cajas: "DIRECCIÓN_DEL_PROVEEDOR" y "TELÉFONO_DEL_PROVEEDOR".]
 
-[Fig. p.1.22]
-
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_p-1.22.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/mata-toledo_2000_figure_p-1.22.png" width="80%">
   <div style="font-size: 0.9em; margin-top: 0.5em;"></div>
 </div>
 
@@ -600,8 +598,8 @@ La vista externa dependería del usuario. El empleado de envíos entendería que
 
 ---
 
-[^1]: E. F. Codd, *The Relational Model of Data for Large Shared Data Banks*. This model is further explained in E. F. Codd, *The Relational Model for Database Management Version 2*, Addison-Wesley, Reading, MA, 1990.  
-[^2]: Dionysios C. Tsichritzis y Anthonly Klug (eds.), *The ANSI/X3/SPARC DBMS Framework: Report of the Study Group on Data Base Management Systems, Information Systems* 3, 1978.  
+[^1]: E. F. Codd, *The Relational Model of Data for Large Shared Data Banks*. This model is further explained in E. F. Codd, *The Relational Model for Database Management Version 2*, Addison-Wesley, Reading, MA, 1990. <> 
+[^2]: Dionysios C. Tsichritzis y Anthonly Klug (eds.), *The ANSI/X3/SPARC DBMS Framework: Report of the Study Group on Data Base Management Systems, Information Systems* 3, 1978. <https://sigmodrecord.org/publications/sigmodRecord/8207/pdfs/984555.1108830.pdf> 
 
 ------------------------------------------------------------------------
 
