@@ -168,11 +168,15 @@ backing file format: qcow2
 ##### 3.1 Crear par de claves Ed25519 (recomendado)
 
 ```bash
+### Variables configurables
+USERNAME="user"
+HOSTNAME="fedora-lab.test"
+
 ### Generar clave sin passphrase para automatización de laboratorio
 ssh-keygen -t ed25519 \
     -f ~/.ssh/fedora-lab-key \
     -N "" \
-    -C "fedora-lab@izt.uam.mx" \
+    -C "$USERNAME@$HOSTNAME" \
     -q
 
 ### Ajustar permisos de la clave privada (requerido por SSH)
@@ -305,7 +309,7 @@ chmod +x ~/personalize-fedora-lab.sh
 ```bash
 sudo virt-install \
     --name fedora-lab \
-    --description "Fedora 44 Lab con PostgreSQL 16 + Pagila - UAM Iztapalapa" \
+    --description "Fedora 44 Lab con PostgreSQL 16 + Pagila" \
     --memory 4096 \
     --vcpus 2 \
     --disk /var/lib/libvirt/images/fedora44-lab.qcow2,format=qcow2,bus=virtio,cache=none \
@@ -616,7 +620,7 @@ else
     exit 1
 fi
 
-### 3. Verificar que root no puede loguear
+### 3. Verificar que root no puede hacer login
 if ssh -o ConnectTimeout=5 -o BatchMode=yes root@$VM_IP "echo ROOT_OK" 2>&1 | grep -q "Permission denied\|Connection refused"; then
     echo "✅ Login de root correctamente deshabilitado"
 else
