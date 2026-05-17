@@ -11,11 +11,11 @@
 
 ---
 
-#### ADVERTENCIA DE SEGURIDAD
+#### Advertencia de Seguridad
 
 > El entorno descrito en esta guía está diseñado exclusivamente para fines académicos y de experimentación controlada. Las credenciales, configuraciones de red y parámetros de seguridad aquí especificados **no deben emplearse bajo ninguna circunstancia en entornos de producción**. Para despliegues productivos, se recomienda consultar y aplicar las guías oficiales de *hardening* de Fedora Project y PostgreSQL Global Development Group.
 
-#### NOTA SOBRE LA BASE DE DATOS PAGILA
+#### Nota sobre la Base de Datos de Prueba Pagila
 
 La base de datos `pagila` constituye un esquema de ejemplo clásico para PostgreSQL, derivado del esquema "DVD Rental" documentado oficialmente por PostgreSQL. Este conjunto de datos incluye tablas representativas como `film`, `actor`, `customer`, `rental`, `payment`, entre otras, y se utiliza ampliamente en contextos educativos para:
 
@@ -26,7 +26,7 @@ La base de datos `pagila` constituye un esquema de ejemplo clásico para Postgre
 
 **Fuente oficial:** [https://github.com/devrimgunduz/pagila](https://github.com/devrimgunduz/pagila)
 
-#### ESTRUCTURA METODOLÓGICA DEL LABORATORIO
+#### Estructura Metodológica del Laboratorio
 
 Este laboratorio se organiza en dos fases operativas claramente delimitadas, con el propósito de facilitar la depuración, garantizar la reproducibilidad y promover buenas prácticas en virtualización profesional:
 
@@ -39,7 +39,7 @@ Este laboratorio se organiza en dos fases operativas claramente delimitadas, con
 
 ---
 
-#### FASE 1: PERSONALIZACIÓN *OFFLINE* DE LA IMAGEN DE DISCO VIRTUAL
+#### Fase 1: Personalización Off-line de la Imagen de Disco Virtual
 
 #### Objetivo de la Fase 1
 
@@ -433,7 +433,7 @@ exit
 
 ---
 
-#### FASE 2: CONFIGURACIÓN *ONLINE* Y VALIDACIÓN DEL ENTORNO
+#### Fase 2: Configuración *Online* y Validación del Entorno
 
 #### Objetivo de la Fase 2
 
