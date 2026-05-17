@@ -1,7 +1,7 @@
 ### Laboratorio 5: Construcción de un Entorno de Laboratorio con Fedora, PostgreSQL y la Base de Datos Pagila
 ### Versión operativa y verificada para Fedora 44 / KVM-libvirt
 
-**Autor:** Dr. Jesús Zavala Ruiz  
+**Autor:** dr. Jesús Zavala Ruiz  
 **Unidad de Enseñanza-Aprendizaje (UEA):** Bases de Datos (2151106)  
 **Institución:** Universidad Autónoma Metropolitana, Unidad Iztapalapa  
 **Fecha de emisión:** 16 de mayo de 2026  
@@ -11,11 +11,11 @@
 
 ---
 
-#### ⚠️ ADVERTENCIA DE SEGURIDAD
+#### ADVERTENCIA DE SEGURIDAD
 
 > El entorno descrito en esta guía está diseñado exclusivamente para fines académicos y de experimentación controlada. Las credenciales, configuraciones de red y parámetros de seguridad aquí especificados **no deben emplearse bajo ninguna circunstancia en entornos de producción**. Para despliegues productivos, se recomienda consultar y aplicar las guías oficiales de *hardening* de Fedora Project y PostgreSQL Global Development Group.
 
-#### ℹ️ NOTA SOBRE LA BASE DE DATOS PAGILA
+#### NOTA SOBRE LA BASE DE DATOS PAGILA
 
 La base de datos `pagila` constituye un esquema de ejemplo clásico para PostgreSQL, derivado del esquema "DVD Rental" documentado oficialmente por PostgreSQL. Este conjunto de datos incluye tablas representativas como `film`, `actor`, `customer`, `rental`, `payment`, entre otras, y se utiliza ampliamente en contextos educativos para:
 
@@ -39,7 +39,7 @@ Este laboratorio se organiza en dos fases operativas claramente delimitadas, con
 
 ---
 
-### FASE 1: PERSONALIZACIÓN *OFFLINE* DE LA IMAGEN DE DISCO VIRTUAL
+#### FASE 1: PERSONALIZACIÓN *OFFLINE* DE LA IMAGEN DE DISCO VIRTUAL
 
 #### Objetivo de la Fase 1
 
@@ -162,7 +162,7 @@ tail -c 40 ~/.ssh/fedora-lab-key.pub
 ... Llave de laboratorio - UEA Bases de Datos
 ```
 
-###### Explicación Técnica de los Parámetros de `ssh-keygen`
+**Explicación Técnica de los Parámetros de `ssh-keygen`**
 
 | Parámetro | Significado técnico | Propósito en el contexto del laboratorio |
 |-----------|-------------------|-----------------------------------------|
@@ -257,28 +257,31 @@ Guarde el siguiente contenido en el archivo `~/vm-images/fedora-cloud/personaliz
 
 ```bash
 #!/bin/bash
-### =============================================================================
-### personaliza_lab.sh
-### Script de Personalización Offline para Fedora 44 Lab
-### Usuario: alumno | Contraseña: uamIztapalapa
-### Autor: Dr. Jesús Zavala Ruiz | UEA Bases de Datos (2151106)
-### =============================================================================
-set -euo pipefail
+# =============================================================================
+# personaliza_lab.sh
+# Script de Personalización Offline de la MV para Fedora 44
+# Usuario: alumno | Contraseña: uamIztapalapa
+# Autor: Dr. Jesús Zavala Ruiz | UEA Bases de Datos (2151106)
+# =============================================================================
+set -euo pipefail  # Terminar ante errores, variables indefinidas o fallos en pipes
 
-### CONFIGURACIÓN
+# CONFIGURACIÓN
 IMAGE_PATH="/var/lib/libvirt/images/fedora44-lab.qcow2"
-SSH_PUBKEY="${HOME}/.ssh/fedora-lab-key.pub"
+SSH_PUBKEY="${HOME}/.ssh/fedora-lab-key.pub"  # Rutas absolutas y variables seguras
 USERNAME="alumno"
 USER_PASSWORD="uamIztapalapa"
 HOSTNAME="fedora-lab.test"
+INIT_SCRIPT_LOCAL="./init-postgres-lab.sh"
 
-### VALIDACIONES PREVIAS
+# VALIDACIONES
 [[ -f "$IMAGE_PATH" ]] || { echo "❌ Error: Imagen $IMAGE_PATH no encontrada."; exit 1; }
 [[ -f "$SSH_PUBKEY" ]] || { echo "❌ Error: Clave pública $SSH_PUBKEY no encontrada."; exit 1; }
+[[ -f "$INIT_SCRIPT_LOCAL" ]] || { echo "❌ Error: Script $INIT_SCRIPT_LOCAL no encontrado."; exit 1; }
 
-echo "🔍 Validaciones completadas. Iniciando personalización..."
+echo "🔍 Validaciones completas. Iniciando personalización..."
 
-### EJECUCIÓN DE VIRT-CUSTOMIZE
+# PERSONALIZACIÓN CON VIRT-CUSTOMIZE
+# NOTA: Se han eliminado los comentarios internos para evitar errores de sintaxis en Bash
 sudo virt-customize \
   -a "$IMAGE_PATH" \
   --hostname "$HOSTNAME" \
@@ -394,6 +397,8 @@ sudo virsh domifaddr fedora-lab
 
 ##### 4.4 Conexión SSH a la Máquina Virtual
 
+Ajuste la IP de su máquina virtual a la que haya obtenido previamente.
+
 ```bash
 ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.161
 ```
@@ -428,7 +433,7 @@ exit
 
 ---
 
-### FASE 2: CONFIGURACIÓN *ONLINE* Y VALIDACIÓN DEL ENTORNO
+#### FASE 2: CONFIGURACIÓN *ONLINE* Y VALIDACIÓN DEL ENTORNO
 
 #### Objetivo de la Fase 2
 
@@ -444,7 +449,7 @@ Al concluir esta fase, el estudiante habrá:
 
 ##### 5.1 Preparación del Script `setup_postgres_lab.sh`
 
-En el sistema anfitrión, cree el archivo `setup_postgres_lab.sh` con el siguiente contenido:
+En el sistema anfitrión (*host*), cree el archivo `setup_postgres_lab.sh` con el siguiente contenido:
 
 ```bash
 #!/bin/bash
@@ -460,14 +465,14 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"; }
 
-log "🚀 Iniciando configuración robusta de PostgreSQL para Fedora 44..."
+log "Iniciando configuración robusta de PostgreSQL para Fedora 44..."
 
 ### 1. Verificación e instalación de paquetes base
-log "📦 Verificando paquetes base..."
+log "Verificando paquetes base..."
 sudo dnf install -y postgresql-server postgresql-contrib git
 
 ### 2. Inicialización del clúster de PostgreSQL
-log "🗄️ Verificando estado del clúster de PostgreSQL..."
+log " Verificando estado del clúster de PostgreSQL..."
 if [ ! -d /var/lib/pgsql/data/base ]; then
     log "Inicializando base de datos con postgresql-setup..."
     sudo postgresql-setup --initdb
@@ -477,14 +482,14 @@ else
 fi
 
 ### 3. Configuración de autenticación local (entorno de laboratorio)
-log "🔐 Configurando pg_hba.conf para acceso de laboratorio..."
+log "Configurando pg_hba.conf para acceso de laboratorio..."
 sudo sed -i 's/^local\s\+all\s\+all\s\+ident/local   all             all                                     trust/' /var/lib/pgsql/data/pg_hba.conf
 sudo sed -i 's/^host\s\+all\s\+all\s\+127.0.0.1\/32\s\+ident/host    all             all             127.0.0.1\/32            trust/' /var/lib/pgsql/data/pg_hba.conf
 sudo sed -i 's/^host\s\+all\s\+all\s\+::1\/128\s\+ident/host    all             all             ::1\/128                 trust/' /var/lib/pgsql/data/pg_hba.conf
 log "✅ pg_hba.conf configurado (método: trust para localhost)."
 
 ### 4. Ajustes de rendimiento para entorno de laboratorio
-log "⚙️ Ajustando parámetros en postgresql.conf..."
+log "Ajustando parámetros en postgresql.conf..."
 sudo tee -a /var/lib/pgsql/data/postgresql.conf > /dev/null << 'EOF'
 ### Configuración para laboratorio
 shared_buffers = 256MB
@@ -496,11 +501,11 @@ EOF
 log "✅ postgresql.conf optimizado."
 
 ### 5. Inicio y habilitación del servicio PostgreSQL
-log "🚀 Iniciando servicio PostgreSQL..."
+log "Iniciando servicio PostgreSQL..."
 sudo systemctl enable --now postgresql
 
 ### Esperar a que PostgreSQL acepte conexiones
-log "⏳ Esperando a que PostgreSQL acepte conexiones..."
+log "sperando a que PostgreSQL acepte conexiones..."
 for i in {1..20}; do
     if sudo -u postgres psql -c "SELECT 1;" &> /dev/null; then
         log "✅ PostgreSQL listo (intento $i/20)."
@@ -510,13 +515,13 @@ for i in {1..20}; do
 done
 
 ### 6. Creación del rol 'alumno' con privilegios
-log "👤 Configurando rol 'alumno' en PostgreSQL..."
+log "Configurando rol 'alumno' en PostgreSQL..."
 sudo -u postgres psql -c "CREATE ROLE alumno WITH LOGIN PASSWORD 'uamIztapalapa';" || true
 sudo -u postgres psql -c "ALTER ROLE alumno CREATEDB;" || true
 log "✅ Rol 'alumno' creado."
 
 ### 7. Descarga y carga de la base de datos Pagila
-log "📦 Preparando base de datos Pagila..."
+log "Preparando base de datos Pagila..."
 cd /opt || cd /
 if [ ! -d "/opt/pagila" ]; then
     log "Clonando repositorio de Pagila..."
@@ -535,7 +540,7 @@ sudo -u postgres psql -d pagila -c "GRANT ALL ON ALL SEQUENCES IN SCHEMA public 
 log "✅ Pagila cargada y permisos configurados."
 
 ### 8. Validación final
-log "🧪 Ejecutando validación final..."
+log "Ejecutando validación final..."
 FILM_COUNT=$(sudo -u postgres psql -d pagila -t -c "SELECT COUNT(*) FROM film;" | tr -d ' ')
 if [ "$FILM_COUNT" -eq 1000 ]; then
     log "🎉 VALIDACIÓN EXITOSA: 1000 películas en la tabla 'film'."
@@ -543,8 +548,8 @@ else
     log "⚠️ ADVERTENCIA: Se esperaban 1000 registros, se encontraron $FILM_COUNT."
 fi
 
-log "📋 Configuración completada. Log guardado en: $LOG_FILE"
-log "🔑 Para conectar: psql -h localhost -U alumno -d pagila"
+log "Configuración completada. Log guardado en: $LOG_FILE"
+log "Para conectar: psql -h localhost -U alumno -d pagila"
 ```
 
 Ajuste permisos y transfiera el script a la VM:
@@ -555,7 +560,7 @@ chmod +x setup_postgres_lab.sh
 scp -i ~/.ssh/fedora-lab-key setup_postgres_lab.sh alumno@192.168.122.161:/home/alumno/
 ```
 
-##### 5.2 Ejecución del Script Dentro de la Máquina Virtual
+##### 5.2 Ejecución del Script en la Máquina Virtual
 
 Conéctese a la VM y ejecute el script:
 
@@ -570,23 +575,23 @@ sudo ./setup_postgres_lab.sh
 
 **Salida esperada (resumen):**
 ```
-[2026-05-17 00:00:01] 🚀 Iniciando configuración robusta de PostgreSQL para Fedora 44...
-[2026-05-17 00:00:01] 📦 Verificando paquetes base...
+[2026-05-17 00:00:01] Iniciando configuración robusta de PostgreSQL para Fedora 44...
+[2026-05-17 00:00:01] Verificando paquetes base...
 ...
 [2026-05-17 00:00:01] ✅ Paquetes instalados correctamente.
-[2026-05-17 00:00:01] 🗄️ Verificando estado del clúster de PostgreSQL...
+[2026-05-17 00:00:01]  Verificando estado del clúster de PostgreSQL...
 [2026-05-17 00:00:01] ✅ Clúster inicializado en /var/lib/pgsql/data
-[2026-05-17 00:00:01] 🔐 Configurando pg_hba.conf para acceso de laboratorio...
+[2026-05-17 00:00:01] Configurando pg_hba.conf para acceso de laboratorio...
 [2026-05-17 00:00:01] ✅ pg_hba.conf configurado (método: trust para localhost).
-[2026-05-17 00:00:01] 🚀 Iniciando servicio PostgreSQL...
+[2026-05-17 00:00:01] Iniciando servicio PostgreSQL...
 [2026-05-17 00:00:01] ✅ PostgreSQL listo (intento 1/20).
-[2026-05-17 00:00:01] 👤 Configurando rol 'alumno' en PostgreSQL...
+[2026-05-17 00:00:01] Configurando rol 'alumno' en PostgreSQL...
 [2026-05-17 00:00:01] ✅ Rol 'alumno' creado.
-[2026-05-17 00:00:01] 📦 Preparando base de datos Pagila...
+[2026-05-17 00:00:01] Preparando base de datos Pagila...
 [2026-05-17 00:00:01] ✅ Pagila cargada y permisos configurados.
-[2026-05-17 00:00:01] 🧪 Ejecutando validación final...
+[2026-05-17 00:00:01] Ejecutando validación final...
 [2026-05-17 00:00:01] 🎉 VALIDACIÓN EXITOSA: 1000 películas en la tabla 'film'.
-[2026-05-17 00:00:01] 🔑 Para conectar: psql -h localhost -U alumno -d pagila
+[2026-05-17 00:00:01] Para conectar: psql -h localhost -U alumno -d pagila
 ```
 
 #### 6. Conexión a PostgreSQL y Ejecución de Consultas de Validación
@@ -607,7 +612,7 @@ pagila=>
 
 ##### 6.2 Consultas de Prueba para Validar el Entorno
 
-###### Consulta 1: Listado de películas (primeros 5 registros)
+**Consulta 1: Listado de películas (primeros 5 registros)**
 
 ```sql
 SELECT title, release_year, rating FROM film LIMIT 5;
@@ -625,7 +630,7 @@ SELECT title, release_year, rating FROM film LIMIT 5;
 (5 rows)
 ```
 
-###### Consulta 2: Búsqueda de películas con patrón de texto
+**Consulta 2: Búsqueda de películas con patrón de texto**
 
 ```sql
 SELECT title, length, rating FROM film WHERE title ILIKE '%dragon%';
@@ -642,7 +647,7 @@ SELECT title, length, rating FROM film WHERE title ILIKE '%dragon%';
 (4 rows)
 ```
 
-###### Consulta 3: JOIN entre tablas relacionadas
+**Consulta 3: JOIN entre tablas relacionadas**
 
 ```sql
 SELECT a.first_name, a.last_name, f.title
@@ -720,20 +725,20 @@ Documentar el procedimiento formal para renombrar una máquina virtual en un ent
 
 ##### 8.3 Procedimiento Paso a Paso
 
-###### Paso 1: Diagnóstico del Estado Inicial
+**Paso 1: Diagnóstico del Estado Inicial**
 
 ```bash
 virsh list --all
 ```
 
-###### Paso 2: Identificación del Dominio Activo
+**Paso 2: Identificación del Dominio Activo**
 
 ```bash
 sudo lsof /var/lib/libvirt/images/fedora44-lab.qcow2
 sudo virsh list --all
 ```
 
-###### Paso 3: Apagado Controlado de la Máquina Virtual
+**Paso 3: Apagado Controlado de la Máquina Virtual**
 
 ```bash
 sudo virsh shutdown fedora-lab
@@ -741,7 +746,7 @@ sudo virsh shutdown fedora-lab
 virsh list --all
 ```
 
-###### Paso 4: Eliminación de la Definición Antigua y Creación de la Nueva
+**Paso 4: Eliminación de la Definición Antigua y Creación de la Nueva**
 
 ```bash
 ### Eliminar definición anterior (la imagen de disco permanece intacta)
@@ -764,7 +769,7 @@ sudo virt-install \
   --qemu-commandline="-accel kvm"
 ```
 
-###### Paso 5: Validación Operativa Final
+**Paso 5: Validación Operativa Final**
 
 ```bash
 ### Verificar registro del dominio
@@ -863,8 +868,6 @@ La configuración actual emplea el método de autenticación `trust` en `pg_hba.
 - Mantener SELinux en modo `enforcing` con políticas personalizadas
 - Implementar cifrado de tráfico mediante TLS/SSL para conexiones remotas
 
----
-
 #### 12. Archivos y Directorios Generados en la Máquina Virtual
 
 | Archivo o Directorio | Propósito |
@@ -875,14 +878,13 @@ La configuración actual emplea el método de autenticación `trust` en `pg_hba.
 | `/etc/fedora-lab-ready` | Marcador de configuración completada |
 | `/etc/ssh/sshd_config.d/hardening.conf` | Configuración de endurecimiento de SSH (opcional) |
 
----
-
-#### REFERENCIAS
+#### 13. Referencias
 
 1. Red Hat. (2021). *Build a lab quickly*. Recuperado de https://www.redhat.com/en/blog/build-lab-quickly
 2. devrimgunduz. (2026). *Pagila - Sample Database for PostgreSQL*. Recuperado de https://github.com/devrimgunduz/pagila
 3. PostgreSQL Global Development Group. (2026). *PostgreSQL 16 Documentation*. Recuperado de https://www.postgresql.org/docs/16/
 4. libguestfs Tools. (2026). *virt-customize manual*. Recuperado de https://libguestfs.org/virt-customize.1.html
-5. Universidad Autónoma Metropolitana, Unidad Iztapalapa. (2026). *Programa de la UEA Bases de Datos (2151106)*. División de Ciencias Básicas e Ingeniería.
+5. Universidad Autónoma Metropolitana (2015). *Programa de la UEA Bases de Datos (2151106)*. División de Ciencias Básicas e Ingeniería.
 
-> **Nota final:** Esta arquitectura basada en *Copy-on-Write* permite reiniciar el entorno en menos de dos minutos eliminando el archivo `fedora44-lab.qcow2` y repitiendo las secciones 2.4 y 3.2. La imagen base permanece inacta para iteraciones futuras. Se recomienda documentar las personalizaciones en el repositorio institucional y rotar credenciales al finalizar el trimestre académico.
+> **Nota final:** Esta arquitectura basada en *Copy-on-Write* permite reiniciar el entorno en menos de dos minutos eliminando el archivo `fedora44-lab.qcow2` y repitiendo las secciones 2.4 y 3.2. La imagen base permanece intacta para iteraciones futuras. Se recomienda documentar las personalizaciones en el repositorio institucional y rotar credenciales al finalizar el trimestre académico.
+
