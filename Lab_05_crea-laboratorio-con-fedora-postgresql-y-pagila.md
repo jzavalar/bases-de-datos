@@ -4,7 +4,8 @@
 **Autor:** dr. Jesús Zavala Ruiz  
 **Unidad de Enseñanza-Aprendizaje (UEA):** Bases de Datos (2151106)  
 **Institución:** Universidad Autónoma Metropolitana, Unidad Iztapalapa  
-**Fecha de emisión:** 16 de mayo de 2026  
+**Fecha de emisión:** 16 de mayo de 2026
+**Última actualización:** 18 de mayo de 2026
 **Nivel de competencia:** Principiante a intermedio  
 **Tiempo estimado de ejecución:** 45–60 minutos  
 **Base técnica:** Red Hat "Build a lab quickly" + Esquema Pagila (devrimgunduz/pagila)
@@ -137,7 +138,7 @@ done
 Genere un par de claves criptográficas para autenticación automatizada:
 
 ```bash
-### Crear el par de claves PKI
+### Crear el par de claves PKI con passphrase vacía (-N "")
 ssh-keygen -t ed25519 \
     -f ~/.ssh/fedora-lab-key \
     -N "" \
@@ -797,7 +798,7 @@ psql -h localhost -U alumno -d pagila -c "SELECT COUNT(*) FROM film;"
 > 3. **Persistencia de definiciones:** Utilice `virsh edit <vm>` en lugar de manipulación manual de XML para evitar inconsistencias de UUID o rutas relativas.
 > 4. **SELinux y permisos:** Mantenga el contexto de seguridad `system_u:object_r:virt_image_t:s0` en las imágenes `.qcow2` mediante `restorecon -v /var/lib/libvirt/images/*.qcow2`.
 
-#### 9. Respaldo, Restauración y Gestión de Instantáneas (Snapshots)
+#### 9. Respaldo, Restauración y Gestión de Instantáneas (Snapshots) de Máquinas Virtuales 
 
 La preservación controlada del estado de la máquina virtual constituye una competencia fundamental en la administración de infraestructuras de bases de datos. En entornos académicos, donde los estudiantes ejecutan prácticas iterativas que pueden alterar esquemas, permisos o configuraciones de servicios, la capacidad de revertir el entorno a un estado conocido garantiza la reproducibilidad del laboratorio y reduce el tiempo de recuperación ante errores operativos. Esta sección documenta los procedimientos técnicos para gestionar instantáneas nativas de `libvirt`, realizar respaldos físicos seguros y validar la integridad de los datos antes y después de las operaciones de restauración.
 
