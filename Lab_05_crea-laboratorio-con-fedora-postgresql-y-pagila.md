@@ -271,12 +271,10 @@ SSH_PUBKEY="${HOME}/.ssh/fedora-lab-key.pub"  # Rutas absolutas y variables segu
 USERNAME="alumno"
 USER_PASSWORD="uamIztapalapa"
 HOSTNAME="fedora-lab.test"
-INIT_SCRIPT_LOCAL="./init-postgres-lab.sh"
 
 # VALIDACIONES
 [[ -f "$IMAGE_PATH" ]] || { echo "❌ Error: Imagen $IMAGE_PATH no encontrada."; exit 1; }
 [[ -f "$SSH_PUBKEY" ]] || { echo "❌ Error: Clave pública $SSH_PUBKEY no encontrada."; exit 1; }
-[[ -f "$INIT_SCRIPT_LOCAL" ]] || { echo "❌ Error: Script $INIT_SCRIPT_LOCAL no encontrado."; exit 1; }
 
 echo "🔍 Validaciones completas. Iniciando personalización..."
 
@@ -798,6 +796,196 @@ psql -h localhost -U alumno -d pagila -c "SELECT COUNT(*) FROM film;"
 > 2. **Limpieza de `known_hosts`:** Tras el cambio de IP, elimine la entrada huérfana en el anfitrión con `ssh-keygen -R <ip_anterior>`.
 > 3. **Persistencia de definiciones:** Utilice `virsh edit <vm>` en lugar de manipulación manual de XML para evitar inconsistencias de UUID o rutas relativas.
 > 4. **SELinux y permisos:** Mantenga el contexto de seguridad `system_u:object_r:virt_image_t:s0` en las imágenes `.qcow2` mediante `restorecon -v /var/lib/libvirt/images/*.qcow2`.
+
+#### zarj Apéndice Técnico: Respaldo, Restauración y Gestión de Instantáneas (Snapshots)
+
+La preservación controlada del estado de la máquina virtual constituye una competencia fundamental en la administración de infraestructuras de bases de datos. En entornos académicos, donde los estudiantes ejecutan prácticas iterativas que pueden alterar esquemas, permisos o configuraciones de servicios, la capacidad de revertir el entorno a un estado conocido garantiza la reproducibilidad del laboratorio y reduce el tiempo de recuperación ante errores operativos. Esta sección documenta los procedimientos técnicos para gestionar instantáneas nativas de `libvirt`, realizar respaldos físicos seguros y validar la integridad de los datos antes y después de las operaciones de restauración.
+
+---
+
+## 📐 Fundamentos de Almacenamiento Virtual
+
+El formato de disco `qcow2` (QEMU Copy-on-Write) soporta nativamente la creación de puntos de restauración sin requerir herramientas de terceros. `libvirt` expone esta funcionalidad mediante dos modalidades operativas:
+
+| Modalidad | Característica técnica | Uso recomendado en el laboratorio |
+|-----------|------------------------|-----------------------------------|
+| **Instantánea interna** | Almacena el estado diferencial dentro del mismo archivo `.qcow2`. No genera archivos adicionales. | Reversión rápida tras prácticas experimentales. Consumo moderado de espacio. |
+| **Respaldo físico (copia fría)** | Duplica el archivo completo en un directorio independiente. | Archivado de ciclos académicos, migración de entornos o recuperación ante corrupción de imagen. |
+
+> **Nota de integridad:** PostgreSQL mantiene buffers de memoria y archivos de registro (WAL) que pueden no reflejarse inmediatamente en disco. Para garantizar la consistencia de la base de datos `pagila` durante la creación de instantáneas en caliente, se recomienda ejecutar un `CHECKPOINT` manual previo.
+
+---
+
+## 🛠️ Procedimientos Operativos
+
+### 1. Preparación de Consistencia de Datos
+Antes de generar cualquier punto de restauración, asegure que los datos relacionales estén flushados a disco.
+
+```bash
+# Conectarse a la VM
+ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.24
+
+# Forzar escritura de buffers de PostgreSQL a disco
+psql -h localhost -U alumno -d pagila -c "CHECKPOINT;"
+```
+
+**Salida esperada:**
+```
+CHECKPOINT
+```
+
+### 2. Creación de una Instantánea Interna
+Con la VM en ejecución, se genera un snapshot que captura el estado del disco y la configuración del dominio.
+
+```bash
+sudo virsh snapshot-create-as fedora44-lab pre-practica \
+  --description "Estado base validado con PostgreSQL 18 y Pagila intactos" \
+  --disk-only
+```
+
+**Salida esperada:**
+```
+Domain snapshot pre-practica created
+```
+
+### 3. Verificación del Registro de Instantáneas
+Confirme que la instantánea se registró correctamente en los metadatos de `libvirt`.
+
+```bash
+sudo virsh snapshot-list fedora44-lab
+```
+
+**Salida esperada:**
+```
+ Name                 Creation Time             State
+------------------------------------------------------------
+ pre-practica         2026-05-17 10:15:30 -0600 disk-snapshot
+```
+
+### 4. Respaldo Físico de la Imagen (Copia Fría)
+Las instantáneas internas son volátiles respecto al archivo principal. Para preservar un ciclo académico completo, realice una copia física deteniendo primero el dominio.
+
+```bash
+# Detener la VM de forma controlada
+sudo virsh shutdown fedora44-lab
+
+# Esperar a que el estado cambie a "shut off"
+sleep 40
+sudo virsh list --all | grep fedora44-lab
+
+# Crear directorio de respaldos y copiar la imagen
+sudo mkdir -p /var/lib/libvirt/backups
+sudo cp -v /var/lib/libvirt/images/fedora44-lab.qcow2 /var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2
+
+# Restaurar contextos de seguridad SELinux y permisos
+sudo restorecon -v /var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2
+sudo chown qemu:qemu /var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2
+```
+
+**Salida esperada:**
+```
+Domain 'fedora44-lab' is being shutdown
+ -    fedora44-lab   shut off
+'/var/lib/libvirt/images/fedora44-lab.qcow2' -> '/var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2'
+Relabeled /var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2 from system_u:object_r:unlabeled_t:s0 to system_u:object_r:virt_image_t:s0
+```
+
+### 5. Restauración del Estado Base (Revertir Instantánea)
+Si una práctica altera irreversiblemente el entorno, regrese al punto de restauración creado.
+
+```bash
+# Revertir y reiniciar automáticamente la VM
+sudo virsh snapshot-revert fedora44-lab pre-practica --running
+```
+
+**Salida esperada:**
+```
+Domain snapshot reverted successfully
+```
+
+> **Validación post-reversión:** Ingrese por SSH y confirme que PostgreSQL responde y que `pagila` mantiene sus 1000 registros:
+> ```bash
+> psql -h localhost -U alumno -d pagila -c "SELECT COUNT(*) FROM film;"
+> ```
+
+### 6. Restauración desde Respaldo Físico
+En caso de corrupción del archivo `.qcow2` o pérdida de metadatos de `libvirt`, restaure la copia independiente.
+
+```bash
+# Detener y eliminar definición actual
+sudo virsh destroy fedora44-lab 2>/dev/null || true
+sudo virsh undefine fedora44-lab
+
+# Restaurar archivo y reaplicar permisos
+sudo cp -v /var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2 /var/lib/libvirt/images/fedora44-lab.qcow2
+sudo restorecon -v /var/lib/libvirt/images/fedora44-lab.qcow2
+sudo chown qemu:qemu /var/lib/libvirt/images/fedora44-lab.qcow2
+
+# Reregistrar dominio e iniciar
+sudo virt-install \
+  --name fedora44-lab \
+  --disk /var/lib/libvirt/images/fedora44-lab.qcow2,format=qcow2,bus=virtio,cache=none \
+  --import --os-variant fedora43 --network network=default,model=virtio \
+  --graphics none --noautoconsole
+
+sudo virsh start fedora44-lab
+```
+
+### 7. Limpieza y Mantenimiento de Instantáneas
+El acúmulo de instantáneas internas degrada el rendimiento de I/O y complica la gestión del espacio. Elimine puntos de restauración obsoletos al finalizar cada ciclo de prácticas.
+
+```bash
+sudo virsh snapshot-delete fedora44-lab pre-practica
+```
+
+**Salida esperada:**
+```
+Domain snapshot pre-practica deleted
+```
+
+---
+
+## 🔍 Validación de Integridad Post-Respaldo
+
+Para garantizar que el respaldo o la restauración no introdujeron corrupción silenciosa, verifique la coherencia del formato `qcow2`:
+
+```bash
+sudo qemu-img check /var/lib/libvirt/images/fedora44-lab.qcow2
+```
+
+**Salida esperada:**
+```
+No errors were found on the image.
+Image end offset: 647004160
+```
+
+---
+
+## 📋 Mejores Prácticas para Entornos Académicos
+
+1. **Cronología de snapshots:** Cree un snapshot inicial (`pre-lab`) al comenzar la sesión y elimínelo (`snapshot-delete`) al finalizar. Evite mantener más de dos puntos de restauración activos simultáneamente.
+2. **Consistencia de base de datos:** Ejecute siempre `CHECKPOINT;` o `pg_dump pagila > backup.sql` antes de operaciones de snapshot en caliente. Esto garantiza que los archivos WAL y los datos de usuario estén sincronizados en disco.
+3. **Contextos SELinux:** Toda operación de copia (`cp`, `rsync`, `mv`) sobre imágenes `.qcow2` debe ir seguida de `restorecon -v <ruta>`. De lo contrario, QEMU rechazará el acceso al disco por violación de políticas de seguridad.
+4. **Espacio de almacenamiento:** Monitoree el crecimiento real del disco con `sudo du -sh /var/lib/libvirt/images/fedora44-lab.qcow2`. Las instantáneas internas consumen espacio progresivamente; elimínelas cuando superen el 15% del tamaño base.
+5. **Documentación institucional:** Mantenga un registro de los hashes SHA-256 de los respaldos físicos para auditoría de integridad: `sha256sum /var/lib/libvirt/backups/*.qcow2 > backup-manifest.txt`.
+
+---
+
+## 🛑 Resolución de Incidencias Frecuentes
+
+| Síntoma | Causa probable | Acción correctiva |
+|---------|----------------|-------------------|
+| `error: unsupported configuration: internal snapshot for domain` | Disco en formato `raw` o sistema de archivos sin soporte | Verificar con `qemu-img info`. Solo `qcow2` soporta snapshots internos. |
+| `failed to revert to snapshot` | VM en estado incompatible o conflicto de memoria | Detener la VM (`sudo virsh shutdown`) y reintentar, o usar `--force` con precaución. |
+| `Permission denied` tras restaurar copia | Contexto SELinux o propietario incorrecto | Ejecutar `sudo chown qemu:qemu <ruta>` y `sudo restorecon -v <ruta>`. |
+| Discrepancia en UUID tras restaurar | Libvirt mantiene caché de metadatos huérfanos | Ejecutar `sudo virsh undefine fedora44-lab --remove-all-storage` y redefinir con `virt-install --import`. |
+| Base de datos `pagila` inconsistente tras revertir | Snapshot creado sin `CHECKPOINT` previo | Restaurar desde respaldo físico o reconstruir esquema con `sudo -u postgres psql -d pagila -f /opt/pagila/pagila-schema.sql`. |
+
+---
+
+## 📝 Conclusión del Apéndice
+
+La implementación sistemática de estrategias de respaldo y gestión de instantáneas no solo protege la inversión de tiempo y recursos del estudiante, sino que también introduce prácticas profesionales de resiliencia operativa aplicables a entornos de bases de datos productivos. Al combinar la agilidad de los snapshots internos con la robustez de los respaldos físicos independientes, se garantiza un ciclo de práctica reproducible, auditado y seguro. Se recomienda integrar estos procedimientos como estándar operativo al inicio y finalización de cada sesión de laboratorio, documentando los puntos de restauración en el repositorio institucional y rotando los respaldos al concluir el periodo académico.
 
 #### 9. Solución de Problemas Frecuentes
 
