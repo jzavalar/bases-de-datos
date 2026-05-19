@@ -454,7 +454,7 @@ En el sistema anfitrión (*host*), cree el archivo `setup_postgres_lab.sh` con e
 ### =============================================================================
 ### setup_postgres_lab.sh
 ### Script de Configuración Online para PostgreSQL 16 + Pagila
-### Autor: Dr. Jesús Zavala Ruiz | UEA Bases de Datos (2151106)
+### Autor: Dr. Jesús Zavala Ruiz
 ### =============================================================================
 set -euo pipefail
 
@@ -797,13 +797,11 @@ psql -h localhost -U alumno -d pagila -c "SELECT COUNT(*) FROM film;"
 > 3. **Persistencia de definiciones:** Utilice `virsh edit <vm>` en lugar de manipulación manual de XML para evitar inconsistencias de UUID o rutas relativas.
 > 4. **SELinux y permisos:** Mantenga el contexto de seguridad `system_u:object_r:virt_image_t:s0` en las imágenes `.qcow2` mediante `restorecon -v /var/lib/libvirt/images/*.qcow2`.
 
-#### zarj Apéndice Técnico: Respaldo, Restauración y Gestión de Instantáneas (Snapshots)
+#### 9. Respaldo, Restauración y Gestión de Instantáneas (Snapshots)
 
 La preservación controlada del estado de la máquina virtual constituye una competencia fundamental en la administración de infraestructuras de bases de datos. En entornos académicos, donde los estudiantes ejecutan prácticas iterativas que pueden alterar esquemas, permisos o configuraciones de servicios, la capacidad de revertir el entorno a un estado conocido garantiza la reproducibilidad del laboratorio y reduce el tiempo de recuperación ante errores operativos. Esta sección documenta los procedimientos técnicos para gestionar instantáneas nativas de `libvirt`, realizar respaldos físicos seguros y validar la integridad de los datos antes y después de las operaciones de restauración.
 
----
-
-## 📐 Fundamentos de Almacenamiento Virtual
+##### 9.1. Fundamentos de Almacenamiento Virtual
 
 El formato de disco `qcow2` (QEMU Copy-on-Write) soporta nativamente la creación de puntos de restauración sin requerir herramientas de terceros. `libvirt` expone esta funcionalidad mediante dos modalidades operativas:
 
@@ -814,12 +812,9 @@ El formato de disco `qcow2` (QEMU Copy-on-Write) soporta nativamente la creació
 
 > **Nota de integridad:** PostgreSQL mantiene buffers de memoria y archivos de registro (WAL) que pueden no reflejarse inmediatamente en disco. Para garantizar la consistencia de la base de datos `pagila` durante la creación de instantáneas en caliente, se recomienda ejecutar un `CHECKPOINT` manual previo.
 
----
+##### 9.1. Preparación de Consistencia de Datos
 
-## 🛠️ Procedimientos Operativos
-
-### 1. Preparación de Consistencia de Datos
-Antes de generar cualquier punto de restauración, asegure que los datos relacionales estén flushados a disco.
+Antes de generar cualquier punto de restauración, asegure que los datos relacionales estén enviados (*flushed*) a disco.
 
 ```bash
 # Conectarse a la VM
@@ -834,7 +829,7 @@ psql -h localhost -U alumno -d pagila -c "CHECKPOINT;"
 CHECKPOINT
 ```
 
-### 2. Creación de una Instantánea Interna
+##### 9.2. Creación de una Instantánea Interna
 Con la VM en ejecución, se genera un snapshot que captura el estado del disco y la configuración del dominio.
 
 ```bash
@@ -848,7 +843,7 @@ sudo virsh snapshot-create-as fedora44-lab pre-practica \
 Domain snapshot pre-practica created
 ```
 
-### 3. Verificación del Registro de Instantáneas
+##### 9.3. Verificación del Registro de Instantáneas
 Confirme que la instantánea se registró correctamente en los metadatos de `libvirt`.
 
 ```bash
@@ -862,7 +857,7 @@ sudo virsh snapshot-list fedora44-lab
  pre-practica         2026-05-17 10:15:30 -0600 disk-snapshot
 ```
 
-### 4. Respaldo Físico de la Imagen (Copia Fría)
+##### 9.4. Respaldo Físico de la Imagen (Copia Fría)
 Las instantáneas internas son volátiles respecto al archivo principal. Para preservar un ciclo académico completo, realice una copia física deteniendo primero el dominio.
 
 ```bash
@@ -890,7 +885,7 @@ Domain 'fedora44-lab' is being shutdown
 Relabeled /var/lib/libvirt/backups/fedora44-lab-ciclo1.qcow2 from system_u:object_r:unlabeled_t:s0 to system_u:object_r:virt_image_t:s0
 ```
 
-### 5. Restauración del Estado Base (Revertir Instantánea)
+##### 9.5. Restauración del Estado Base (Revertir Instantánea)
 Si una práctica altera irreversiblemente el entorno, regrese al punto de restauración creado.
 
 ```bash
@@ -908,7 +903,7 @@ Domain snapshot reverted successfully
 > psql -h localhost -U alumno -d pagila -c "SELECT COUNT(*) FROM film;"
 > ```
 
-### 6. Restauración desde Respaldo Físico
+##### 9.6. Restauración desde Respaldo Físico
 En caso de corrupción del archivo `.qcow2` o pérdida de metadatos de `libvirt`, restaure la copia independiente.
 
 ```bash
@@ -931,7 +926,7 @@ sudo virt-install \
 sudo virsh start fedora44-lab
 ```
 
-### 7. Limpieza y Mantenimiento de Instantáneas
+##### 9.7. Limpieza y Mantenimiento de Instantáneas
 El acúmulo de instantáneas internas degrada el rendimiento de I/O y complica la gestión del espacio. Elimine puntos de restauración obsoletos al finalizar cada ciclo de prácticas.
 
 ```bash
@@ -945,7 +940,7 @@ Domain snapshot pre-practica deleted
 
 ---
 
-## 🔍 Validación de Integridad Post-Respaldo
+##### 9.8. Validación de Integridad Post-Respaldo
 
 Para garantizar que el respaldo o la restauración no introdujeron corrupción silenciosa, verifique la coherencia del formato `qcow2`:
 
@@ -959,9 +954,11 @@ No errors were found on the image.
 Image end offset: 647004160
 ```
 
----
+##### 9.9. Conclusiones
 
-## 📋 Mejores Prácticas para Entornos Académicos
+La implementación sistemática de estrategias de respaldo y gestión de instantáneas no solo protege la inversión de tiempo y recursos del estudiante, sino que también introduce prácticas profesionales de resiliencia operativa aplicables a entornos de bases de datos productivos. Al combinar la agilidad de los snapshots internos con la robustez de los respaldos físicos independientes, se garantiza un ciclo de práctica reproducible, auditado y seguro. Se recomienda integrar estos procedimientos como estándar operativo al inicio y finalización de cada sesión de laboratorio, documentando los puntos de restauración en el repositorio institucional y rotando los respaldos al concluir el periodo académico.
+
+#### 10. Mejores Prácticas para Entornos Académicos
 
 1. **Cronología de snapshots:** Cree un snapshot inicial (`pre-lab`) al comenzar la sesión y elimínelo (`snapshot-delete`) al finalizar. Evite mantener más de dos puntos de restauración activos simultáneamente.
 2. **Consistencia de base de datos:** Ejecute siempre `CHECKPOINT;` o `pg_dump pagila > backup.sql` antes de operaciones de snapshot en caliente. Esto garantiza que los archivos WAL y los datos de usuario estén sincronizados en disco.
@@ -969,37 +966,24 @@ Image end offset: 647004160
 4. **Espacio de almacenamiento:** Monitoree el crecimiento real del disco con `sudo du -sh /var/lib/libvirt/images/fedora44-lab.qcow2`. Las instantáneas internas consumen espacio progresivamente; elimínelas cuando superen el 15% del tamaño base.
 5. **Documentación institucional:** Mantenga un registro de los hashes SHA-256 de los respaldos físicos para auditoría de integridad: `sha256sum /var/lib/libvirt/backups/*.qcow2 > backup-manifest.txt`.
 
----
-
-## 🛑 Resolución de Incidencias Frecuentes
+#### 11. Resolución de Incidencias Frecuentes
 
 | Síntoma | Causa probable | Acción correctiva |
-|---------|----------------|-------------------|
+|---------|------------------|-------------------|
 | `error: unsupported configuration: internal snapshot for domain` | Disco en formato `raw` o sistema de archivos sin soporte | Verificar con `qemu-img info`. Solo `qcow2` soporta snapshots internos. |
-| `failed to revert to snapshot` | VM en estado incompatible o conflicto de memoria | Detener la VM (`sudo virsh shutdown`) y reintentar, o usar `--force` con precaución. |
+| `failed to revert to snapshot` | VM en estado incompatible o conflicto de memoria | Detener la VM con `sudo virsh shutdown` y reintentar, o usar `--force` con precaución. |
 | `Permission denied` tras restaurar copia | Contexto SELinux o propietario incorrecto | Ejecutar `sudo chown qemu:qemu <ruta>` y `sudo restorecon -v <ruta>`. |
 | Discrepancia en UUID tras restaurar | Libvirt mantiene caché de metadatos huérfanos | Ejecutar `sudo virsh undefine fedora44-lab --remove-all-storage` y redefinir con `virt-install --import`. |
 | Base de datos `pagila` inconsistente tras revertir | Snapshot creado sin `CHECKPOINT` previo | Restaurar desde respaldo físico o reconstruir esquema con `sudo -u postgres psql -d pagila -f /opt/pagila/pagila-schema.sql`. |
-
----
-
-## 📝 Conclusión del Apéndice
-
-La implementación sistemática de estrategias de respaldo y gestión de instantáneas no solo protege la inversión de tiempo y recursos del estudiante, sino que también introduce prácticas profesionales de resiliencia operativa aplicables a entornos de bases de datos productivos. Al combinar la agilidad de los snapshots internos con la robustez de los respaldos físicos independientes, se garantiza un ciclo de práctica reproducible, auditado y seguro. Se recomienda integrar estos procedimientos como estándar operativo al inicio y finalización de cada sesión de laboratorio, documentando los puntos de restauración en el repositorio institucional y rotando los respaldos al concluir el periodo académico.
-
-#### 9. Solución de Problemas Frecuentes
-
-| Síntoma | Causa probable | Acción correctiva |
-|---------|---------------|-------------------|
-| `Permission denied` en SSH | Permisos incorrectos en clave privada | Ejecutar `chmod 600 ~/.ssh/fedora-lab-key` en el host |
-| `Connection refused` al conectar a PostgreSQL | Servicio no iniciado | Ejecutar `sudo systemctl start postgresql` dentro de la VM |
+| `Permission denied` en SSH | Permisos incorrectos en clave privada | Ejecutar `chmod 600 ~/.ssh/fedora-lab-key` en el host. |
+| `Connection refused` al conectar a PostgreSQL | Servicio no iniciado | Ejecutar `sudo systemctl start postgresql` dentro de la VM. |
 | `role "alumno" does not exist` | Rol no creado en PostgreSQL | Ejecutar `sudo -u postgres psql -c "CREATE ROLE alumno WITH LOGIN PASSWORD 'uamIztapalapa';"` |
-| `Ident authentication failed` | `pg_hba.conf` configurado con método `ident` | Modificar `pg_hba.conf` para usar `trust` en conexiones locales y recargar con `sudo systemctl reload postgresql` |
-| VM no obtiene dirección IP | Red de libvirt inactiva | Ejecutar `sudo virsh net-start default` en el host |
-| `virt-customize: ssh-inject: user does not exist` | Orden incorrecto de opciones | Mover `--run-command useradd` antes de `--ssh-inject` |
-| `ssh: connect to host ... port 22: Connection refused` | VM en arranque o `sshd` inactivo | Esperar 60–90 s adicionales; verificar con `virsh console` |
+| `Ident authentication failed` | `pg_hba.conf` configurado con método `ident` | Modificar `pg_hba.conf` para usar `trust` en conexiones locales y recargar con `sudo systemctl reload postgresql`. |
+| VM no obtiene dirección IP | Red de libvirt inactiva | Ejecutar `sudo virsh net-start default` en el host. |
+| `virt-customize: ssh-inject: user does not exist` | Orden incorrecto de opciones | Mover `--run-command useradd` antes de `--ssh-inject`. |
+| `ssh: connect to host ... port 22: Connection refused` | VM en arranque o `sshd` inactivo | Esperar 60–90 segundos; verificar con `virsh console`. |
 
-#### 10. Comandos de Gestión Operativa
+#### 12. Comandos de Gestión Operativa
 
 ```bash
 ### === Desde el sistema anfitrión ===
@@ -1045,7 +1029,7 @@ psql -h localhost -U alumno -d pagila -c "\dt"
 \q
 ```
 
-#### 11. Notas de Seguridad para Entornos Productivos
+#### 13. Notas de Seguridad para Entornos Productivos
 
 La configuración actual emplea el método de autenticación `trust` en `pg_hba.conf`, lo que permite conexiones locales sin contraseña. Esta configuración es adecuada para un laboratorio académico aislado, pero **no debe utilizarse en entornos productivos**. Para despliegues reales, considere las siguientes medidas:
 
@@ -1056,7 +1040,7 @@ La configuración actual emplea el método de autenticación `trust` en `pg_hba.
 - Mantener SELinux en modo `enforcing` con políticas personalizadas
 - Implementar cifrado de tráfico mediante TLS/SSL para conexiones remotas
 
-#### 12. Archivos y Directorios Generados en la Máquina Virtual
+#### 14. Archivos y Directorios Generados en la Máquina Virtual
 
 | Archivo o Directorio | Propósito |
 |---------------------|-----------|
@@ -1066,7 +1050,7 @@ La configuración actual emplea el método de autenticación `trust` en `pg_hba.
 | `/etc/fedora-lab-ready` | Marcador de configuración completada |
 | `/etc/ssh/sshd_config.d/hardening.conf` | Configuración de endurecimiento de SSH (opcional) |
 
-#### 13. Referencias
+#### 14. Referencias
 
 1. Red Hat. (2021). *Build a lab quickly*. Recuperado de https://www.redhat.com/en/blog/build-lab-quickly
 2. devrimgunduz. (2026). *Pagila - Sample Database for PostgreSQL*. Recuperado de https://github.com/devrimgunduz/pagila
