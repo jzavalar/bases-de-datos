@@ -12,6 +12,10 @@
 
 ---
 
+#### Introduccion
+
+La selección de Fedora como sistema operativo base para este laboratorio responde a consideraciones técnicas, pedagógicas y de alineación con estándares institucionales de infraestructura. A diferencia de distribuciones de ciclo extendido como Ubuntu LTS, Fedora integra de manera nativa las versiones más recientes del núcleo Linux, las utilidades de virtualización KVM/libvirt y el motor relacional PostgreSQL, lo que permite a los estudiantes interactuar con una pila tecnológica actualizada y reflejo directo de las tendencias emergentes en administración de sistemas. Al constituir la distribución ascendente (*upstream*) de Red Hat Enterprise Linux (RHEL), Fedora expone al alumno a un ecosistema basado en RPM, SELinux y `systemd` en su configuración por defecto, competencias ampliamente requeridas en entornos corporativos y de investigación donde se despliegan bases de datos relacionales. Esta elección garantiza no solo un entorno reproducible, seguro y optimizado para las prácticas de la UEA, sino que también **acelera la transición del estudiante hacia plataformas empresariales**, priorizando la estandarización, el endurecimiento nativo (*hardening*) y la compatibilidad directa con herramientas de virtualización y gestión de servicios sobre la comodidad de interfaces o paquetes empaquetados de forma externa.
+
 #### Advertencia de Seguridad
 
 > El entorno descrito en esta guía está diseñado exclusivamente para fines académicos y de experimentación controlada. Las credenciales, configuraciones de red y parámetros de seguridad aquí especificados **no deben emplearse bajo ninguna circunstancia en entornos de producción**. Para despliegues productivos, se recomienda consultar y aplicar las guías oficiales de *hardening* de Fedora Project y PostgreSQL Global Development Group.
