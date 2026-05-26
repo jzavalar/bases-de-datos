@@ -53,26 +53,103 @@ El primer paso consiste en sincronizar los repositorios del sistema y adquirir l
 
 Ejecute los siguientes comandos dentro de la máquina virtual:
 
+Actualizar el Sistema Operativo: 
 ```bash
 sudo dnf update -y
-sudo dnf install -y pgadmin4 pgadmin4-httpd httpd
-rpm -q pgadmin4 httpd
 ```
 
+Salida:
+```
+Updating and loading repositories:
+Repositories loaded.
+Package                      Arch   Version                  Repository         Size
+Upgrading:
+ mod_http2                   x86_64 0:2.0.39-1.fc44          updates       435.5 KiB
+   replacing mod_http2       x86_64 0:2.0.37-2.fc44          fedora        435.2 KiB
+ python3-unbound             x86_64 0:1.25.1-1.fc44          updates       524.4 KiB
+   replacing python3-unbound x86_64 0:1.24.2-10.fc44         4e4a4f70cfdd4 520.2 KiB
+ unbound-anchor              x86_64 0:1.25.1-1.fc44          updates        52.4 KiB
+   replacing unbound-anchor  x86_64 0:1.24.2-10.fc44         4e4a4f70cfdd4  52.3 KiB
+ unbound-libs                x86_64 0:1.25.1-1.fc44          updates         1.5 MiB
+   replacing unbound-libs    x86_64 0:1.24.2-10.fc44         4e4a4f70cfdd4   1.5 MiB
+
+Transaction Summary:
+ Upgrading:          4 packages
+ Replacing:          4 packages
+
+Total size of inbound packages is 934 KiB. Need to download 934 KiB.
+After this operation, 17 KiB extra will be used (install 3 MiB, remove 3 MiB).
+[1/4] python3-unbound-0:1.25.1-1.fc44.x86_6 100% | 184.1 KiB/s | 123.2 KiB |  00m01s
+[2/4] mod_http2-0:2.0.39-1.fc44.x86_64      100% | 232.4 KiB/s | 166.6 KiB |  00m01s
+[3/4] unbound-libs-0:1.25.1-1.fc44.x86_64   100% | 296.8 KiB/s | 604.4 KiB |  00m02s
+[4/4] unbound-anchor-0:1.25.1-1.fc44.x86_64 100% |  29.3 KiB/s |  40.1 KiB |  00m01s
+------------------------------------------------------------------------------------
+[4/4] Total                                 100% | 216.2 KiB/s | 934.3 KiB |  00m04s
+Running transaction
+[ 1/10] Verify package files                100% | 363.0   B/s |   4.0   B |  00m00s
+[ 2/10] Prepare transaction                 100% |  48.0   B/s |   8.0   B |  00m00s
+...
+[ 9/10] Removing unbound-libs-0:1.24.2-10.f 100% |   1.7 KiB/s |  16.0   B |  00m00s
+[10/10] Removing mod_http2-0:2.0.37-2.fc44. 100% |  10.0   B/s |  15.0   B |  00m01s
+Complete!
+```
+Instale el repositorio:
+```
+sudo rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
+```
+
+N.B. `pgadmin4-httpd` es el paquete nativo mantenido por la comunidad de Fedora, diseñado específicamente para integrar pgAdmin 4 con el servidor web Apache (httpd). Incluye la configuración WSGI (`/etc/httpd/conf.d/pgadmin4.conf`) adaptada a las rutas y políticas de Fedora. Declara dependencias explícitas con `httpd`, `python3-mod_wsgi` y los contextos SELinux correspondientes y sigue las directrices de empaquetado de Fedora, garantizando coherencia con `dnf`, `systemd` y las actualizaciones oficiales. En otras palabras, al instalar el paquete con `pgadmin4-httpd`, el sistema colocó automáticamente el archivo de configuración necesario en la ruta:
+`/etc/httpd/conf.d/pgadmin4.conf`. Este archivo le dice a Apache: "Cuando alguien visite la dirección `/pgadmin`, ejecuta la aplicación de Python que está en `/usr/lib/pgadmin4`". Para que Apache "lea" ese nuevo archivo de configuración y habilite `pgAdmin`, es necesario reiniciar el servicio del servidor web.
+
+Instalar `pgAdmin` y el servidor web:
+```bash
+sudo dnf install -y pgadmin4 pgadmin4-httpd httpd
+```
+Salida:
+```
+Updating and loading repositories:
+Repositories loaded.
+Package "pgadmin4-9.15-1.fc44.x86_64" is already installed.
+Package "pgadmin4-httpd-9.15-1.fc44.x86_64" is already installed.
+Package "httpd-2.4.67-1.fc44.x86_64" is already installed.
+
+Nothing to do.
+```
+
+Probar que fueron instalados los paquetes:
+```bash
+rpm -q pgadmin4 pgadmin4-httpd httpd
+```
 La salida esperada confirma las versiones instaladas:
 ```
-pgadmin4-9.15-1.fc44.x86_64
-httpd-2.4.67-1.fc44.x86_64
+pgadmin4-9.15-1.fc43.x86_64
+pgadmin4-httpd-9.15-1.fc43.x86_64
+httpd-2.4.67-1.fc43.x86_64
 ```
 
 Una vez instalados los paquetes, es necesario habilitar el servicio de Apache para que inicie automáticamente con el sistema y activarlo de manera inmediata:
 
 ```bash
 sudo systemctl enable --now httpd
+```
+Salida nula significa que se activó.
+
+Verificarlo:
+```bash
 sudo systemctl is-active httpd
+```
+Salida:
+```
+active
+```
+Verificar el funcionamiento del servidor web:
+```bash
 sudo ss -tlnp | grep :80
 ```
-
+Salida:
+```
+LISTEN 0      511                *:80              *:*    users:(("httpd",pid=1390,fd=4),("httpd",pid=1029,fd=4),("httpd",pid=1027,fd=4),("httpd",pid=1026,fd=4),("httpd",pid=948,fd=4))
+```
 La confirmación `active` y la línea `LISTEN ... *:80` indican que el servidor web está operando y recibiendo conexiones en el puerto estándar.
 
 #### 3. Configuración del servidor web Apache y pgAdmin en la MV
@@ -89,17 +166,24 @@ grep "Require" /etc/httpd/conf.d/pgadmin4.conf
 
 La directiva modificada autoriza explícitamente las solicitudes provenientes de la subred `192.168.122.0/24`, manteniendo al mismo tiempo el acceso local para fines de diagnóstico. Es importante notar que la ruta de acceso configurada es `/pgadmin`, por lo que la URL de acceso final será `http://192.168.122.24/pgadmin/`. Abra esa URL en un navegador, para acceder a pgAdmin desde el anfitrión:
 
-
 <div style="text-align: center;">
   <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/lab_06_pgadmin-desde-localhost.png" width="70%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1. Acceso a pgAdmin desde el anfitrión</div>
 </div>
+
+Antes de acceder, configure pgAdmin en la MV.
+
+Revisar 
 
 #### 4. Inicialización de pgAdmin en la MV
 
 La aplicación requiere una base de datos interna en formato SQLite para almacenar credenciales de usuarios, configuraciones de servidores registrados y preferencias de sesión. Fedora distribuye un script de inicialización basado en Python que debe ejecutarse con privilegios elevados.
 
 Localice la ruta del script y consulte sus subcomandos disponibles:
+
+```
+sudo /usr/pgadmin4/bin/setup-web.sh
+```
 
 ```bash
 SETUP_SCRIPT=$(rpm -ql pgadmin4 | grep '/setup\.py$' | head -n 1)
@@ -156,6 +240,17 @@ Instale el servicio y actívelo:
 
 ```bash
 sudo dnf install -y firewalld
+```
+Salida:
+```
+Updating and loading repositories:
+Repositories loaded.
+Package "firewalld-2.4.0-2.fc44.noarch" is already installed.
+
+Nothing to do.
+```
+
+```bash
 sudo systemctl enable --now firewalld
 ```
 
@@ -163,23 +258,65 @@ Verifique que el servicio está operando y revise la zona activa:
 
 ```bash
 sudo systemctl is-active firewalld
-sudo firewall-cmd --list-all
+```
+Salida:
+```
+active
 ```
 
+```bash
+sudo firewall-cmd --list-all
+```
+Salida:
+```
+public (default, active)
+  target: default
+  ingress-priority: 0
+  egress-priority: 0
+  icmp-block-inversion: no
+  interfaces: enp1s0
+  sources: 
+  services: dhcpv6-client http mdns ssh
+  ports: 
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules:
+```
 Inicialmente, el servicio `http` no aparecerá en la lista. Agréguelo de forma permanente y recargue las reglas sin interrumpir servicios activos:
 
 ```bash
 sudo firewall-cmd --permanent --add-service=http
-sudo firewall-cmd --reload
-sudo firewall-cmd --list-services
+```
+Salida:
+```
+Warning: ALREADY_ENABLED: http
+success
 ```
 
+```bash
+sudo firewall-cmd --reload
+```
+Salida:
+```
+success
+```
+
+```bash
+sudo firewall-cmd --list-services
+```
+Salida:
+```
+dhcpv6-client http mdns ssh
+```
 La salida debe incluir `http` junto a los servicios base como `ssh`. Confirme que no existen puertos expuestos de forma numérica directa:
 
 ```bash
 sudo firewall-cmd --list-ports
 ```
-
 Una lista vacía o sin referencias al puerto `5432` confirma que el motor de bases de datos permanece protegido detrás del túnel SSH, cumpliendo con el principio de mínimo privilegio.
 
 #### 7. Validación de acceso web en la MV
@@ -189,7 +326,21 @@ Tras aplicar todas las configuraciones, reinicie el servidor web para consolidar
 ```bash
 sudo systemctl restart httpd
 curl -s -o /dev/null -w "HTTP Code: %{http_code}\n" http://localhost/pgadmin/
+```
+Salida:
+```
+HTTP Code: 302
+```
+
+```bash
 curl -v http://localhost/pgadmin/ 2>&1 | grep -E "HTTP/|Location:"
+```
+Salida:
+```
+* using HTTP/1.x
+> GET /pgadmin/ HTTP/1.1
+< HTTP/1.1 302 FOUND
+< Location: /pgadmin/login?next=/pgadmin/
 ```
 
 Un código de respuesta `302` con redirección hacia `/pgadmin/login` confirma que la pila está operativa y que el sistema solicita autenticación, comportamiento esperado en la primera carga.
@@ -199,8 +350,12 @@ Desde el equipo anfitrión, confirme la conectividad externa:
 ```bash
 curl -s -o /dev/null -w "HTTP Code: %{http_code}\n" http://192.168.122.24/pgadmin/
 ```
+Salida:
+```
+HTTP Code: 302
+```
 
-Acceda mediante un navegador web a la dirección `http://192.168.122.24/pgadmin/` y complete el registro de la cuenta maestra solicitada. Estas credenciales son exclusivas para la interfaz de pgAdmin y no guardan relación con el sistema operativo ni con PostgreSQL.
+Acceda mediante un navegador web a la dirección `http://192.168.122.24/pgadmin/` y complete el registro de la cuenta maestra solicitada. Estas **credenciales son exclusivas para la interfaz de pgAdmin** y no guardan relación con el sistema operativo ni con PostgreSQL.
 
 #### 8. Conexión segura a PostgreSQL en la MV mediante túnel SSH desde el anfitrión (localhost)
 
