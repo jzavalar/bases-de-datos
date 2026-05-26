@@ -37,7 +37,7 @@ sudo virsh start fedora44-lab
 
 Salida:
 ```
-[sudo] password for jzavalar: 
+[sudo] password for alumno: 
 Domain 'fedora44-lab' started
 ```
 
