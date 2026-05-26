@@ -21,13 +21,33 @@ En este laboratorio se documenta el procedimiento completo para desplegar pgAdmi
 
 Antes de iniciar, confirme que la máquina virtual cumple con las siguientes condiciones:
 
-- Sistema operativo Fedora 44 Cloud Base actualizado.
+- Máquina virtual (VM) `fedora44-lab` con sistema operativo Fedora 44 Cloud Base actualizado.
 - Usuario `alumno` con privilegios de administración mediante sudo.
 - PostgreSQL 18 operativo con la base de datos `pagila` cargada.
 - Clave SSH configurada para acceso remoto desde el equipo anfitrión.
-- Conexión de red tipo NAT o puente gestionada por libvirt.
+- Conexión de red tipo NAT o puente gestionada por `libvirt`.
 
 #### Instalación de componentes base
+
+**Iniciar la VM:**
+
+```bash
+sudo virsh start fedora44-lab
+```
+
+Salida:
+```
+[sudo] password for jzavalar: 
+Domain 'fedora44-lab' started
+```
+
+**Conectarse a la VM:**
+```bash
+# Conectarse a la VM
+ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.24
+```
+
+#### Instalación de componentes base en la VM
 
 El primer paso consiste en sincronizar los repositorios del sistema y adquirir los paquetes que conforman la pila de pgAdmin en Fedora. Dado que pgAdmin está desarrollado en Python y requiere un servidor web para su ejecución en modalidad remota, es necesario instalar simultáneamente la aplicación, su módulo de integración con Apache y el propio servidor HTTP.
 
@@ -176,7 +196,9 @@ curl -s -o /dev/null -w "HTTP Code: %{http_code}\n" http://192.168.122.24/pgadmi
 
 Acceda mediante un navegador web a la dirección `http://192.168.122.24/pgadmin/` y complete el registro de la cuenta maestra solicitada. Estas credenciales son exclusivas para la interfaz de pgAdmin y no guardan relación con el sistema operativo ni con PostgreSQL.
 
-#### Conexión segura a PostgreSQL
+#### Conexión segura a PostgreSQL mediante túnel SSH
+
+##### Creación de túnel SSH
 
 Por diseño, PostgreSQL escucha únicamente en la interfaz local de la máquina virtual. Para administrar la base de datos desde el equipo anfitrión sin exponer el puerto `5432` en la red, establezca un túnel SSH cifrado:
 
@@ -185,11 +207,81 @@ ssh -L 5433:localhost:5432 -i ~/.ssh/fedora-lab-key alumno@192.168.122.24 -N -f
 ss -tlnp | grep 5433
 ```
 
-El parámetro `-L 5433:localhost:5432` redirige el puerto local `5433` del anfitrión hacia el puerto `5432` de la máquina virtual. La bandera `-f` ejecuta el proceso en segundo plano y `-N` inhibe la ejecución de comandos remotos. La presencia de `LISTEN ... 127.0.0.1:5433` confirma que el canal seguro está activo.
+El parámetro `-L 5433:localhost:5432` redirige el puerto local `5433` del anfitrión (localhost) hacia el puerto `5432` de la máquina virtual. La bandera `-f` ejecuta el proceso en segundo plano y `-N` inhibe la ejecución de comandos remotos. La presencia de `LISTEN ... 127.0.0.1:5433` confirma que el canal seguro está activo.
 
-#### Registro y validación en la interfaz
+##### Conexión segura de localhost a VM
 
-Dentro de pgAdmin, registre el servidor de bases de datos utilizando la configuración del túnel:
+```bash
+# Verficar versión de PostgreSQL
+psql --version
+```
+
+Salida:
+```
+psql (PostgreSQL) 16.13
+```
+
+```bash
+# Verificar parametros de conexion a la base de datos
+psql -h localhost -p 5433 -U alumno -d pagila -c "SELECT current_user, current_database(), inet_server_port();"
+```
+
+Salida:
+```
+ current_user | current_database | inet_server_port 
+--------------+------------------+------------------
+ alumno       | pagila           |             5432
+(1 row)
+```
+
+```bash
+# Verificar versión de PostgreSQL 
+psql -h localhost -p 5433 -U alumno -d pagila -c "SELECT version();"
+```
+
+Salida:
+```
+
+                                                   version                          
+                          
+------------------------------------------------------------------------------------
+--------------------------
+ PostgreSQL 18.3 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 16.0.1 20260321 (
+Red Hat 16.0.1-0), 64-bit
+(1 row)
+```
+
+```bash
+# Validar conexión a la base de datos con el conteo de registros en la tabla principal
+psql -h localhost -p 5433 -U alumno -d pagila -c "SELECT COUNT(*) AS total_peliculas FROM film;"
+```
+
+Salida:
+```
+ total_peliculas 
+-----------------
+            1000
+(1 row)
+```
+
+```bash
+# Probar relación entre tablas mediante JOIN
+psql -h localhost -p 5433 -U alumno -d pagila -c "SELECT f.title, a.first_name || ' ' || a.last_name AS actor FROM film f JOIN film_actor fa ON f.film_id = fa.film_id JOIN actor a ON fa.actor_id = a.actor_id LIMIT 3;"
+```
+
+Salida:
+```
+        title         |      actor       
+----------------------+------------------
+ ACADEMY DINOSAUR     | PENELOPE GUINESS
+ ANACONDA CONFESSIONS | PENELOPE GUINESS
+ ANGELS LIFE          | PENELOPE GUINESS
+(3 rows)
+```
+
+##### Conexión a PostgreSQL mediante un túnel SSH usando pgAdmin 
+
+Dentro de pgAdmin local, registre el servidor de bases de datos utilizando la configuración del túnel:
 
 1. Navegue a Servers, haga clic derecho y seleccione Register > Server.
 2. En la pestaña General, asigne un nombre descriptivo como `Fedora-Lab-Pagila`.
@@ -215,9 +307,9 @@ JOIN actor a ON fa.actor_id = a.actor_id
 LIMIT 5;
 ```
 
-Los resultados deben coincidir con la versión de PostgreSQL 16, un conteo de 1000 registros en la tabla `film` y un listado válido de películas y actores.
+Los resultados deben coincidir con la versión de PostgreSQL, un conteo de 1000 registros en la tabla `film` y un listado válido de películas y actores.
 
-#### Script de auditoría de seguridad
+#### Script de auditoría de seguridad de pgAdmin en la MV
 
 Para verificar de manera sistemática el cumplimiento de los controles implementados, utilice el siguiente script de validación. Este instrumento evalúa el estado de SELinux, contextos de archivos, permisos, configuración de Apache, reglas de cortafuegos y estado de servicios.
 
@@ -286,19 +378,22 @@ Un resultado sin fallos confirma que el entorno cumple con los estándares de se
 
 La arquitectura implementada separa claramente las capas de administración y datos. pgAdmin opera como interfaz web accesible mediante HTTP, mientras PostgreSQL permanece aislado y solo alcanzaable a través de un túnel SSH cifrado. Esta separación reduce la superficie de ataque y facilita la auditoría de accesos.
 
-Para finalizar las sesiones de trabajo, cierre el túnel SSH desde el anfitrión y detenga la máquina virtual si no se requiere uso inmediato:
+Para finalizar las sesiones de trabajo, cierre el túnel SSH desde el anfitrión (localhost) y detenga la máquina virtual si no se requiere uso inmediato:
 
 ```bash
+# Matar el proceso que mantiene activo el tunel del localhost a la MV
 pkill -f "ssh -L 5433:localhost:5432"
-sudo virsh shutdown fedora-lab
+
+# Apagar la VM
+sudo virsh shutdown fedora44-lab
 ```
 
 Mantenga actualizados los paquetes del sistema mediante `sudo dnf update` y rote las credenciales de acceso al concluir el período académico. Documente cada intervención en la bitácora de laboratorio, vinculando las configuraciones aplicadas con los criterios de evaluación de la unidad de enseñanza-aprendizaje.
 
 #### Referencias
 
-- pgAdmin 4 Documentation. https://www.pgadmin.org/docs/
-- Fedora Project Documentation. https://docs.fedoraproject.org/
-- PostgreSQL 16 Documentation. https://www.postgresql.org/docs/16/
-- Red Hat Enterprise Linux SELinux Guide. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/using_selinux/
-- OpenSSH Manual Pages. https://man.openbsd.org/ssh
+- pgAdmin 4 Documentation. <https://www.pgadmin.org/docs/>
+- Fedora Project Documentation. <https://docs.fedoraproject.org/>
+- PostgreSQL Documentation. <https://www.postgresql.org/docs/>
+- Red Hat Enterprise Linux SELinux Guide. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/using_selinux/>
+- OpenSSH Manual Pages. <https://man.openbsd.org/ssh>
