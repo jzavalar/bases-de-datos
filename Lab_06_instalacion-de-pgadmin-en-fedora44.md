@@ -87,7 +87,7 @@ sudo sed -i 's/Require local/Require ip 192.168.122.0\/24 127.0.0.1 ::1/' /etc/h
 grep "Require" /etc/httpd/conf.d/pgadmin4.conf
 ```
 
-La directiva modificada autoriza explícitamente las solicitudes provenientes de la subred `192.168.122.0/24`, manteniendo al mismo tiempo el acceso local para fines de diagnóstico. Es importante notar que la ruta de acceso configurada es `/pgadmin`, por lo que la URL de acceso final será `http://192.168.122.24/pgadmin/`. Abra esa URL dirección en un navegador.
+La directiva modificada autoriza explícitamente las solicitudes provenientes de la subred `192.168.122.0/24`, manteniendo al mismo tiempo el acceso local para fines de diagnóstico. Es importante notar que la ruta de acceso configurada es `/pgadmin`, por lo que la URL de acceso final será `http://192.168.122.24/pgadmin/`. Abra esa URL en un navegador, para acceder a pgAdmin desde el anfitrión:
 
 
 <div style="text-align: center;">
