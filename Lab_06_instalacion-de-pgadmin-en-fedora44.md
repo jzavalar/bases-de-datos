@@ -17,7 +17,7 @@ La administración eficiente de sistemas gestores de bases de datos requiere her
 
 En este laboratorio se documenta el procedimiento completo para desplegar pgAdmin 4 en modalidad web sobre Fedora 44, integrando los componentes necesarios, aplicando controles de seguridad obligatoria mediante SELinux, configurando el acceso restringido a través de Apache y estableciendo una capa de filtrado de red con firewalld. La arquitectura resultante replica prácticas estándar de hardening utilizadas en entornos productivos, garantizando que la interfaz de administración permanezca accesible mientras el motor de bases de datos se mantiene aislado y protegido.
 
-#### Requisitos del entorno
+#### 1. Requisitos del entorno
 
 Antes de iniciar, confirme que la máquina virtual cumple con las siguientes condiciones:
 
@@ -27,9 +27,9 @@ Antes de iniciar, confirme que la máquina virtual cumple con las siguientes con
 - Clave SSH configurada para acceso remoto desde el equipo anfitrión.
 - Conexión de red tipo NAT o puente gestionada por `libvirt`.
 
-#### Instalación de componentes base
+#### 2. Instalación de componentes base en la Máquina Virtual
 
-**Iniciar la VM:**
+**2.1. Iniciar la VM:**
 
 ```bash
 sudo virsh start fedora44-lab
@@ -41,13 +41,13 @@ Salida:
 Domain 'fedora44-lab' started
 ```
 
-**Conectarse a la VM:**
+**2.2. Conectarse a la VM:**
 ```bash
 # Conectarse a la VM
 ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.24
 ```
 
-#### Instalación de componentes base en la VM
+**2.3. Instalación de componentes base en la VM**
 
 El primer paso consiste en sincronizar los repositorios del sistema y adquirir los paquetes que conforman la pila de pgAdmin en Fedora. Dado que pgAdmin está desarrollado en Python y requiere un servidor web para su ejecución en modalidad remota, es necesario instalar simultáneamente la aplicación, su módulo de integración con Apache y el propio servidor HTTP.
 
@@ -75,7 +75,7 @@ sudo ss -tlnp | grep :80
 
 La confirmación `active` y la línea `LISTEN ... *:80` indican que el servidor web está operando y recibiendo conexiones en el puerto estándar.
 
-#### Configuración del servidor web Apache
+#### 3. Configuración del servidor web Apache y pgAdmin en la MV
 
 Por defecto, la configuración de pgAdmin en Fedora restringe el acceso a la interfaz web únicamente desde la dirección local (`localhost`). Para permitir la conexión desde el equipo anfitrión a través de la red virtual, es necesario modificar la directiva de control de acceso en la configuración de Apache.
 
@@ -87,9 +87,15 @@ sudo sed -i 's/Require local/Require ip 192.168.122.0\/24 127.0.0.1 ::1/' /etc/h
 grep "Require" /etc/httpd/conf.d/pgadmin4.conf
 ```
 
-La directiva modificada autoriza explícitamente las solicitudes provenientes de la subred `192.168.122.0/24`, manteniendo al mismo tiempo el acceso local para fines de diagnóstico. Es importante notar que la ruta de acceso configurada es `/pgadmin`, por lo que la URL de acceso final será `http://192.168.122.24/pgadmin/`.
+La directiva modificada autoriza explícitamente las solicitudes provenientes de la subred `192.168.122.0/24`, manteniendo al mismo tiempo el acceso local para fines de diagnóstico. Es importante notar que la ruta de acceso configurada es `/pgadmin`, por lo que la URL de acceso final será `http://192.168.122.24/pgadmin/`. Abra esa URL dirección en un navegador.
 
-#### Inicialización de pgAdmin
+
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/lab_06_pgadmin-desde-localhost.png" width="50%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1. Acceso a pgAdmin desde el anfitrión</div>
+</div>
+
+#### 4. Inicialización de pgAdmin en la MV
 
 La aplicación requiere una base de datos interna en formato SQLite para almacenar credenciales de usuarios, configuraciones de servidores registrados y preferencias de sesión. Fedora distribuye un script de inicialización basado en Python que debe ejecutarse con privilegios elevados.
 
@@ -108,7 +114,7 @@ sudo python3 "$SETUP_SCRIPT" setup-db
 
 El proceso es idempotente y no produce salida visible si se completa correctamente. La ausencia de errores indica que la base de datos interna `pgadmin4.db` ha sido generada en `/var/lib/pgadmin/`.
 
-#### Ajuste de permisos y políticas SELinux
+#### 5. Ajuste de permisos y políticas SELinux en la MV
 
 Fedora implementa Security-Enhanced Linux (SELinux) en modo obligatorio (`Enforcing`). Esta capa de seguridad evalúa no solo los permisos tradicionales del sistema de archivos, sino también los contextos de seguridad asociados a cada archivo y directorio. Si el proceso de Apache (`httpd_t`) intenta escribir en un directorio que posee un contexto genérico, la operación será bloqueada independientemente de los permisos `rwx`.
 
@@ -142,7 +148,7 @@ La salida debe mostrar `httpd_log_t` para los registros y `httpd_sys_rw_content_
 sudo setsebool -P httpd_can_network_connect 1
 ```
 
-#### Configuración del cortafuegos (firewalld)
+#### 6. Configuración del cortafuegos (firewalld) en la MV
 
 Las imágenes minimalistas de Fedora Cloud Base no incluyen el gestor de cortafuegos por defecto. Para completar el endurecimiento del entorno, instale y configure `firewalld`, garantizando que únicamente el tráfico HTTP autorizado pueda alcanzar la interfaz de administración.
 
@@ -176,7 +182,7 @@ sudo firewall-cmd --list-ports
 
 Una lista vacía o sin referencias al puerto `5432` confirma que el motor de bases de datos permanece protegido detrás del túnel SSH, cumpliendo con el principio de mínimo privilegio.
 
-#### Validación de acceso web
+#### 7. Validación de acceso web en la MV
 
 Tras aplicar todas las configuraciones, reinicie el servidor web para consolidar los cambios y verifique que la aplicación responde correctamente a solicitudes HTTP:
 
@@ -196,9 +202,9 @@ curl -s -o /dev/null -w "HTTP Code: %{http_code}\n" http://192.168.122.24/pgadmi
 
 Acceda mediante un navegador web a la dirección `http://192.168.122.24/pgadmin/` y complete el registro de la cuenta maestra solicitada. Estas credenciales son exclusivas para la interfaz de pgAdmin y no guardan relación con el sistema operativo ni con PostgreSQL.
 
-#### Conexión segura a PostgreSQL mediante túnel SSH
+#### 8. Conexión segura a PostgreSQL en la MV mediante túnel SSH desde el anfitrión (localhost)
 
-##### Creación de túnel SSH
+**8.1. Creación de túnel SSH en el anfitrión**
 
 Por diseño, PostgreSQL escucha únicamente en la interfaz local de la máquina virtual. Para administrar la base de datos desde el equipo anfitrión sin exponer el puerto `5432` en la red, establezca un túnel SSH cifrado:
 
@@ -209,7 +215,7 @@ ss -tlnp | grep 5433
 
 El parámetro `-L 5433:localhost:5432` redirige el puerto local `5433` del anfitrión (localhost) hacia el puerto `5432` de la máquina virtual. La bandera `-f` ejecuta el proceso en segundo plano y `-N` inhibe la ejecución de comandos remotos. La presencia de `LISTEN ... 127.0.0.1:5433` confirma que el canal seguro está activo.
 
-##### Conexión segura de localhost a VM
+**8.2. Conexión segura a PostgreSQL en la MV mediante un túnel SSH desde localhost con el cliente psql**
 
 ```bash
 # Verficar versión de PostgreSQL
@@ -279,7 +285,7 @@ Salida:
 (3 rows)
 ```
 
-##### Conexión a PostgreSQL mediante un túnel SSH usando pgAdmin 
+**8.3. Conexión segura a PostgreSQL en la MV mediante un túnel SSH desde localhost con pgAdmin** 
 
 Dentro de pgAdmin local, registre el servidor de bases de datos utilizando la configuración del túnel:
 
@@ -308,6 +314,8 @@ LIMIT 5;
 ```
 
 Los resultados deben coincidir con la versión de PostgreSQL, un conteo de 1000 registros en la tabla `film` y un listado válido de películas y actores.
+
+
 
 #### Script de auditoría de seguridad de pgAdmin en la MV
 
