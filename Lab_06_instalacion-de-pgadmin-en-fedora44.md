@@ -91,7 +91,7 @@ La directiva modificada autoriza explícitamente las solicitudes provenientes de
 
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/lab_06_pgadmin-desde-localhost.png" width="50%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/lab_06_pgadmin-desde-localhost.png" width="70%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Fig. 1. Acceso a pgAdmin desde el anfitrión</div>
 </div>
 
