@@ -1062,8 +1062,8 @@ Mantenga actualizados los paquetes del sistema mediante `sudo dnf update` y rote
 
 #### 12. Referencias
 
-- pgAdmin 4 Documentation. <https://www.pgadmin.org/docs/>
-- Fedora Project Documentation. <https://docs.fedoraproject.org/>
-- PostgreSQL Documentation. <https://www.postgresql.org/docs/>
-- Red Hat Enterprise Linux SELinux Guide. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/using_selinux/>
-- OpenSSH Manual Pages. <https://man.openbsd.org/ssh>
+Fedora Project. (n.d.). Fedora documentation. <https://docs.fedoraproject.org/es_419/docs/>
+OpenBSD Project. (n.d.). ssh(1). OpenBSD manual pages. <https://man.openbsd.org/ssh>
+pgAdmin Development Team. (n.d.). pgAdmin 4 documentation. <https://www.pgadmin.org/docs/>
+PostgreSQL Global Development Group. (2026). PostgreSQL 18 documentation. <https://www.postgresql.org/docs/18/>
+Red Hat, Inc. (n.d.). Using SELinux. Red Hat Enterprise Linux 9 documentation. <https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index>
