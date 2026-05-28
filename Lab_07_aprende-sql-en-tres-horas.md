@@ -10,7 +10,7 @@
 ---
 
 > ADVERTENCIA ÉTICA:
-> Esfuércese en realizar el laboratorio de manera sistemática y consciente con la finalidad de aprender, sin utilizar IA. La finalidad NO ES la estrega en sí de los entregables sino del desarrollo de conocimiento básico y habilidades de pensamiento reflexivo que lo/la lleven a reflexionar sobre el potencial y limitaciones que tienen las bases de datos relacionales, que seguirán siendo la espina dorsal de la operación de las organizaciones públicas y privadas.
+> Esfuércese en realizar el laboratorio de manera sistemática y consciente con la finalidad de aprender, sin utilizar IA. La finalidad NO ES la estrega en sí de los entregables sino del desarrollo de conocimiento básico y habilidades de pensamiento que la/lo lleven a reflexionar sobre el potencial y limitaciones que tienen las bases de datos relacionales, que seguirán siendo la espina dorsal de la operación de las organizaciones públicas y privadas.
 
 **Si bien el laboratorio está pensado para desarrollar en tres fines de semana, es muy conveniente completarlo lo más pronto posible para comenzar a trabajar en el proyecto integrador.**
 
