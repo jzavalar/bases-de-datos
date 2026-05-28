@@ -1,4 +1,4 @@
-# Laboratorio 07: SQL en Tres Niveles: Básico, Intermedio y Avanzado
+### Laboratorio 07: SQL en Tres Niveles: Básico, Intermedio y Avanzado
 
 **Nivel:** Progresivo (tres módulos independientes de 60 minutos cada uno)  
 **Duración total estimada:** 180 minutos (sesiones modulares)  
@@ -16,7 +16,7 @@
 
 ---
 
-## Fundamentación Pedagógica
+#### Fundamentación Pedagógica
 
 Este laboratorio se estructura bajo un enfoque mayéutico: el conocimiento no se transmite como instrucción directa, sino que se construye mediante preguntas guía que inducen al estudiante a formular hipótesis, contrastar resultados y reflexionar sobre los principios subyacentes. Cada ejercicio depende conceptualmente del anterior, reforzando el aprendizaje mediante la reutilización deliberada de estructuras sintácticas en contextos de creciente complejidad.
 
@@ -25,23 +25,23 @@ El progreso escalonado responde a tres principios:
 2. **Extensión:** La nueva complejidad se introduce como variación controlada de lo ya dominado.
 3. **Consolidación:** La reflexión posterior exige articular lo ejecutado con los fundamentos teóricos del modelo relacional.
 
-# NIVEL BÁSICO: Fundamentos de Proyección, Filtrado y Agregación
+### NIVEL BÁSICO: Fundamentos de Proyección, Filtrado y Agregación
 **Duración:** 60 minutos
 
-## Objetivo Específico
+#### Objetivo Específico
 Al concluir este módulo, el estudiante será capaz de formular consultas SQL elementales que proyecten columnas, filtren tuplas mediante predicados booleanos, ordenen resultados y calculen métricas agregadas, comprendiendo el orden lógico de evaluación de las cláusulas fundamentales.
 
-## Preguntas de Activación Cognitiva (5 min)
+#### Preguntas de Activación Cognitiva (5 min)
 Antes de ejecutar cualquier instrucción, responda brevemente:
 1. ¿Qué diferencia existe entre seleccionar "todas las columnas" mediante `SELECT *` y proyectar únicamente las columnas necesarias?
 2. Si una consulta incluye `WHERE`, `GROUP BY` y `ORDER BY`, ¿en qué orden lógico se evalúan estas cláusulas? Fundamente su respuesta.
 3. ¿Por qué cree que `LIMIT` se aplica al final del procesamiento de una consulta?
 
-## Fase 1: Conexión y Primera Proyección (10 min)
+#### Fase 1: Conexión y Primera Proyección (10 min)
 
 **Propósito:** Establecer comunicación con el sistema gestor y ejecutar la consulta mínima que recupera información.
 
-### Instrucciones Guiadas
+##### Instrucciones Guiadas
 1. Conéctese al cliente interactivo:
    ```bash
    psql -h localhost -U alumno -d pagila
@@ -62,11 +62,11 @@ Antes de ejecutar cualquier instrucción, responda brevemente:
 **Pregunta de reflexión posterior:**
 - ¿Qué ocurriría si omitiera la cláusula `LIMIT` en una tabla con miles de registros? ¿Cómo afecta esto la experiencia de exploración?
 
-## Fase 2: Filtrado Lógico y Ordenamiento (15 min)
+#### Fase 2: Filtrado Lógico y Ordenamiento (15 min)
 
 **Propósito:** Restringir el conjunto de resultados mediante condiciones y modificar su presentación.
 
-### Instrucciones Progresivas
+##### Instrucciones Progresivas
 1. Partiendo de la consulta anterior, ¿cómo modificaría la instrucción para mostrar únicamente películas con tarifa de renta superior a 4.99?
    ```sql
    SELECT title, rental_rate 
@@ -98,11 +98,11 @@ Antes de ejecutar cualquier instrucción, responda brevemente:
 - ¿Por qué `WHERE` se evalúa antes de `ORDER BY`? ¿Qué implicación tiene esto en el rendimiento de la consulta?
 - ¿En qué caso práctico utilizaría `ILIKE` en lugar de `LIKE`? ¿Existe un costo asociado?
 
-## Fase 3: Agregación y Agrupamiento (15 min)
+#### Fase 3: Agregación y Agrupamiento (15 min)
 
 **Propósito:** Calcular métricas resumen y segmentarlas por categorías lógicas.
 
-### Instrucciones Dependientes
+##### Instrucciones Dependientes
 1. Utilizando lo aprendido sobre proyección, ¿cómo calcularía el número total de películas, su duración promedio y el rango de tarifas?
    ```sql
    SELECT 
@@ -134,11 +134,11 @@ Antes de ejecutar cualquier instrucción, responda brevemente:
 - ¿Cuál es la diferencia semántica entre filtrar con `WHERE` y filtrar con `HAVING`? Ilustre con un ejemplo de este ejercicio.
 - Si omitiera `GROUP BY` en la segunda consulta, ¿qué error esperaría que retornara PostgreSQL? ¿Por qué?
 
-## Fase 4: Primera Unión Relacional (15 min)
+#### Fase 4: Primera Unión Relacional (15 min)
 
 **Propósito:** Combinar información distribuida en dos relaciones mediante claves de vinculación.
 
-### Instrucciones Guiadas por Preguntas
+##### Instrucciones Guiadas por Preguntas
 1. Observe la estructura de `film` y `language`. ¿Qué columna cree que permite relacionar ambas tablas? Verifique con `\d film` y `\d language`.
 
 2. Formule una hipótesis: ¿Cómo recuperaría el título de cada película junto con el nombre de su idioma original?
@@ -163,9 +163,9 @@ Antes de ejecutar cualquier instrucción, responda brevemente:
 **Pregunta de síntesis:**
 - Si una consulta `JOIN` devuelve más filas de las esperadas, ¿qué patrón relacional (uno-a-muchos, muchos-a-muchos) podría estar generando este efecto? Fundamente con un ejemplo del esquema `pagila`.
 
-## Fase 5: Validación y Cierre (5 min)
+#### Fase 5: Validación y Cierre (5 min)
 
-### Consulta Integradora
+##### Consulta Integradora
 Ejecute la siguiente instrucción y explique, línea por línea, el propósito de cada cláusula:
 ```sql
 SELECT 
@@ -175,12 +175,12 @@ FROM film
 WHERE rating = 'PG-13' AND length > 120;
 ```
 
-### Reflexión Final (responder por escrito)
+##### Reflexión Final (responder por escrito)
 1. ¿Por qué el orden lógico de evaluación de una consulta SQL es: `FROM` -> `WHERE` -> `GROUP BY` -> `HAVING` -> `SELECT` -> `ORDER BY` -> `LIMIT`?
 2. Si tuviera que explicar a un compañero la diferencia entre `COUNT(*)` y `COUNT(columna)`, ¿qué ejemplo utilizaría?
 3. ¿Qué ventaja ofrece usar alias de tabla (`f`, `l`, `c`) en consultas con múltiples uniones?
 
-## Entregable del Nivel Básico
+#### Entregable del Nivel Básico
 - Archivo `<matricula>_lab07_nivel_basico.sql` con las 10 consultas ejecutadas, comentadas explicando el propósito de cada cláusula.
 - Capturas de pantalla de las salidas de las consultas de las fases 3.3 y 4.2.
 - Respuestas fundamentadas a las preguntas de reflexión (máx. 100 palabras cada una).
@@ -189,23 +189,23 @@ WHERE rating = 'PG-13' AND length > 120;
 
 ---
 
-# NIVEL INTERMEDIO: Subconsultas, Operaciones de Conjunto y Funciones de Ventana
+### NIVEL INTERMEDIO: Subconsultas, Operaciones de Conjunto y Funciones de Ventana
 **Duración:** 60 minutos
 
-## Objetivo Específico
+#### Objetivo Específico
 Al concluir este módulo, el estudiante será capaz de formular consultas que empleen subconsultas correlacionadas, operaciones de conjunto y funciones de ventana, comprendiendo cómo estas extensiones amplían la expresividad del álgebra relacional sin violar sus principios fundamentales.
 
-## Preguntas de Activación Cognitiva (5 min)
+#### Preguntas de Activación Cognitiva (5 min)
 Recupere conocimientos del nivel básico:
 1. ¿Cómo localizaría películas cuya tarifa exceda el promedio global utilizando únicamente lo aprendido hasta ahora?
 2. ¿Qué limitación identifica en el enfoque anterior que justifique el uso de subconsultas?
 3. Si deseara calcular un total acumulado por cliente, ¿por qué `GROUP BY` no sería suficiente?
 
-## Fase 1: Subconsultas – Expresividad mediante Anidamiento (15 min)
+#### Fase 1: Subconsultas – Expresividad mediante Anidamiento (15 min)
 
 **Propósito:** Comprender cómo las subconsultas permiten encapsular lógica de filtrado y cálculo.
 
-### Instrucciones Progresivas
+##### Instrucciones Progresivas
 1. Partiendo de su respuesta a la pregunta de activación, formule la consulta que localice películas con tarifa superior al promedio:
    ```sql
    SELECT title, rental_rate 
@@ -242,11 +242,11 @@ Recupere conocimientos del nivel básico:
    ```
    **Pregunta de rendimiento:** ¿Por qué las subconsultas correlacionadas pueden impactar negativamente el tiempo de ejecución? ¿Qué alternativa podría optimizar esta lógica?
 
-## Fase 2: Operaciones de Conjunto y Uniones Avanzadas (10 min)
+#### Fase 2: Operaciones de Conjunto y Uniones Avanzadas (10 min)
 
 **Propósito:** Aplicar álgebra de conjuntos y explorar uniones que preservan filas no coincidentes.
 
-### Instrucciones Dependientes
+##### Instrucciones Dependientes
 1. Utilizando `LEFT JOIN`, liste todas las películas y su cantidad de copias en inventario, incluyendo aquellas sin stock. ¿Por qué `INNER JOIN` no sería adecuado aquí?
    ```sql
    SELECT f.title, COUNT(i.inventory_id) AS unidades_stock
@@ -285,11 +285,11 @@ Recupere conocimientos del nivel básico:
 **Pregunta de síntesis:**
 - ¿Qué requisitos de compatibilidad deben cumplir las consultas combinadas con `UNION`, `INTERSECT` o `EXCEPT`? ¿Por qué existe esta restricción?
 
-## Fase 3: Funciones de Ventana – Análisis sin Colapso de Filas (15 min)
+#### Fase 3: Funciones de Ventana – Análisis sin Colapso de Filas (15 min)
 
 **Propósito:** Introducir cálculos analíticos que preservan la granularidad de cada tupla.
 
-### Instrucciones Guiadas
+##### Instrucciones Guiadas
 1. Clasifique películas por tarifa dentro de cada clasificación MPAA. ¿Cómo calcularía un ranking sin agrupar ni perder detalle?
    ```sql
    SELECT 
@@ -329,11 +329,11 @@ Recupere conocimientos del nivel básico:
 **Pregunta de reflexión crítica:**
 - ¿Por qué las funciones de ventana no reemplazan a `GROUP BY`, sino que lo complementan? Proporcione un escenario donde ambas sean necesarias en la misma consulta.
 
-## Fase 4: Control Transaccional Básico (15 min)
+#### Fase 4: Control Transaccional Básico (15 min)
 
 **Propósito:** Ejecutar modificaciones atómicas dentro de bloques controlados.
 
-### Instrucciones con Puntos de Verificación
+##### Instrucciones con Puntos de Verificación
 *Nota de seguridad: Todas las modificaciones se realizan sobre tablas temporales y se revierten.*
 
 1. Inicie una transacción y cree una tabla temporal para registro de auditoría. ¿Qué instrucción garantiza que los cambios no sean permanentes hasta confirmación explícita?
@@ -371,9 +371,9 @@ Recupere conocimientos del nivel básico:
 **Pregunta de fundamentación teórica:**
 - ¿Qué propiedad ACID garantiza que, ante un fallo durante `COMMIT`, los datos no queden en estado inconsistente? ¿Qué mecanismo de PostgreSQL implementa esta garantía?
 
-## Fase 5: Validación y Cierre (5 min)
+#### Fase 5: Validación y Cierre (5 min)
 
-### Consulta Integradora
+##### Consulta Integradora
 Ejecute y explique la siguiente consulta que combina subconsulta, ventana y filtro:
 ```sql
 WITH ranked_payments AS (
@@ -389,12 +389,12 @@ ORDER BY amount DESC
 LIMIT 5;
 ```
 
-### Reflexión Final
+##### Reflexión Final
 1. ¿Por qué una expresión de tabla común (CTE) mejora la legibilidad frente a subconsultas anidadas profundas?
 2. Si `EXPLAIN ANALYZE` muestra un `Seq Scan` en una columna frecuentemente filtrada, ¿qué acción de optimización consideraría?
 3. ¿Cómo garantiza el principio de cierre relacional que el resultado de una consulta con funciones de ventana siga siendo una relación válida?
 
-## Entregable del Nivel Intermedio
+#### Entregable del Nivel Intermedio
 - Archivo `<matr'icula>_lab07_nivel_intermedio.sql` con las 12 consultas ejecutadas, comentadas explicando el rol de cada cláusula avanzada.
 - Capturas de pantalla de las salidas de las consultas 1.3, 3.2 y 4.4.
 - Respuestas fundamentadas a las preguntas de reflexión (máx. 120 palabras cada una).
@@ -403,27 +403,27 @@ LIMIT 5;
 
 ---
 
-# NIVEL AVANZADO: CTEs, Funciones Analíticas, DML Transaccional y Optimización
+### NIVEL AVANZADO: CTEs, Funciones Analíticas, DML Transaccional y Optimización
 **Duración:** 60 minutos
 
-## Objetivo Específico
+#### Objetivo Específico
 Al concluir este módulo, el estudiante será capaz de diseñar pipelines de consulta complejos mediante CTEs, aplicar funciones de ventana analíticas con marcos explícitos, gestionar actualizaciones atómicas con cláusulas `RETURNING` y `ON CONFLICT`, e interpretar planes de ejecución para fundamentar decisiones de optimización.
 
 >Nota:
 > Una **Expresión de Tabla Común** (del inglés **Common Table Expression**, **CTE**) es una construcción sintáctica de SQL que permite definir un resultado temporal con nombre, el cual puede ser referenciado dentro de una consulta SELECT, INSERT, UPDATE, DELETE o MERGE. Su declaración se realiza mediante la cláusula WITH, previa a la sentencia principal.
 > Según Date (2019), las CTEs materializan el principio de cierre relacional: el resultado de toda consulta es una relación, y por tanto puede servir como operando de otra consulta. Las CTEs hacen explícita esta propiedad mediante una sintaxis que favorece la legibilidad y la descomposición lógica de problemas complejos.
 
-## Preguntas de Activación Cognitiva (5 min)
+#### Preguntas de Activación Cognitiva (5 min)
 Recupere y conecte conocimientos previos:
 1. ¿Cómo estructuraría una consulta que requiera dos niveles de agregación (por tienda y por mes) sin anidamiento excesivo?
 2. Si deseara calcular un promedio móvil de 7 días, ¿por qué una función de ventana con marco explícito sería preferible a una subconsulta correlacionada?
 3. ¿Qué mecanismo de PostgreSQL permitiría insertar o actualizar un registro en una sola instrucción, evitando condiciones de carrera?
 
-## Fase 1: CTEs – Pipelines Lógicos y Descomposición de Problemas (15 min)
+#### Fase 1: CTEs – Pipelines Lógicos y Descomposición de Problemas (15 min)
 
 **Propósito:** Utilizar `WITH` para estructurar consultas complejas en bloques semánticos reutilizables.
 
-### Instrucciones Progresivas
+##### Instrucciones Progresivas
 1. Analice la rentabilidad por tienda. ¿Cómo descompondría este problema en dos etapas: cálculo de ingresos y ranking posterior?
    ```sql
    WITH store_revenue AS (
@@ -471,11 +471,11 @@ Recupere y conecte conocimientos previos:
    ```
    **Pregunta de optimización:** ¿En qué circunstancias el optimizador de PostgreSQL podría "inlinear" un CTE para evitar materialización intermedia?
 
-## Fase 2: Funciones de Ventana Avanzadas – Marcos Explícitos y Segmentación (15 min)
+#### Fase 2: Funciones de Ventana Avanzadas – Marcos Explícitos y Segmentación (15 min)
 
 **Propósito:** Extender el análisis secuencial y distribucional mediante operadores de ventana con control preciso del marco de cálculo.
 
-### Instrucciones Dependientes
+##### Instrucciones Dependientes
 1. Analice la brecha temporal entre pagos consecutivos de un cliente. ¿Cómo accedería simultáneamente al pago anterior y siguiente?
    ```sql
    SELECT 
@@ -526,11 +526,11 @@ Recupere y conecte conocimientos previos:
 **Pregunta de fundamentación teórica:**
 - ¿Por qué la cláusula `ROWS BETWEEN` es crucial para cálculos de promedios móviles? ¿Qué ocurriría si se omitiera y se usara el marco por defecto?
 
-## Fase 3: DML Transaccional Avanzado – UPSERT y Control de Concurrencia (15 min)
+#### Fase 3: DML Transaccional Avanzado – UPSERT y Control de Concurrencia (15 min)
 
 **Propósito:** Ejecutar modificaciones atómicas con manejo explícito de conflictos y retorno de metadatos.
 
-### Instrucciones con Puntos de Decisión
+##### Instrucciones con Puntos de Decisión
 *Nota de seguridad: Todas las operaciones se realizan sobre tablas temporales o se revierten.*
 
 1. Inserte nuevos clientes o actualice sus datos si ya existen. ¿Qué cláusula evitaría una verificación previa en la aplicación?
@@ -577,11 +577,11 @@ Recupere y conecte conocimientos previos:
 **Pregunta de reflexión crítica:**
 - Si un `UPSERT` falla por conflicto de concurrencia (serialización), ¿qué patrón de reintento con retroceso exponencial implementaría en una aplicación productiva?
 
-## Fase 4: Planes de Ejecución – Conciencia de Optimización (10 min)
+#### Fase 4: Planes de Ejecución – Conciencia de Optimización (10 min)
 
 **Propósito:** Interpretar `EXPLAIN (ANALYZE, BUFFERS)` para identificar cuellos de botella y comprender la transformación de consultas declarativas en planes físicos.
 
-### Instrucciones Guiadas por Preguntas
+##### Instrucciones Guiadas por Preguntas
 1. Analice el plan de una consulta que une tres tablas con filtro por apellido. ¿Qué estrategia de unión selecciona el optimizador y por qué?
    ```sql
    EXPLAIN (ANALYZE, BUFFERS) 
@@ -613,9 +613,9 @@ Recupere y conecte conocimientos previos:
 **Pregunta de síntesis teórica:**
 - Date (2019) afirma que "la independencia física depende de que el optimizador pueda transformar equivalentes algebraicos sin alterar semántica". ¿Cómo se manifiesta este principio en la diferencia entre una consulta escrita por un humano y el plan físico generado por PostgreSQL?
 
-## Fase 5: Validación Integradora y Reflexión Final (5 min)
+#### Fase 5: Validación Integradora y Reflexión Final (5 min)
 
-### Consulta de Síntesis
+##### Consulta de Síntesis
 Ejecute y explique la siguiente consulta que combina CTE, ventana y análisis temporal:
 ```sql
 WITH monthly_store AS (
@@ -637,12 +637,12 @@ WHERE mes >= '2007-03-01' AND mes < '2007-06-01'
 ORDER BY store_id, mes;
 ```
 
-### Reflexión Final del Laboratorio Completo
+##### Reflexión Final del Laboratorio Completo
 1. ¿Cómo garantiza el principio de cierre relacional que un CTE pueda alimentarse a otro sin violar la independencia lógica entre niveles de abstracción?
 2. Si `EXPLAIN ANALYZE` ejecuta la consulta, ¿qué implicaciones tiene esto en entornos productivos con tablas de gran volumen? ¿Qué precauciones tomaría?
 3. ¿Qué mecanismo de control de concurrencia multiversión (MVCC) de PostgreSQL previene lecturas sucias durante operaciones `UPSERT` simultáneas? ¿Cómo se refleja esto en el sistema de identificadores de transacción (`xmin`)?
 
-## Entregable del Nivel Avanzado
+#### Entregable del Nivel Avanzado
 - Archivo `<matricula>_lab07_nivel_avanzado.sql` con las 8 consultas ejecutadas, comentadas explicando el rol de cada cláusula avanzada.
 - Capturas de pantalla de las salidas de las consultas 1.1, 2.2 y 3.1.
 - Respuestas fundamentadas a las preguntas de reflexión final (máx. 120 palabras cada una).
@@ -651,7 +651,7 @@ ORDER BY store_id, mes;
 
 ---
 
-## Rúbrica de Evaluación Unificada (aplicable a los tres niveles)
+#### Rúbrica de Evaluación Unificada (aplicable a los tres niveles)
 
 | Criterio | Ponderación | Indicadores de Desempeño |
 |----------|-------------|-------------------------|
@@ -663,7 +663,7 @@ ORDER BY store_id, mes;
 
 ---
 
-## Consideraciones de Seguridad y Buenas Prácticas
+#### Consideraciones de Seguridad y Buenas Prácticas
 
 - Todas las consultas de los niveles básico e intermedio son de solo lectura (`SELECT`). Las operaciones de escritura del nivel avanzado se ejecutan dentro de transacciones explícitas y se aíslan en tablas temporales o se revierten. **No se modifican tablas base permanentemente en entornos académicos.**
 - Evite el uso de `SELECT *` en consultas productivas; proyecte únicamente las columnas necesarias para reducir consumo de ancho de banda y memoria.
@@ -673,10 +673,10 @@ ORDER BY store_id, mes;
 
 ---
 
-## Referencias Bibliográficas
+#### Referencias Bibliográficas
 
+- devrimgunduz. (2026). *Pagila - Sample Database for PostgreSQL*. GitHub. https://github.com/devrimgunduz/pagila
 - Date, C. J. (2019). *Database Design and Relational Theory: Normal Forms and All That Jazz* (2ª ed.). Apress.
 - Mata-Toledo, R. A., & Cushman, P. K. (2000). *Schaum's Outline of Fundamentals of Relational Databases*. McGraw-Hill.
-- PostgreSQL Global Development Group. (2026). *PostgreSQL 18 Documentation: Query Syntax, Window Functions, Transaction Control, EXPLAIN*. https://www.postgresql.org/docs/18/
-- devrimgunduz. (2026). *Pagila - Sample Database for PostgreSQL*. GitHub. https://github.com/devrimgunduz/pagila
+- PostgreSQL Global Development Group. (2026). *PostgreSQL 18 Documentation: Query Syntax, Window Functions, Transaction Control, EXPLAIN*. <https://www.postgresql.org/docs/18/>
 
