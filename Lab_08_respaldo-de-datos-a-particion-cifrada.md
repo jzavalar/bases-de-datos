@@ -20,7 +20,7 @@ El enfoque pedagógico prioriza la comprensión causal de cada intervención té
 | **Partición destino** | `/dev/sda4` (espacio sin formatear, ~674 GiB) |
 | **Herramientas principales** | `gparted`, `cryptsetup`, `lsblk`, `dracut`, `rsync`, `tmux`, `systemd` |
 
-> **Nota de diseño:** El laboratorio parte de la premisa de un disco único que alberga el sistema operativo y requiere la creación de un volumen dedicado para respaldos. Esta configuración es habitual en equipos de laboratorio o estaciones de trabajo personales, donde se busca optimizar el medio sin depender de dispositivos externos ni infraestructura de red.
+> **Nota de diseño:** El laboratorio parte de la premisa de un disco único que alberga el sistema operativo y requiere la creación de un volumen dedicado para respaldos, dejando el espacio para la instalación o reinstalación del sistema operativo Fedora Linux. Esta configuración es habitual en equipos de laboratorio o estaciones de trabajo personales, donde se busca optimizar el medio sin depender de dispositivos externos ni infraestructura de red.
 
 #### III. Fase 1: Gestión y preparación del almacenamiento
 Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloque de almacenamiento crudo, libre de metadatos y sin intervención del sistema de archivos activo. GParted permite modificar la geometría del disco de manera segura, siempre que se respeten los protocolos de precaución.
