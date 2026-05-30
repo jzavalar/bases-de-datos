@@ -7,11 +7,13 @@
 ---
 
 #### I. Introducción
+
 En la administración contemporánea de sistemas Linux, la protección de la información no constituye un complemento opcional, sino un requisito estructural derivado de la exposición a fallos de hardware, errores operativos y vectores de acceso no autorizado. Este laboratorio presenta una aproximación sistemática y reproducible a la implementación de un volumen de respaldo cifrado mediante LUKS2, integrado al ciclo de arranque de Fedora y gestionado mediante herramientas nativas de línea de comandos. 
 
 El enfoque pedagógico prioriza la comprensión causal de cada intervención técnica: se explica no únicamente la sintaxis del comando, sino su posición dentro de la cadena de inicio del sistema, su impacto en la gestión de recursos y su relación con los mecanismos de seguridad del kernel. Asimismo, se incorpora el uso de `tmux` para garantizar la resiliencia de operaciones de larga duración, una práctica administrativa esencial en entornos donde las interrupciones de sesión, cortes de red o suspensiones del sistema son frecuentes. Al concluir este documento, el alumno habrá adquirido competencia técnica en cifrado de bloques, persistencia de configuración de almacenamiento y sincronización segura de datos, consolidando un flujo de trabajo aplicable directamente en contextos institucionales y académicos.
 
 #### II. Preparación del entorno de trabajo
+
 | Componente | Especificación |
 |------------|----------------|
 | **Sistema operativo** | Fedora Workstation (versión reciente) |
@@ -20,7 +22,8 @@ El enfoque pedagógico prioriza la comprensión causal de cada intervención té
 | **Partición destino** | `/dev/sda4` (espacio sin formatear, ~674 GiB) |
 | **Herramientas principales** | `gparted`, `cryptsetup`, `lsblk`, `dracut`, `rsync`, `tmux`, `systemd` |
 
-> **Nota de diseño:** El laboratorio parte de la premisa de un disco único que alberga el sistema operativo y requiere la creación de un volumen dedicado para respaldos, dejando el espacio para la instalación o reinstalación del sistema operativo Fedora Linux. Esta configuración es habitual en equipos de laboratorio o estaciones de trabajo personales, donde se busca optimizar el medio sin depender de dispositivos externos ni infraestructura de red.
+> **Nota de diseño:**
+> El laboratorio parte de la premisa de un disco único que alberga el sistema operativo y requiere la creación de un volumen dedicado para respaldos, dejando el espacio para la instalación o reinstalación del sistema operativo Fedora Linux. Esta configuración es habitual en equipos de laboratorio o estaciones de trabajo personales, donde se busca optimizar el medio sin depender de dispositivos externos ni infraestructura de red.
 
 #### III. Fase 1: Gestión y preparación del almacenamiento
 Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloque de almacenamiento crudo, libre de metadatos y sin intervención del sistema de archivos activo. GParted permite modificar la geometría del disco de manera segura, siempre que se respeten los protocolos de precaución.
