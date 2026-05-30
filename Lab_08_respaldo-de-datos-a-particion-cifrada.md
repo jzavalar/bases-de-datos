@@ -25,10 +25,12 @@ El enfoque pedagógico prioriza la comprensión causal de cada intervención té
 > **Nota de diseño:**  
 > El laboratorio parte de la premisa de un disco único que alberga el sistema operativo y requiere la creación de un volumen dedicado para respaldos, dejando el espacio para la instalación o reinstalación del sistema operativo Fedora Linux. Esta configuración es habitual en equipos de laboratorio o estaciones de trabajo personales, donde se busca optimizar el medio sin depender de dispositivos externos ni infraestructura de red.
 
-#### III. Fase 1: Gestión y preparación del almacenamiento
+#### III. Fase 1: Gestión y preparación del almacenamiento  
+
 Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloque de almacenamiento crudo, libre de metadatos y sin intervención del sistema de archivos activo. GParted permite modificar la geometría del disco de manera segura, siempre que se respeten los protocolos de precaución.
 
-> ⚠️ **Advertencia crítica:** Las operaciones de particionamiento alteran la tabla de particiones. Aunque GParted está diseñado para preservar datos existentes, una interrupción eléctrica o un cierre forzado durante el redimensionamiento puede corromper el sistema de archivos. **Se requiere un respaldo previo de toda información crítica antes de ejecutar este paso.**
+> ⚠️ **Advertencia crítica:**
+> Las operaciones de particionamiento alteran la tabla de particiones. Aunque GParted está diseñado para preservar datos existentes, una interrupción eléctrica o un cierre forzado durante el redimensionamiento puede corromper el sistema de archivos. **Se requiere un respaldo previo de toda información crítica antes de ejecutar este paso.**
 
 #### Procedimiento
 1. Ejecute `sudo gparted` desde un Live USB o desde la sesión instalada (evitando modificar la partición raíz activa).
