@@ -8,11 +8,15 @@
 
 #### I. Introducción
 
-En la administración contemporánea de sistemas Linux, la protección de la información no constituye un complemento opcional, sino un requisito estructural derivado de la exposición a fallos de hardware, errores operativos y vectores de acceso no autorizado. Este laboratorio presenta una aproximación sistemática y reproducible a la implementación de un volumen de respaldo cifrado mediante LUKS2, integrado al ciclo de arranque de Fedora y gestionado mediante herramientas nativas de línea de comandos. 
+En la administración contemporánea de sistemas Linux, la protección de la información no constituye un complemento opcional, sino un requisito estructural derivado de la exposición a fallos de hardware, errores operativos y vectores de acceso no autorizado. Este laboratorio presenta una aproximación sistemática y reproducible a la implementación de un volumen de respaldo cifrado mediante el estándar **Linux Unified Key Setup 2** (**LUKS2**), integrado al ciclo de arranque de Fedora y gestionado mediante herramientas nativas de línea de comandos. 
 
-El enfoque pedagógico prioriza la comprensión causal de cada intervención técnica: se explica no únicamente la sintaxis del comando, sino su posición dentro de la cadena de inicio del sistema, su impacto en la gestión de recursos y su relación con los mecanismos de seguridad del kernel. Asimismo, se incorpora el uso de `tmux` para garantizar la resiliencia de operaciones de larga duración, una práctica administrativa esencial en entornos donde las interrupciones de sesión, cortes de red o suspensiones del sistema son frecuentes. Al concluir este documento, el alumno habrá adquirido competencia técnica en cifrado de bloques, persistencia de configuración de almacenamiento y sincronización segura de datos, consolidando un flujo de trabajo aplicable directamente en contextos institucionales y académicos.
+El enfoque pedagógico prioriza la comprensión causal de cada intervención técnica: se explica no únicamente la sintaxis del comando, sino su posición dentro de la cadena de inicio del sistema, su impacto en la gestión de recursos y su relación con los mecanismos de seguridad del kernel. Asimismo, se incorpora el uso de `tmux` para garantizar la resiliencia de operaciones de larga duración, una práctica administrativa esencial en entornos donde las interrupciones de sesión, cortes de red o suspensiones del sistema son frecuentes. 
 
-#### II. Preparación del entorno de trabajo
+Al concluir este laboratorio, el alumno habrá adquirido competencia técnica en cifrado de bloques, persistencia de configuración de almacenamiento y sincronización segura de datos, consolidando un flujo de trabajo aplicable directamente en contextos institucionales y académicos.
+
+#### II. Entorno de trabajo
+
+El entorno requiere la disposición de un sistema operativo Fedora con un disco duro o de  estado sólido.
 
 | Componente | Especificación |
 |------------|----------------|
@@ -29,21 +33,22 @@ El enfoque pedagógico prioriza la comprensión causal de cada intervención té
 
 Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloque de almacenamiento crudo, libre de metadatos y sin intervención del sistema de archivos activo. GParted permite modificar la geometría del disco de manera segura, siempre que se respeten los protocolos de precaución.
 
-> ⚠️ **Advertencia crítica:**
-> Las operaciones de particionamiento alteran la tabla de particiones. Aunque GParted está diseñado para preservar datos existentes, una interrupción eléctrica o un cierre forzado durante el redimensionamiento puede corromper el sistema de archivos. **Se requiere un respaldo previo de toda información crítica antes de ejecutar este paso.**
+> **Advertencia crítica:**
+> Las operaciones de particionamiento alteran la tabla de particiones. Aunque la aplicación GParted, en Gnome, está diseñada para preservar datos existentes, una interrupción eléctrica o un cierre forzado durante el redimensionamiento puede corromper el sistema de archivos.
+> **Se requiere un respaldo previo de toda información crítica antes de ejecutar este paso.**
 
-#### Procedimiento
+#### 1. Procedimiento
 
-1. Ejecute `sudo gparted` desde un Live USB o desde la sesión instalada (evitando modificar la partición raíz activa).
+1. Ejecute `sudo gparted` desde la sesión instalada o desde un Live USB (evitando modificar la partición raíz activa).
 2. Seleccione `/dev/sda` en el menú superior derecho.
-3. Si es necesario liberar espacio, haga clic derecho sobre la partición adyacente → **Redimensionar/Mover**. Ajuste el tamaño para dejar ~690 101 MiB libres.
+3. Libere espacio, haciendo click derecho sobre la partición adyacente → **Redimensionar/Mover**. Ajuste el tamaño para dejar ~690 101 MiB libres, suficiente para realizar el respaldo de datos completo (como en este caso) o de una dimensión más pequeña, por ejemplo, de 4 096 MiB, para realizar una demostración. 
 4. En el espacio no asignado, haga clic derecho → **Nuevo**. Configure:
-   - **Sistema de archivos:** `unformatted`
+   - **Sistema de archivos:** `unformatted` (**indispensable**)
    - **Etiqueta:** `datos`
    - **Alinear a:** `MiB` (garantiza compatibilidad óptima con SSD)
 5. Presione **✓ Aplicar** y espere la finalización sin interrupciones.
 
-#### Verificación inicial
+#### 2. Verificación inicial
 
 ```bash
 $ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/sda
@@ -58,12 +63,12 @@ sda                                   931.5G
 └─sda4                                673.9G                    
 ```
 
-**Interpretación:**  
-La ausencia de `FSTYPE` y de punto de montaje en `/dev/sda4` confirma que se trata de un bloque de almacenamiento sin estructura lógica, condición ideal para la inicialización criptográfica.
+> **Interpretación:**  
+> La ausencia de `FSTYPE` y de punto de montaje en `/dev/sda4` confirma que se trata de un bloque de almacenamiento sin estructura lógica, condición ideal para la inicialización criptográfica.
 
 #### IV. Fase 2: Implementación del cifrado LUKS2 y sistema de archivos
 
-LUKS (Linux Unified Key Setup) estandariza el cifrado de bloques en Linux. La versión 2 introduce `argon2id` para la derivación de claves (resistente a ataques por fuerza bruta con GPU) y `aes-xts-plain64` como modo de cifrado por defecto. Es fundamental comprender que LUKS no cifra los datos directamente, sino que protege una *clave maestra* almacenada en la cabecera del volumen; la frase de contraseña que ingresa el usuario sirve únicamente para desbloquear dicha clave.
+LUKS (Linux Unified Key Setup) estandariza el cifrado de bloques en Linux. La versión 2 introduce `argon2id` para la derivación de claves (resistente a ataques por fuerza bruta con GPU) y `aes-xts-plain64` como modo de cifrado por defecto. Es fundamental comprender que *LUKS no cifra los datos directamente*, sino que protege una *clave maestra* almacenada en la cabecera del volumen; la frase contraseña que ingresa el usuario sirve únicamente para desbloquear dicha clave.
 
 #### 1. Inicialización del contenedor LUKS2
 
@@ -79,6 +84,9 @@ Introduzca la frase contraseña de /dev/sda4:
 Verifique la frase contraseña: 
 ```
 
+> **Advertencia:**
+> Guarde y recuerde muy bien la **frase contraseña** ya que si la píerde, será **imposible** abrir el volumen encriptado.
+
 #### 2. Apertura del volumen y creación del mapeador
 
 Un dispositivo LUKS cerrado es ilegible para el sistema. `luksOpen` descifra la clave maestra en memoria RAM y expone un dispositivo virtual en `/dev/mapper/`. Este mapeador actúa como un filtro transparente: todo dato escrito se cifra antes de alcanzar el disco físico; todo dato leído se descifra antes de llegar a la aplicación.
@@ -93,7 +101,7 @@ $ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT | grep -E "sda4|datos"
 
 #### 3. Formateo del sistema de archivos `ext4`
 
-Se formatea `/dev/mapper/datos`, **no** `/dev/sda4`. `ext4` se selecciona por su estabilidad, bajo consumo de memoria y compatibilidad probada con operaciones `discard` (TRIM) en SSD.
+Se formatea `/dev/mapper/datos`, no `/dev/sda4`, con us sistema de archivos  `ext4` por su estabilidad, bajo consumo de memoria y compatibilidad probada con operaciones `discard` (TRIM) en el disco de estado sólido (SSD).
 
 ```bash
 $ sudo mkfs.ext4 -L datos_vol /dev/mapper/datos
@@ -287,16 +295,15 @@ El esquema resultante cumple con los principios de confidencialidad (cifrado LUK
 
 #### X. Referencias
 
-Anónimo (2025, mayo 22). ncriptación de disco completo con LUKS. <https://linuxmind.dev/es/2025/05/22/encriptacion-de-disco-completo-con-luks/>
+Anónimo. (2024). Capítulo 8. Cifrado de dispositivos de bloque mediante LUKS In *Red Hat Enterprise Linux 8: Seguridad de Red Hat Enterprise Linux 8*. Red Hat. <https://docs.redhat.com/es/documentation/red_hat_enterprise_linux/8/html-single/security_hardening/index#encrypting-block-devices-using-luks_security-hardening>
 
-Anónimo (2025, Sep 09). cryptsetup(8) — Linux manual page. <https://www.man7.org/linux/man-pages/man8/cryptsetup.8.html>
+Anónimo (2025, mayo 22). Encriptación de disco completo con LUKS. <https://linuxmind.dev/es/2025/05/22/encriptacion-de-disco-completo-con-luks/>
 
-Anónimo. (2026, May 8). *rsync -⁠ a fast, versatile, remote (and local) file-copying tool*. <https://download.samba.org/pub/rsync/rsync.html>
+Anónimo. (2025). cryptsetup(8), systemd-cryptsetup-generator(8), crypttab(5) y fstab(5) manual pages. <https://manpages.org/cryptsetup/8>, <https://manpages.org/systemd-cryptsetup-generator/8>, <https://es.manpages.org/crypttab/5>, <https://es.manpages.org/fstab/5>
 
-Anónimo. (2025). *systemd-cryptsetup-generator(8), crypttab(5) and fstab(5) manual pages*. <https://manpages.org/systemd-cryptsetup-generator/8>
+Anónimo. (2026, May 8). *rsync -⁠ a fast, versatile, remote (and local) file-copying tool*. <https://manpages.org/rsync>, <https://rsync.samba.org/>
 
 Nicholas Marriott, N. (2025, Dec 22). *tmux: Terminal multiplexer documentation*. <https://github.com/tmux/tmux/wiki>
 
-Van Oort, H., & Linux storage community. (2024). *Linux Unified Key Setup (LUKS) specification and implementation guidelines*. <https://gitlab.com/cryptsetup/cryptsetup>
 
 Ziegler, M. (2025). *dracut: Initramfs infrastructure for modern Linux distributions*. https://dracut.wiki.kernel.org/
