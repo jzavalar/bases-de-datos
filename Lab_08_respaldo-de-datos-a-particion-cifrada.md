@@ -1,9 +1,8 @@
 ### Laboratorio 08. Respaldo de Datos a Partición Cifrada en Fedora
-
 **(Opcional, pero recomendado)**
 
 **Autor:** Dr. Jesús Zavala Ruiz\
-**Última modificación:** 30 de Mayo de 2026
+**Última modificación:** 31 de Mayo de 2026
 
 ------------------------------------------------------------------------
 
