@@ -206,7 +206,7 @@ drwxr-xr-x 3 alumno alumno 4096 may 29 14:17 /backup
 
 Para cerrar de forma segura un volumen cifrado en tu sistema Fedora, debe asegurarse que no esté en uso y evitar errores al intentar cerrarlo.
 
-**Paso 1: Verificar si el volumen está en uso**
+##### Paso 1: Verificar si el volumen está en uso
 
 Antes de desmontar o cerrar el volumen, asegúrese que ningún proceso esté accediendo a `/dev/mapper/datos`. Para ello, podemos usar los comandos `lsof` y `fuser`:
 
@@ -226,7 +226,7 @@ Nuevamente, no hay salida, confirmando que el volumen no está en uso activo.
 
 Estos comandos ayudan a detectar si algún proceso está accediendo al volumen. Si aparecieran procesos, deberán detenerse antes de continuar.
 
-**Paso 2: Verificar puntos de montaje**
+##### Paso 2: Verificar puntos de montaje
 
 El siguiente paso es comprobar si el volumen cifrado está montado en alguna ubicación del sistema. Ejecutamos:
 
@@ -237,7 +237,7 @@ $ mount | grep /dev/mapper/datos
 
 Esto indica que `/dev/mapper/datos` está montado en `/backup`. Para cerrar el volumen, primero debe desmontarlo.
 
-**Paso 3: Desmontar el volumen**
+##### Paso 3: Desmontar el volumen
 
 Se procede a desmontarlo con:
 
@@ -256,7 +256,7 @@ Como no aparece ninguna línea, se confirma que ya no está montado.
 > **Advertencia:** 
 > **No intente cerrar el volumen cifrado mientras está montado, porque eso puede causar errores o pérdida de datos.**
 
-**Paso 4: Cerrar el volumen cifrado**
+##### Paso 4: Cerrar el volumen cifrado
 
 Con el volumen desmontado, ahora sí puede cerrarlo de manera segura:
 
@@ -324,26 +324,26 @@ Luego, se podrás proceder con la restauración de la cabecera.
 > **Advertencia**:\
 > La operación de restauración de la cabecera del dispositivo destino la sobrescribe. Si se ejecuta sobre un **dispositivo incorrecto** o con un archivo de respaldo desactualizado, **los datos serán irrecuperables**. **Verifique tres veces el dispositivo y el archivo antes de proceder.**
 
-**1. Verificación previa a la restauración**
+##### 2.1. Verificación previa a la restauración
 
 ``` bash
-### 1. Verificar que el archivo de respaldo existe y tiene tamaño razonable (~16 MiB para LUKS2)
+##### 1. Verificar que el archivo de respaldo existe y tiene tamaño razonable (~16 MiB para LUKS2)
 $ ls -lh ~/luks-header-datos.img
 -rw------- 1 alumno alumno 16M may 29 14:20 /home/alumno/luks-header-datos.img
 
-### 2. Confirmar que el dispositivo destino es el esperado
+##### 2. Confirmar que el dispositivo destino es el esperado
 $ sudo blkid /dev/sda4
 /dev/sda4: PARTUUID="c607c2f0-fc0d-43e4-960d-ca538edfff6c"
 
-### 3. (Opcional) Inspeccionar metadatos del respaldo sin restaurar
+##### 3. (Opcional) Inspeccionar metadatos del respaldo sin restaurar
 $ sudo cryptsetup luksDump ~/luks-header-datos.img | head -20
 ```
 
-**2. Verificación de integridad y ejecución de la restauración**
+##### 2.2. Verificación de integridad y ejecución de la restauración
 
 Dado que la operación de restauración modifica irreversiblemente los metadatos del dispositivo, el procedimiento debe dividirse en dos etapas claramente diferenciadas: una **verificación no destructiva** del archivo de respaldo y la **ejecución controlada** de la sobrescritura.
 
-#### Paso A: Validación del respaldo con `luksDump` (solo lectura)
+##### Paso A: Validación del respaldo con `luksDump` (solo lectura)
 
 Antes de interactuar con el dispositivo físico, es imperativo confirmar que `~/luks-header-datos.img` contiene una cabecera LUKS2 válida, estructurada y coherente con los parámetros originales. El comando `luksDump` inspecciona el archivo en modo de solo lectura, sin alterar ni el respaldo ni el disco.
 
@@ -389,7 +389,7 @@ Keyslots:
 
 > **Nota de validación:** Si la salida inicia con `LUKS header information` y reporta `Version: 2`, el respaldo es estructuralmente íntegro. Si el archivo estuviera corrupto o no correspondiera a un contenedor LUKS, `cryptsetup` retornaría: `Device ~/luks-header-datos.img is not a valid LUKS device`.
 
-#### Paso B: Ejecución de la restauración (`luksHeaderRestore`)
+##### Paso B: Ejecución de la restauración (`luksHeaderRestore`)
 
 Una vez validado el respaldo, se procede a sobrescribir la cabecera del dispositivo físico. Este comando reemplaza los primeros ~16 MiB de `/dev/sda4` con el contenido binario del archivo de respaldo.
 
@@ -402,22 +402,22 @@ $ sudo cryptsetup luksHeaderRestore /dev/sda4 --header-backup-file ~/luks-header
 - **Salida silenciosa en éxito:** El comando no retorna mensajes en terminal si la operación finaliza correctamente. La ausencia de errores (`stderr`) constituye la confirmación de éxito.
 - **Irreversibilidad:** Tras la ejecución, la cabecera original del dispositivo queda sobrescrita. Si el archivo de respaldo corresponde a una configuración de claves distinta a la esperada, el volumen no podrá abrirse con la frase actual hasta que se restaure un respaldo coherente.
 
-#### Paso C: Validación post-restauración
+##### Paso C: Validación post-restauración
 
 Para certificar que la cabecera fue aplicada correctamente y que el volumen es nuevamente accesible:
 
 ```bash
-### 1. Verificar que el dispositivo reporta la cabecera restaurada
+##### 1. Verificar que el dispositivo reporta la cabecera restaurada
 $ sudo cryptsetup luksDump /dev/sda4 | grep -E "Version|Label|UUID"
 Version:       	2
 Label:         	datos
 UUID:          	54acac45-d8c9-4b6d-8cd3-9f7cefb39ca7
 
-### 2. Validar apertura con la frase de contraseña original
+##### 2. Validar apertura con la frase de contraseña original
 $ sudo cryptsetup luksOpen /dev/sda4 datos
 Introduzca la frase contraseña de /dev/sda4: 
 
-### 3. Confirmar montaje y disponibilidad de datos
+##### 3. Confirmar montaje y disponibilidad de datos
 $ sudo mount /dev/mapper/datos /backup
 $ ls /backup/respaldos_home/
 20260529
@@ -427,7 +427,7 @@ Esta secuencia garantiza que la recuperación de metadatos criptográficos se ej
 
 ##### 3. Validación post-restauración
 
-**1. Verificar que la cabecera fue restaurada correctamente:**
+##### 3.1. Verificar que la cabecera fue restaurada correctamente:
 
 ```bash
 $ sudo cryptsetup luksDump /dev/sda4 | grep -E "Version|Label"
@@ -435,7 +435,7 @@ Version:        2
 Label:          datos
 ``` 
 
-**2. Intentar abrir el volumen con la frase de contraseña original:**
+##### 3.2. Intentar abrir el volumen con la frase de contraseña original:
 
 ```bash
 $ sudo cryptsetup luksOpen /dev/sda4 datos
@@ -444,7 +444,7 @@ Introduzca la frase contraseña de /dev/sda4:
 
 Como no hay salida, el dispositivo se abrió exitosamente. Si el mensaje fue `El dispositivo datos ya existe.` significa que ya está abierto. 
 
-**3. Confirmar montaje y acceso a datos**
+##### 3.3. Confirmar montaje y acceso a datos
 
 ```bash
 $ sudo mount /dev/mapper/datos /backup
@@ -486,11 +486,11 @@ Un respaldo de \~150 GiB puede extenderse entre 30 y 90 minutos. Si la terminal 
 ##### 1. Sesión resiliente con `tmux`
 
 ``` bash
-### 1. Crear y adjuntar una sesión persistente llamada "respaldo"
+##### 1. Crear y adjuntar una sesión persistente llamada "respaldo"
 $ tmux new-session -d -s respaldo
 $ tmux attach -t respaldo
 
-### 2. Dentro de tmux, preparar directorio y ejecutar rsync
+##### 2. Dentro de tmux, preparar directorio y ejecutar rsync
 $ BACKUP_DIR="/backup/respaldos_home/$(date +%Y%m%d)"
 $ sudo mkdir -p "$BACKUP_DIR"
 $ sudo rsync -aAXHv --progress \
@@ -614,7 +614,7 @@ El esquema resultante cumple con los principios de confidencialidad (cifrado LUK
 
 Su implementación en entornos académicos y organizacionales no solo protege la información sensible, sino que establece una base reproducible para la adopción de prácticas de ciberseguridad alineadas con estándares internacionales. Se recomienda complementar este flujo con políticas de retención automatizada, verificación de integridad mediante checksums y almacenamiento seguro de la frase de contraseña y la cabecera LUKS en medios externos seguros.
 
-#### XI. Referencias
+#### XII. Referencias
 
 cryptsetup project. (2025). *LUKS2 on-disk format specification* (Version 1.1.4). GitLab. <https://gitlab.com/cryptsetup/LUKS2-docs>
 
