@@ -39,7 +39,7 @@ Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloq
 ##### 1. Procedimiento de particionamiento
 
 1.  Ejecute `sudo gparted` desde la sesión instalada o desde un Live USB (evitando modificar la partición raíz activa).
-2.  Seleccione `/dev/sda` en el menú superior derecho.
+2.  Seleccione `/dev/sda` o `/dev/nvme0n1` (si es un disco de estado sólido) en el menú superior derecho.
 3.  Libere espacio haciendo clic derecho sobre la partición adyacente → **Redimensionar/Mover**. Ajuste el tamaño para dejar \~690 101 MiB libres, suficiente para realizar el respaldo de datos completo (como en este caso) o de una dimensión más pequeña, por ejemplo, de 4 096 MiB, si lo que quieres es realizar una demostración.
 4.  En el espacio no asignado, haga clic derecho → **Nuevo**. Configure:
     -   **Sistema de archivos:** `unformatted` (**indispensable**)
@@ -49,6 +49,7 @@ Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloq
 
 ##### 2. Verificación inicial
 
+Con disco duro:
 ``` bash
 $ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/sda
 NAME                                    SIZE FSTYPE      LABEL  MOUNTPOINT
@@ -62,14 +63,28 @@ sda                                   931.5G
 └─sda4                                673.9G                    
 ```
 
+Con disco de estado solido (cambie `/dev/sda` por `/dev/nvme0n1`):
+
+```
+$ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/nvme0n1
+NAME                                            SIZE FSTYPE      LABEL  MOUNTPOINT
+nvme0n1                                         1.8T                    
+├─nvme0n1p1                                     600M vfat               /boot/efi
+├─nvme0n1p2                                       1G ext4               /boot
+├─nvme0n1p3                                     1.1T crypto_LUKS        
+│ └─luks-9a376149-bbbf-4189-aa71-63bea40f4c73   1.1T btrfs       fedora /home
+└─nvme0n1p4                                   785.5G                    
+```
+
 > **Interpretación:**\
-> La ausencia de `FSTYPE` y de punto de montaje en `/dev/sda4` confirma que se trata de un bloque de almacenamiento sin estructura lógica, condición ideal para la inicialización criptográfica. Con el espacio preparado, se procede a aplicar la capa de cifrado que protegerá los datos del respaldo.
+> La ausencia de `FSTYPE` y de punto de montaje en `/dev/sda4` o en `/dev/nvme0n1` confirma que se trata de un bloque de almacenamiento sin estructura lógica, condición ideal para la inicialización criptográfica. Con el espacio preparado, se procede a aplicar la capa de cifrado que protegerá los datos del respaldo.
 
 #### IV. Fase 2: Implementación del cifrado LUKS2 y sistema de archivos
 
 LUKS (Linux Unified Key Setup) estandariza el cifrado de bloques en Linux. La versión 2 introduce `argon2id` para la derivación de claves (resistente a ataques por fuerza bruta con GPU) y `aes-xts-plain64` como modo de cifrado por defecto. Es fundamental comprender que **LUKS no cifra los datos directamente**, sino que protege una *clave maestra* almacenada en la cabecera del volumen; la frase contraseña que ingresa el usuario sirve únicamente para desbloquear dicha clave.
 
 ##### 1. Inicialización del contenedor LUKS2
+(cambie `/dev/sda4` por `/dev/nvme0n1p4`) 
 
 ``` bash
 $ sudo cryptsetup luksFormat --type luks2 --label datos /dev/sda4
