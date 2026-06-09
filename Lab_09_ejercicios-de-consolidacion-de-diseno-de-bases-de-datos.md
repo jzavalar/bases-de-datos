@@ -2,7 +2,7 @@
 ### Validación, Portabilidad e Ingeniería Inversa en el Diseño de Bases de Datos
 
 **Dr. Jesús Zavala Ruiz**
-Junio de 2026
+(Junio de 2026)
 
 ---
 
@@ -127,5 +127,8 @@ En mi opinión, estos ejercicios preparan al estudiante para los desafíos reale
 
 - Captain, F. A. (2015). *Six-step relational database design: A step by step approach to relational database design and development*. Fidel Captain.
 - Everest, G. C. (1976). Basic data structure models explained with a common example. In *Computing Systems 1976, Proceedings Fifth Texas Conference on Computing Systems* (pp. 39-46). IEEE Computer Society Publications Office.
-- MySQL. (2024). *Sakila Sample Database*. Retrieved from https://dev.mysql.com/doc/index-other.html
-- PostgreSQL. (2024). *PostgreSQL 16 Documentation*. Retrieved from https://www.postgresql.org/docs/16/
+- MySQL. (2024). *Sakila Sample Database*. Retrieved from <https://dev.mysql.com/doc/index-other.html>
+- PostgreSQL. (2024). *PostgreSQL 16 Documentation*. Retrieved from <https://www.postgresql.org/docs/16/>  
+- Zavala Ruiz, J. (2026, Junio). Metodología profesional de diseño de bases de datos: Estudio de Caso: Sistema de registro académico universitario. (draft). UEA Bases de Datos. <https://github.com/jzavalar/bases-de-datos/blob/main/Lectura_05_metodologia-de-diseno-de-bases-de-datos_estudio-de-caso.md> 
+
+**Dr. Jesús  
