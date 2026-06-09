@@ -5,13 +5,15 @@
 **Dr. Jesús Zavala Ruiz**
 Mayo de 2026
 
+---
+
 #### Introducción
 
 El **diseño de bases de datos** constituye, en mi opinión, mucho más que un mero ejercicio técnico de almacenamiento de información; representa la columna vertebral conceptual de cualquier aplicación moderna. Una estructura bien concebida no solo resguarda datos, sino que garantiza la integridad, la eficiencia operativa y la escalabilidad del sistema a lo largo del tiempo, formalizando parcialmente el conocimiento organizacional (el *orgware*, por así decirlo). En este ámbito, la metodología de diseño de bases de datos sistematizada por Fidel A. Captain (2015), como los Seis Pasos, se presenta no como una simple receta o un *framework* de moda (*management fad*), sino como una *práctica* rigurosa que ofrece un enfoque sistemático para transformar los requerimientos empresariales —esa construcción social de la realidad operativa— en un modelo relacional sólido.
 
 Esta metodología guía al diseñador de bases de datos mediante un proceso que, desde la lógica de Charles S. Peirce, podríamos calificar de abductivo: partimos de los "hechos sorprendentes" y las anomalías de los reportes actuales del cliente, para sugerir una hipótesis plausible que se materializa en el diagrama de Modelo Relacional (R-M). El proceso de normalización actúa como el marco teórico indispensable que guía el diseño de las bases de datos relacionales. La normalización no es solo una regla técnica; es el mecanismo de defensa contra la fragmentación lógica, asegurando que la visión del negocio se refleje con precisión y sin las redundancias que, de otro modo, convertirían a la base de datos en un auténtico Frankenstein.
 
-Dicho de otra manera, esta metodología estructura el **proceso de diseño de bases de datos** en tres fases fundamentales que bien podríamos calificar como un tránsito metodológico. La **primera fase** de **descubrimiento de identidades** (Pasos 1 y 2) se centra en la identidad del dominio: identifica las entidades de interés, asigna sus atributos atómicos y establece las relaciones unarias y binarias mediante una Matriz Entidad-Entidad. La **segunda fase**, de **modelado conceptual** (Pasos 3, 4 y 5), traduce estos hallazgos en un diagrama Entidad-Relación (E-R) simplificado que, tras la enumeración exhaustiva de afirmaciones de opcionalidad y cardinalidad, culmina en un *diagrama E-R* detallado. Este modelo conceptual captura fielmente *la visión del usuario y las reglas de negocio* institucionales. Finalmente, la **tercera fase** de **implementación lógica** (Paso 6) transforma el modelo conceptual en un *diagrama del Modelo Relacional* (M-R) con notación de Pata de Gallo (*Crow’s Foot*), resolviendo las relaciones complejas mediante tablas de unión y llaves foráneas para obtener un *esquema normalizado* y listo para su despliegue en cualquier Sistema Manejador de Bases de Datos Relacionales (RDBMS).
+Dicho de otra manera, esta metodología estructura el **proceso de diseño de bases de datos** en tres fases fundamentales que bien podríamos calificar como un tránsito metodológico. La **primera fase** de **descubrimiento de identidades** (Pasos 1 y 2) se centra en la identidad del dominio: identifica las entidades de interés, asigna sus atributos atómicos y establece las relaciones unarias y binarias mediante una Matriz Entidad-Entidad. La **segunda fase**, de **modelado conceptual** (Pasos 3, 4 y 5), traduce estos hallazgos en un diagrama Entidad-Relación (E-R) simplificado que, tras la enumeración exhaustiva de afirmaciones de opcionalidad y cardinalidad, culmina en un *diagrama E-R* detallado. Este modelo conceptual captura fielmente *la visión del usuario y las reglas de negocio* institucionales. Finalmente, la **tercera fase** de **implementación lógica** (Paso 6) transforma el modelo conceptual en un *diagrama del Modelo Relacional* (M-R) con notación de Pata de Gallo (*Crow's Foot*), resolviendo las relaciones complejas mediante tablas de unión y llaves foráneas para obtener un *esquema normalizado* y listo para su despliegue en cualquier Sistema Manejador de Bases de Datos Relacionales (RDBMS).
 
 El estudio de caso, retomado de Captain (2015), aborda el diseño de una base de datos para el departamento de registro de una universidad de tamaño mediano. La problemática central radica en la necesidad de gestionar, de manera integral, la programación semestral de clases, la asignación de docentes, la inscripción estudiantil y el control de accesos. Sin embargo, un aspecto fundamental que deseo destacar —y que a menudo se pasa por alto en los enfoques puramente tecnicistas— es la clara distinción entre *dos perfiles de interacción* con el sistema de información: los usuarios operativos y los usuarios de negocio.
 
@@ -20,6 +22,8 @@ Los **usuarios operativos** corresponden al personal administrativo y técnico r
 Por lo anterior, es plausible afirmar que esta separación conceptual permite estructurar la **arquitectura de la base de datos** de manera que refleje fielmente los distintos niveles de responsabilidad y acceso, evitando lo que en teoría de la organización llamaríamos "confusión de roles". A través de los Seis Pasos de la metodología de Captain, se modelará cada componente de manera independiente pero cohesiva, asegurando que las reglas de negocio, los flujos de acceso y los requisitos técnicos converjan en un diseño preciso, normalizado y listo para su implementación en producción, cumpliendo los objetivos organizacionales.
 
 #### Fase I: Descubrimiento de Entidades (Pasos 1 y 2)
+
+Antes de dibujar tablas, es imperativo comprender la naturaleza misma del negocio. Esta fase constituye un ejercicio de abducción: extraer del caos aparente de los reportes cotidianos los objetos tangibles que la organización "desea llevar el control de", para posteriormente mapear la praxeología de sus interacciones mediante la Matriz Entidad-Entidad.
 
 #### Paso 1: Descubrimiento de entidades y atributos
 
@@ -57,25 +61,25 @@ Al observar estos reportes, es evidente que la organización actual, particularm
 
 El primer filtro consiste en extraer del planteamiento del problema y de los insumos los **sustantivos** que representan objetos tangibles, persistentes y de interés directo. Por convención, los nombramos en plural para facilitar el manejo de relaciones en etapas posteriores.
 
-Tras analizar los requisitos y los reportes, identificamos siete **objetos** o **entidades de interés** claramente delimitados: `estudiantes`, `cursos`, `clases_programadas`, `docentes`, `usuarios`, `niveles_acceso`, `registros_actividad`.
+Tras analizar los requisitos y los reportes, identificamos siete **objetos** o **entidades de interés** claramente delimitados: `estudiantes`, `cursos`, `clases_programadas`, `docentes`, `usuarios`, `niveles_acceso` y `registros_actividad`.
 
 En esta primera iteración y, alineados con la visión inicial del cliente reflejada en los reportes, listamos los **atributos** de las entidades, tal como se perciben en un primer acercamiento:
 
-- **estudiantes:** `nombre_completo`, `correo_electronico`, `telefono`, `direccion`, `fecha_nacimiento`.
-- **cursos:** `codigo_curso`, `nombre_corto`, `nombre_largo`, `descripcion_curso`.
-- **clases_programadas:** `codigo_horario`, `seccion`, `dia`, `hora`, `ubicacion`, `periodo_o_semestre`, `nombre_profesor`, `lista_estudiantes`.
-- **docentes:** `nombre_completo`, `correo_electronico`, `telefono`, `direccion`, `acerca_de`.
-- **usuarios:** `cuenta`, `nombre_usuario`, `contrasena`, `activo`.
-- **niveles_acceso:** `codigo_nivel_acceso`, `nombre_corto`, `nombre_largo`, `descripcion_nivel_acceso`.
-- **registros_actividad:** `nombre_usuario`, `fecha_hora`, `tabla_afectada`, `llave_afectada`, `tipo_cambio`.
+- **estudiantes:** `nombre_completo`, `correo_electronico`, `telefono`, `direccion` y `fecha_nacimiento`.  
+- **cursos:** `codigo_curso`, `nombre_corto`, `nombre_largo` y `descripcion_curso`.  
+- **clases_programadas:** `codigo_horario`, `seccion`, `dia`, `hora`, `ubicacion`, `periodo_o_semestre`, `nombre_profesor` y `lista_estudiantes`.  
+- **docentes:** `nombre_completo`, `correo_electronico`, `telefono`, `direccion` y `acerca_de`.  
+- **usuarios:** `cuenta`, `nombre_usuario`, `contrasena` y `activo`.  
+- **niveles_acceso:** `codigo_nivel_acceso`, `nombre_corto`, `nombre_largo` y `descripcion_nivel_acceso`.  
+- **registros_actividad:** `nombre_usuario`, `fecha_hora`, `tabla_afectada`, `llave_afectada` y `tipo_cambio`.  
 
 Es crucial notar que, en esta primera iteración, **`semestres`** *no aparece como una entidad independiente*. ¿Por qué? Porque en la visión cruda del cliente (el Insumo A y B), el "Semestre Año-1 (2026-1)" es percibido simplemente como una etiqueta de texto o un filtro temporal adjunto a la clase programada, no como un objeto de negocio con su propia identidad, ciclo de vida y atributos (fechas de inicio y fin). Esta "ceguera" es sumamente común en las primeras etapas del levantamiento de requisitos.
 
-A partir de este punto y, como estándar de facto en el modelado de bases de datos, adoptamos la **notación *snake_case*** (minúsculas separadas por guiones bajos). En mi opinión, esta práctica responde a razones de compatibilidad nativa con motores de bases de datos (DBMS) y lenguajes de programación. Debe evitarse el uso de espacios, tildes, eñe o caracteres especiales que generan errores de codificación. Ilustrativamente, en lugar de usar "Nombre Completo" o "NombreCompleto", utilizamos `nombre_completo`; en lugar de "Fecha de Nacimiento", usamos `fecha_nacimiento`. Esto garantiza un mapeo controlado y una precisión semántica cuando el concepto se origina en español, recordándonos que el lenguaje que usamos para modelar termina por estructurar el pensamiento del sistema. En la etapa final, haremos una transformación lingüística del español al inglés para garantizar un mapeo con precisión semántica universal.
+A partir de este punto y, como estándar de facto en el modelado de bases de datos, adoptamos la **notación *snake_case*** (minúsculas separadas por guiones bajos), en lugar de camelCase (primera letra mayúscula). En mi opinión, esta práctica responde a razones de compatibilidad nativa con motores de bases de datos (DBMS) y lenguajes de programación. Debe evitarse el uso de espacios, tildes, acentos, eñe o caracteres especiales que generan errores de codificación, es decir, deben cumplir el estandar SQL92. Ilustrativamente, en lugar de usar "Nombre Completo" o "NombreCompleto", utilizamos `nombre_completo`; en lugar de "Fecha de Nacimiento", usamos `fecha_nacimiento`. Esto garantiza un mapeo controlado y una precisión semántica cuando el concepto se origina en español, recordándonos que el lenguaje que usamos para modelar termina por estructurar el pensamiento del sistema. En la etapa final, haremos una transformación lingüística del español al inglés para garantizar un mapeo con precisión semántica universal.
 
 En mi opinión, la revisión de esta primera iteración nos confronta invariablemente con lo que podríamos llamar las "trampas de la práctica cotidiana". Siguiendo los tips metodológicos que Captain nos advierte para no arrastrar inconsistencias a las fases subsecuentes, el diseñador debe mantenerse alerta ante tres síntomas clásicos de esta **"ceguera" inicial**: **primero**, los **atributos multivaluados o agrupados** (como `nombre_completo` o `direccion`), que no son más que una confusión donde múltiples propiedades se disfrazan de una sola, violando el principio de atomicidad; **segundo**, las **entidades ocultas** o no identificadas, aquellas que yacen subordinadas y confundidas con meros atributos de otras (como el "semestre" o el "periodo" incrustado como texto en la clase programada) y que requieren una abducción para emerger con identidad propia; y **tercero**, las **redundancias y dependencias** **funcionales cruzadas**, donde datos que pertenecen a un dominio (como el correo del profesor) son secuestrados por otro (la lista de grupo).
 
-Dicho de otra manera, estos hallazgos no son meros errores técnicos, sino el reflejo de cómo la organización ha normalizado el desorden ordenado en sus hojas de cálculo. Para transitar hacia la segunda iteración, no basta con reorganizar; es imperativo aplicar el bisturí de la Primera Forma Normal (1FN) y descomponer estas estructuras, garantizando que cada atributo sea estrictamente atómico y que cada entidad sea dueña de su propia esencia.
+Dicho de otra manera, estos hallazgos no son meros errores técnicos, sino el reflejo de cómo la organización ha normalizado el desorden ordenado en sus hojas de cálculo. Para transitar hacia la segunda iteración, no basta con reorganizar; es imperativo aplicar el bisturí de la Primera Forma Normal (1NF de *1st Normal Form*) y descomponer estas estructuras, garantizando que cada atributo sea estrictamente atómico y que cada entidad sea dueña de su propia esencia.
 
 ##### 1.2 Técnica de Refinamiento
 
@@ -83,44 +87,42 @@ Para transitar de la visión cruda de la primera iteración a una estructura dep
 
 Primero, preguntamos: ¿De qué, específica e independientemente, debe llevarse un registro? Segundo, descomponemos los requisitos y las anomalías de los reportes en oraciones con una estructura **Sujeto - Verbo - Complemento (Objeto)**. Es aquí donde el **razonamiento abductivo** propuesto por Charles S. Peirce opera como una "***intuición racional***" para resolver los hechos sorprendentes (las anomalías de los reportes):
 
-- El [departamento de registro académico] \<debe llevar el control de\> las [clases programadas], los [cursos] y [docentes]
-- Los [estudiantes] \<se inscriben en\> [clases programadas]
-- Los [cursos] \<se programan\> cada [semestre]
-- Los [docentes] \<son asignados\> a cada [clase programada]
-- La [aplicación] \<debe llevar el control\> de la [actividad de los usuarios]
+- El [departamento de registro académico] \<debe llevar el control de\> las [clases programadas], los [cursos] y [docentes]  
+- Los [estudiantes] \<se inscriben en\> [clases programadas]  
+- Los [cursos] \<se programan\> cada [semestre]  
+- Los [docentes] \<son asignados\> a cada [clase programada]  
+- La [aplicación] \<debe llevar el control\> de la [actividad de los usuarios]  
 
 Análisis:
 
-- *Ejemplo 1: Incorporación de una entidad oculta:*
+- *Ejemplo 1: Incorporación de una entidad oculta:*  
   Al analizar el Insumo A, notamos que las clases dependen de un periodo. Formulamos: "El [jefe de registro académico] (Sujeto) \<debe agrupar y controlar\> (Verbos) las [clases programadas] por [periodos académicos] o [**semestres**] (Complemento)".
   ¡Eureka! Mediante esta abducción pedagógica, **`semestres`** emerge como una entidad propia, con sus propias reglas y atributos. La anomalía se disuelve.
 
-- *Ejemplo 2: Ruptura de la desnormalización:*
+- *Ejemplo 2: Ruptura de la desnormalización:*  
   "El [*sistema*] (Sujeto) \<debe registrar\> (Verbo) la [*inscripción* de los *Estudiantes*] (Complemento 1) en las [*Clases Programadas*] (Complemento 2)".
   Esta descomposición revela que "Estudiantes" y "Clases Programadas" son entidades distintas. "lista_estudiantes" no es un atributo de la clase, sino el resultado de una relación que requiere sus propios datos (como la fecha de inscripción). Asimismo, el "Nombre del Profesor" en la lista de grupo debe romperse, pues el Docente es una entidad que "imparte" o "se asigna" a la clase, no un mero atributo de texto de la misma.
 
-- Los [usuarios] \<deben tener\> diferentes [niveles de acceso]
+- Los [usuarios] \<deben tener\> diferentes [niveles de acceso]  
 
 Esta técnica nos fuerza a cuestionar la agrupación de datos y nos prepara para la aplicación de reglas de integridad.
 
-##### 1.3 El imperativo de la atomicidad: Hacia la Primera Forma Normal (1FN)
+##### 1.3 El imperativo de la atomicidad: Hacia la Primera Forma Normal (1NF)
 
 Hasta aquí, hemos capturado la visión del cliente. Sin embargo, desde una perspectiva técnica y metodológica, debemos cuestionar la estructura de estos atributos. ¿Qué datos necesitamos realmente y cómo deben estar organizados para que el sistema sea eficiente?
 
-*La inclusión de un atributo no se decide por intuición, sino por necesidad operativa* y por una regla fundamental del diseño relacional: la **Primera Forma Normal (1FN)**. Esta regla establece que ***todos los atributos de una entidad deben ser atómicos***; es decir, *cada atributo debe describir una y solo una característica o propiedad de la entidad*, sin agrupar múltiples valores en una sola columna y cada entidad debe poseer una llave o *clave primaria* que identifique de manera única cada registro.
+*La inclusión de un atributo no se decide por intuición, sino por necesidad operativa* y por una regla fundamental del diseño relacional: la **Primera Forma Normal (1NF)**. Esta regla establece que ***todos los atributos de una entidad deben ser atómicos***; es decir, *cada atributo debe describir una y solo una característica o propiedad de la entidad*, sin agrupar múltiples valores en una sola columna y cada entidad debe poseer una llave o *clave primaria* que identifique de manera única cada registro.
 
-Al revisar la primera iteración, identificamos violaciones a este principio:
-1. `nombre_completo` agrupa el nombre o nombres y los apellidos paterno y materno. ¿Qué sucede si necesitamos buscar a todos los estudiantes con el apellido "García"? Con el campo agrupado, la búsqueda es ineficiente y propensa a errores.
-2. `direccion` agrupa la calle, la colonia, la ciudad, el estado, el país y el código postal. Esto impide realizar reportes segmentados por región o validar códigos postales de manera automatizada.
-3. La ausencia de un identificador único (`id_...`) impide distinguir entre dos entidades que puedan compartir el mismo nombre o código de negocio, violando la integridad de entidad.
+Al revisar la primera iteración, identificamos violaciones a este principio:  
+1. `nombre_completo` agrupa el nombre o nombres y los apellidos paterno y materno. ¿Qué sucede si necesitamos buscar a todos los estudiantes con el apellido "García"? Con el campo agrupado, la búsqueda es ineficiente y propensa a errores.  
+2. `direccion` agrupa la calle, la colonia, la ciudad, el estado, el país y el código postal. Esto impide realizar reportes segmentados por región o validar códigos postales de manera automatizada.  
+3. La ausencia de un identificador único (`id_...`) impide distinguir entre dos entidades que puedan compartir el mismo nombre o código de negocio, violando la integridad de entidad.  
 
-Por lo anterior, es plausible afirmar que resulta imperativo *descomponer estos atributos compuestos* en sus elementos atómicos constitutivos y asignar claves primarias antes de avanzar:
-
-El atributo `direccion` se debe descomponer en `calle`, `colonia`, `ciudad`, `estado`, `pais` y `codigo_postal` se eliminó la mención a numero_exterior y numero_interior para que coincida con la tabla de la Iteración 2, por lo menos, pensando en que operativamente sea útil.
+Por lo anterior, es plausible afirmar que resulta imperativo *descomponer estos atributos compuestos* en sus elementos atómicos constitutivos y asignar claves primarias antes de avanzar. El atributo `direccion` se debe descomponer en `calle`, `colonia`, `ciudad`, `estado`, `pais` y `codigo_postal`, pensando en que operativamente sea útil para segmentación geográfica y validación postal.
 
 ##### 1.4 Acotamiento conceptual por entidad (Iteración 2: La versión depurada)
 
-Aplicando la regla de la 1FN y la técnica Sujeto-Verbo-Complemento, reestructuramos las entidades para garantizar la atomicidad, la identificación única y evitar solapamientos. A continuación, se presenta el desglose definitivo de atributos para cada entidad, utilizando la notación *snake_case*, en estricto cumplimiento de la **Primera Forma Normal** (**1FN**), la cual establece que todo atributo debe ser atómico (indivisible), describiendo una y solo una característica de la entidad sin agrupar múltiples valores en una misma columna y que cada tabla debe poseer una **clave primaria** que identifique de manera unívoca cada ocurrencia, eliminando así cualquier redundancia o grupo repetitivo.
+Aplicando la regla de la 1NF y la técnica Sujeto-Verbo-Complemento, reestructuramos las entidades para garantizar la atomicidad, la identificación única y evitar solapamientos. A continuación, se presenta el desglose definitivo de atributos para cada entidad, utilizando la notación *snake_case*, en estricto cumplimiento de la **Primera Forma Normal** (**1NF**), la cual establece que todo atributo debe ser atómico (indivisible), describiendo una y solo una característica de la entidad sin agrupar múltiples valores en una misma columna y que cada tabla debe poseer una **clave primaria** que identifique de manera unívoca cada ocurrencia, eliminando así cualquier redundancia o grupo repetitivo.
 
 **1. estudiantes**
 
@@ -129,14 +131,17 @@ Individuo matriculado que escoge la oferta académica. Sus atributos capturan id
 | Atributo (*snake_case*) | Justificación conceptual |
 | :--- | :--- |
 | `id_estudiante` | Clave primaria. Referencia única interna para localizar registros sin depender de datos variables. |
+| `num_seguro_social` | Dato administrativo institucional para cumplimiento normativo. |
 | `apellido_paterno` | Componente atómico esencial para ordenamiento y búsqueda formal. |
 | `apellido_materno` | Componente atómico esencial para ordenamiento y búsqueda formal. |
 | `nombre` | Primer nombre de pila. Se mantiene separado para respetar la atomicidad. |
 | `segundo_nombre` | Campo opcional que permite flexibilidad cultural sin romper la estructura atómica. |
+| `genero` | Clasificación demográfica para reportes institucionales y segmentación estadística. |
 | `fecha_nacimiento` | Dato temporal base para validación de requisitos de admisión y cálculos etarios. |
 | `correo_electronico` | Canal digital principal. Único por estudiante para notificaciones. |
 | `telefono_celular` | Contacto prioritario para emergencias y comunicación móvil. |
 | `telefono_casa` | Contacto residencial alternativo o de respaldo. |
+| `telefono_trabajo` | Contacto laboral, útil para estudiantes que ejercen funciones administrativas o docentes. |
 | `calle` | Calle y número. Requerido para correspondencia oficial. |
 | `colonia` | Colonia que evita columnas multivaluadas. |
 | `ciudad` | Componente geográfico para segmentación regional. |
@@ -189,11 +194,12 @@ Personal académico responsable de la impartición. Se delimita por su rol profe
 | :--- | :--- |
 | `id_docente` | Clave primaria. Referencia única para gestión de cargas académicas y evaluaciones. |
 | `num_empleado` | Número de empleado interno. |
-| `num_seguro_social` | Número de seguro social. |
+| `num_seguro_social` | Número de seguro social para fines contractuales o de nómina. |
 | `apellido_paterno` | Componente atómico del nombre personal. |
 | `apellido_materno` | Componente atómico del nombre personal. |
 | `nombre` | Componente atómico del nombre personal. |
 | `segundo_nombre` | Componente opcional y atómico. |
+| `genero` | Clasificación demográfica para reporting institucional. |
 | `correo_electronico` | Canal principal de comunicación académica y coordinación. |
 | `telefono_celular` | Contacto directo para coordinación o emergencias. |
 | `telefono_casa` | Contacto residencial alternativo. |
@@ -207,7 +213,7 @@ Entidad de seguridad y autenticación. Gestiona credenciales, permisos y estado 
 | Atributo (*snake_case*) | Justificación conceptual |
 | :--- | :--- |
 | `id_usuario` | Clave primaria. Referencia interna que vincula la cuenta de seguridad con los perfiles de negocio. |
-| `cuenta` | Se reincorpora este atributo faltante de la Iteración 1: Identificador único de autenticación (login). |
+| `cuenta` | Identificador único de autenticación (login). |
 | `nombre_usuario` | Denominación visible en interfaz o reportes de auditoría. |
 | `contrasena` | Credencial cifrada para validación de identidad. Nunca visible en texto plano. |
 | `activo` | Indicador de estado operativo (1=Activo, 0=Inactivo). Permite deshabilitar acceso sin borrar historial. |
@@ -240,7 +246,7 @@ Registro histórico de eventos de autenticación y cambios en el sistema (audito
 
 ##### 1.5 Selección de identificadores y claves primarias
 
-Una vez definido qué vamos a rastrear y cómo lo describiremos de manera atómica, necesitamos un mecanismo confiable para señalar cada registro individualmente. Aquí es donde seleccionamos la **llave** o **clave primaria** (PK).
+Una vez definido qué vamos a rastrear y cómo lo describiremos de manera atómica, necesitamos un mecanismo confiable para señalar cada registro individualmente. Aquí es donde seleccionamos la **llave** o **clave primaria** (PK, de *Primary Key*).
 
 Siguiendo la recomendación del autor, priorizamos **identificadores numéricos** secuenciales autoincrementales (llamadas *surrogate keys*) en lugar de códigos alfanuméricos del negocio. ¿Por qué? Porque los índices sobre números enteros son computacionalmente más eficientes, garantizan unicidad absoluta y no dependen de reglas institucionales que podrían cambiar (como un código de curso que se reestructura o un número de seguro social que se migra). Es, en esencia, una decisión pragmática frente a la volatilidad del mundo real y la construcción social de los códigos institucionales.
 
@@ -257,6 +263,8 @@ Siguiendo la recomendación del autor, priorizamos **identificadores numéricos*
 **Regla de validación final del Paso 1:** Antes de cerrar el Paso 1, aplicamos la prueba de fuego de la normalización: «¿Cada atributo depende exclusivamente de la entidad y no de otra?». Si algún atributo responde con un "no", no pertenece a esa entidad y debe reubicarse. Esta verificación asegura que el modelo conceptual esté listo para derivar relaciones en el Paso 2 sin arrastrar dependencias cruzadas o redundancias.
 
 Con las entidades descubiertas (incluyendo la emergencia de `semestres`), sus atributos acotados atómicamente y sus identificadores definidos bajo un estándar de nomenclatura consistente, el Paso 1 está completo. El modelo está listo para pasar al Paso 2, donde conectaremos estos objetos mediante relaciones unarias y binarias, transitando de la estática de las entidades a la dinámica de los vínculos organizacionales.
+
+---
 
 #### Paso 2: Identificación de relaciones unarias y binarias
 
@@ -316,14 +324,14 @@ A continuación, se presenta la Matriz E-E resultante para el sistema académico
 
 | | `estudiantes` | `cursos` | `clases_programadas` | `semestres` | `docentes` | `usuarios` | `niveles_acceso` | `registros_actividad` |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`estudiantes`** | — | | se inscriben en<br>(0:N / 0:N)<br>*(inscribir)* | | | | | |
-| **`cursos`** | | \* son prerrequisito de<br>(0:N / 0:N)<br>*(ser_prerrequisito)* | | | | | | |
+| **`estudiantes`** | — | | se inscriben en<br>(0:N / 0:N)<br>*(inscribir)* | | | son autenticados por<br>(1:1 / 0:1)<br>*(autenticar)* | | |
+| **`cursos`** | | \* son prerrequisito de<br>(0:N / 0:N)<br>*(ser_prerrequisito)* | son materializados en<br>(0:N / 1:1)<br>*(materializar)* | | son impartidos por<br>(0:N / 0:N)<br>*(impartir)* | | | |
 | **`clases_programadas`** | | | — | pertenecen a<br>(1:1 / 0:N)<br>*(pertenecer)* | se asignan a<br>(1:1 / 0:N)<br>*(asignar)* | | | |
 | **`semestres`** | | | | — | | | | |
-| **`docentes`** | | imparten<br>(0:N / 0:N)<br>*(impartir)* | se asignan a<br>(0:N / 1:1)<br>*(asignar)* | | — | | | |
-| **`usuarios`** | son autenticados por<br>(1:1 / 0:1)<br>*(autenticar)* | | | | son autenticados por<br>(1:1 / 0:1)<br>*(autenticar)* | \* crean<br>(0:N / 1:1)<br>*(crear)* | | |
-| **`niveles_acceso`** | | | | | | autorizan a<br>(1:1 / 0:N)<br>*(autorizar)* | — | |
-| **`registros_actividad`** | | | | | | pertenecen a<br>(1:1 / 0:N)<br>*(pertenecer)* | | — |
+| **`docentes`** | | | | | — | son autenticados por<br>(1:1 / 0:1)<br>*(autenticar)* | | |
+| **`usuarios`** | | | | | | \* crean<br>(0:N / 1:1)<br>*(crear)* | autorizan a<br>(1:1 / 0:N)<br>*(autorizar)* | generan<br>(0:N / 1:1)<br>*(generar)* |
+| **`niveles_acceso`** | | | | | | | — | |
+| **`registros_actividad`** | | | | | | | | — |
 
 **Nota:** Las celdas en blanco en la mitad superior se mantienen intencionalmente vacías siguiendo la regla de Captain. Las celdas con `—` en la diagonal principal también se omiten por convención, salvo las relaciones unarias que se leerán en su fila/columna correspondiente.
 
@@ -333,8 +341,10 @@ Al observar la matriz resultante, es natural que surjan dudas o que el cliente s
 
 1.  **¿Por qué los `estudiantes` no `se inscriben en` los `cursos` directamente?**
     Este es un error clásico de modelado, una confusión conceptual. Los `cursos` son entes abstractos (el catálogo de "Cálculo I"); los estudiantes no se inscriben en el concepto, sino en la *instancia temporal y espacial* de ese curso. La relación válida es: Estudiantes se inscriben en Clases Programadas. Capturar un vínculo directo entre estudiantes y cursos duplicaría lógica y rompería la integridad del proceso de programación académica.
+
 2.  **¿Por qué los `docentes` se `asignan` a `clases_programadas` e `imparten` `cursos`?**
     Aquí aplicamos la regla del "mismo verbo, diferente contexto". Los docentes imparten el contenido curricular a nivel académico (`cursos`), pero se asignan a las sesiones logísticas según lo establecido en el horario (`clases_programadas`). Son dos contratos de negocio distintos que deben capturarse por separado.
+
 3.  **¿Por qué los `niveles_acceso` y los `registros_actividad` solo se relacionan con los `usuarios`?**
     Porque los permisos y la auditoría operan exclusivamente sobre la *identidad digital* (la cuenta de seguridad), no sobre el perfil biográfico o académico (Estudiante/Docente). Habrá una relación *indirecta* entre `niveles_acceso` y `estudiantes` a través de `usuarios`, pero capturar un vínculo directo violaría la separación de responsabilidades entre el *frontend* y el *backend*, creando un modelo frágil ante los cambios organizacionales.
 
@@ -353,11 +363,13 @@ La separación arquitectónica entre la capa académica y la capa operativa perm
     - `clases_programadas` ↔ `semestres` (`pertenecer`): El horario pertenece a un periodo académico específico.
     - `docentes` ↔ `cursos` (`impartir`): El docente imparte el contenido curricular a nivel académico.
     - `cursos` ↔ `cursos` (`ser_prerrequisito`): Relación unaria que captura la dependencia académica.
+
 2.  **Relaciones Intra-Backend (Capa de Seguridad y Auditoría)**
     Operan exclusivamente sobre la gestión de identidades y el control de acceso:
     - `usuarios` ↔ `usuarios` (`crear`): Relación unaria que refleja la jerarquía administrativa (una cuenta autorizada crea nuevas cuentas).
     - `niveles_acceso` ↔ `usuarios` (`autorizar`): Los permisos se asignan a las cuentas de acceso, preservando el principio de mínima exposición.
-    - `registros_actividad` ↔ `usuarios` (`pertenecer`): La auditoría registra eventos de autenticación asociados a una cuenta, no a un individuo físico.
+    - `registros_actividad` ↔ `usuarios` (`generar`): La auditoría registra eventos de autenticación asociados a una cuenta, no a un individuo físico.
+
 3.  **Relaciones Puente (Conexión Frontend ↔ Backend)**
     Vínculos necesarios para traducir la identidad operativa en perfiles de negocio:
     - `usuarios` ↔ `estudiantes` (`autenticar`): Vincula la cuenta de seguridad con el perfil académico del estudiante.
@@ -377,9 +389,11 @@ Con la Matriz Entidad-Entidad completada bajo la estricta regla de lectura de fi
 
 Este mapa de interacciones está listo para traducirse en el **Paso 3: Crear un diagrama Entidad-Relación (E-R) simplificado**, donde construiremos una representación visual que sintetizará estas conexiones de manera intuitiva. En esa etapa, introduciremos la notación gráfica (rectángulos para entidades y rombos para relaciones) sin incorporar aún la opcionalidad ni la cardinalidad, dejando ese refinamiento cuantitativo para los pasos subsiguientes. Transitaremos, así, de la lógica textual a la topología visual.
 
-------------------------------------------------------------------------
+---
 
 #### Fase II. Modelado conceptual (Pasos 3, 4 y 5)
+
+Habiendo cartografiado el territorio, procedemos a formalizar la visión del usuario. Esta fase traduce los hallazgos previos en una arquitectura visual (el diagrama E-R), inyectando progresivamente las reglas de negocio —obligatoriedad y cardinalidad— hasta consolidar un modelo conceptual maduro, validado y blindado contra las ambigüedades del lenguaje natural.
 
 #### Paso 3: Diagrama Entidad-Relación simplificado
 
@@ -391,7 +405,7 @@ Según Fidel A. Captain (2015, p. 52), este diagrama simplificado constituye la 
 
 En la metodología de los Seis Pasos, cada paso tiene una responsabilidad específica. El diagrama Entidad-Relación (E-R) simplificado, por diseño pedagógico y arquitectónico, **no contiene información sobre obligatoriedad ni cardinalidad**. Esta exclusión no es una omisión técnica, sino una decisión deliberada: al posponer las reglas de negocio cuantitativas, evitamos la sobrecarga cognitiva, mejoramos la abstracción y nos aseguramos de que la estructura lógica subyacente sea sólida antes de inyectar restricciones. Dicho de otra manera, primero debemos cartografiar el territorio antes de dibujar sus fronteras.
 
-Es imperativo introducir desde esta etapa el estándar visual que regirá la transición hacia el Modelo Relacional (Paso 6): la **Notación Pata de Gallo** (*Crow’s Foot Notation*). Desarrollada originalmente por Gordon Everest (1976) y ampliamente adoptada en la industria, esta notación utiliza símbolos intuitivos en los extremos de las líneas de relación para representar gráficamente la cardinalidad y la obligatoriedad entre entidades, símbolos que no usaremos en este momento, ya que es una versión simplificada. Nos limitamos a usar una línea simple que une las entidades, para evitar la saturación visual, con el verbo sobre la línea. Tener presente esta notación nos prepara metodológicamente para el Paso 5 (el Diagrama Entidad-Relación Detallado) y el Paso 6 (Modelo Relacional), donde todos los símbolos de la notación cobrarán vida para cimentar la integridad referencial de los datos.
+Es imperativo introducir desde esta etapa el estándar visual que regirá la transición hacia el Modelo Relacional (Paso 6): la **Notación Pata de Gallo** (*Crow's Foot Notation*). Desarrollada originalmente por Gordon Everest (1976) y ampliamente adoptada en la industria, esta notación utiliza símbolos intuitivos en los extremos de las líneas de relación para representar gráficamente la cardinalidad y la obligatoriedad entre entidades, símbolos que no usaremos en este momento, ya que es una versión simplificada. Nos limitamos a usar una línea simple que une las entidades, para evitar la saturación visual, con el verbo sobre la línea. Tener presente esta notación nos prepara metodológicamente para el Paso 5 (el Diagrama Entidad-Relación Detallado) y el Paso 6 (Modelo Relacional), donde todos los símbolos de la notación cobrarán vida para cimentar la integridad referencial de los datos.
 
 > *Nota:* «No necesitas incluir todos los atributos para todas las entidades en el diagrama E-R simplificado porque hacerlo puede saturar el diagrama haciendo que las entidades sean inusualmente largas. Por lo tanto, en interés del espacio, *solo la clave primaria y los atributos más importantes y relevantes* deben incluirse en las entidades del diagrama E-R simplificado» (Captain, 2015, p. 52).
 
@@ -422,7 +436,7 @@ A continuación, presentamos las entidades con sus claves primarias y los atribu
 
 | Entidad | Clave Primaria | Atributos estratégicos (según Captain) |
 | :--- | :--- | :--- |
-| `usuarios` | `id_usuario` | **`nombre_usuario`**, `contrasena`, `activo` |
+| `usuarios` | `id_usuario` | **`cuenta`**, **`nombre_usuario`**, `contrasena`, `activo` |
 | `niveles_acceso` | `id_nivel_acceso` | **`codigo_nivel_acceso`**, `nombre_corto`, `nombre_largo` |
 | `registros_actividad` | `id_registro_actividad` | `fecha_hora_inicio`, `fecha_hora_fin` |
 
@@ -431,7 +445,7 @@ A continuación, presentamos las entidades con sus claves primarias y los atribu
 Las relaciones que conectan estas entidades provienen directamente de la Matriz E-E completada en el Paso 2. Captain enfatiza que *cada verbo registrado representa un contrato de negocio verificable*. La separación arquitectónica nos permite clasificarlas en tres grupos funcionales:
 
 - **Relaciones Intra-Frontend (Lógica Académica):** `estudiantes` ↔ `clases_programadas` (`inscribir`), `clases_programadas` ↔ `cursos` (`materializar`), `clases_programadas` ↔ `semestres` (`pertenecer`), `docentes` ↔ `cursos` (`impartir`), `cursos` ↔ `cursos` (`ser_prerrequisito`).
-- **Relaciones Intra-Backend (Capa de Seguridad y Auditoría):** `usuarios` ↔ `usuarios` (`crear`), `niveles_acceso` ↔ `usuarios` (`autorizar`), `registros_actividad` ↔ `usuarios` (`pertenecer`).
+- **Relaciones Intra-Backend (Capa de Seguridad y Auditoría):** `usuarios` ↔ `usuarios` (`crear`), `niveles_acceso` ↔ `usuarios` (`autorizar`), `registros_actividad` ↔ `usuarios` (`generar`).
 - **Relaciones Puente (Frontend ↔ Backend):** `usuarios` ↔ `estudiantes` (`autenticar`), `usuarios` ↔ `docentes` (`autenticar`), `clases_programadas` ↔ `docentes` (`asignar`).
 
 ##### 3.4 Topología del Diagrama E-R simplificado
@@ -443,15 +457,17 @@ Captain señala que las entidades con relaciones consigo mismas pueden represent
                          │
                          ├──<autentican a>── [estudiantes]
                          ├──<autentican a>── [docentes]
-                         └─<pertenecen a>── [registros_actividad]
+                         └─<generan>── [registros_actividad]
 
 [semestres] ──<pertenecen a>── [clases_programadas] ──<se asignan a>── [docentes]
                                       │
                                       ├──<materializan>── [cursos] ──<son prerrequisito de>── [cursos]*
+                                      │         │
+                                      │         └──<son impartidos por>── [docentes]
                                       └─<se inscriben a>── [estudiantes]
 ```
 
-> **Nota:** Los corchetes `[ ]` representan entidades; los ángulos `< >` representan relaciones. La notación `*` indica duplicación visual para clarificar relaciones unarias, priorizando la legibilidad sobre el formalismo estricto).
+> **Nota:** Los corchetes `[ ]` representan entidades; los ángulos `< >` representan relaciones. La notación `*` indica duplicación visual para clarificar relaciones unarias, priorizando la legibilidad sobre el formalismo estricto.
 
 #### 3.5 Validación
 
@@ -466,7 +482,7 @@ Antes de considerar este paso concluido, Captain recomienda una verificación cr
 
 Si todas las respuestas son afirmativas, el modelo conceptual está listo para evolucionar. En el siguiente paso, inyectaremos las reglas de negocio mediante **obligatoriedad y cardinalidad**, transformando este esquema estático en un modelo dinámico, validado y preparado para su posterior traducción al lenguaje de implementación.
 
-#### 3.7 Consideraciones finales del Paso 3
+#### 3.6 Consideraciones finales del Paso 3
 
 La propuesta de Captain para este estudio de caso destaca por su equilibrio entre rigor metodológico y pragmatismo pedagógico. Tres elementos merecen especial atención en nuestra integración:
 
@@ -475,6 +491,8 @@ La propuesta de Captain para este estudio de caso destaca por su equilibrio entr
 3.  **Separación explícita de dominios:** Aunque Captain no explicita la separación *frontend/backend* en su notación original, la topología natural de sus diagramas agrupa las entidades operativas en un cluster distinto al académico. Hacerlo explícito refuerza la arquitectura del sistema y prepara el terreno para una implementación modular y segura.
 
 Con esta validación, el diagrama Entidad-Relación simplificado queda listo para avanzar al Paso 4: Enumeración de afirmaciones, donde derivaremos la obligatoriedad y cardinalidad que transformarán esta estructura estática en un modelo dinámico de negocio. Transitaremos, así, de la topología visual a la semántica operativa.
+
+---
 
 #### Paso 4: Enumeración de afirmaciones
 
@@ -603,6 +621,8 @@ Antes de avanzar al Paso 5 (Creación del diagrama E-R detallado), verifique que
 
 Si todas las respuestas son afirmativas, el modelo conceptual está listo para evolucionar. En el siguiente paso, inyectaremos estas afirmaciones en el diagrama E-R simplificado mediante la notación `Obligatoriedad:Cardinalidad`, transformando esta estructura estática en un modelo dinámico, validado y preparado para su traducción al lenguaje de implementación. Transitaremos, así, de la semántica operativa a la topología detallada.
 
+---
+
 #### Paso 5: Diagrama Entidad-Relación detallado: La inyección de restricciones dinámicas
 
 Una vez que hemos definido con precisión las reglas de negocio en el Paso 4, es momento de integrarlas visualmente en nuestro modelo. El **Paso 5** tiene un propósito claro y mecánico, pero de una profundidad conceptual mayúscula: fusionar el diagrama Entidad-Relación simplificado (del Paso 3) con las afirmaciones textuales (del Paso 4) para generar un diagrama E-R detallado. 
@@ -674,9 +694,11 @@ Al ensamblar todos los fragmentos anteriores, incluyendo las relaciones `M:N` co
                                               └─ 1:1 <generar> ── 0:N ── [registros_actividad]
 
 [semestres] ── 0:N <pertenecer> ── 1:1 ── [clases_programadas] ── 1:1 <asignar> ── 0:N ── [docentes]
+                                                    │                        │
+                                                    │                        └── 0:N <impartir> ── 0:N ── [cursos]
                                                     │
                                                     ├── 1:1 <materializar> ── 0:N ── [cursos] ── 0:N <ser_prerrequisito> ── 0:N ── [cursos]*
-                                                    ├── 0:N <impartir> ── 0:N ── [docentes]
+                                                    │
                                                     └─ 0:N <inscribir> ── 0:N ── [estudiantes]
 ```
 *(Nota de lectura: Para interpretar una conexión, lee desde la entidad de origen, toma el primer par `O:C`, lee el verbo de la relación, toma el segundo par `O:C` y llega a la entidad de destino. Ejemplo: `[semestres]` (0:N) `<pertenecer>` (1:1) `[clases_programadas]`).*
@@ -691,9 +713,13 @@ Antes de dar por concluido este paso y avanzar hacia la transformación al model
 - ✅ ¿Las cardinalidades (`1` o `N`) están justificadas por la naturaleza del dominio (ej. una `clase_programada` *debe* tener un solo `docente`, pero un `docente` *puede* tener muchas `clases_programadas`)?
 - ✅ ¿El diagrama es legible y las relaciones unarias están representadas sin generar ambigüedad visual?
 
-Si todas las respuestas son afirmativas, hemos completado con éxito la fase de modelado conceptual. El diagrama E-R detallado está ahora maduro, validado y listo para ser traducido al lenguaje del desarrollador en el **Paso 6: Transformar el diagrama E-R detallado en un diagrama R-M implementable**, donde los rombos desaparecerán para dar paso a las claves foráneas y la notación de Pata de Gallo (*Crow’s Foot*), cimentando la integridad de los datos en la estructura física.
+Si todas las respuestas son afirmativas, hemos completado con éxito la fase de modelado conceptual. El diagrama E-R detallado está ahora maduro, validado y listo para ser traducido al lenguaje del desarrollador en el **Paso 6: Transformar el diagrama E-R detallado en un diagrama R-M implementable**, donde los rombos desaparecerán para dar paso a las claves foráneas y la notación de Pata de Gallo (*Crow's Foot*), cimentando la integridad de los datos en la estructura física.
 
-Fase III. 
+---
+
+#### Fase III: Implementación Lógica (Paso 6)
+
+Cruzar el umbral de esta fase implica un cambio de visión radical. El modelo conceptual, fiel a la realidad del negocio, debe ahora someterse a las rigideces y convenciones de la máquina. Aquí los rombos colapsan para dar paso a las claves foráneas y la normalización, materializando la integridad referencial en un esquema SQL listo para su despliegue en un Sistema Gestor de Bases de Datos Relacionales (RDBMS).
 
 #### Paso 6: Transformar el diagrama E-R detallado en un diagrama R-M implementable
 
@@ -703,15 +729,15 @@ Este es el sexto y último paso del proceso de diseño conceptual. Como señala 
 
 Hasta el Paso 5, nos mantuvimos fieles al *orgware* del cliente, modelando en español para facilitar la validación semántica. Sin embargo, al cruzar el umbral del Paso 6, ocurre una transformación deliberada: la traducción al lenguaje universal de los Sistemas Gestores de Bases de Datos (RDBMS). Las entidades y atributos mutan a su contraparte técnica en inglés, adoptando estrictamente la notación **`snake_case`** (minúsculas separadas por guiones bajos) y la forma **singular**. Esta decisión no es caprichosa; es una medida pragmática para garantizar la compatibilidad nativa, la eficiencia de los índices y la precisión semántica universal, evitando la "jaula de hierro" técnica que imponen los espacios, las mayúsculas o los caracteres especiales en los scripts SQL.
 
-En esta fase, las entidades se convierten en tablas bidimensionales y los vínculos se cimentan mediante la migración de Claves Primarias (PK) que se transforman en Claves Foráneas (FK), sellando la integridad referencial mediante la notación de Pata de Gallo (*Crow’s Foot*).
+En esta fase, las entidades se convierten en tablas bidimensionales y los vínculos se cimentan mediante la migración de Claves Primarias (PK) que se transforman en Claves Foráneas (FK, de *Foreign Key*), sellando la integridad referencial mediante la notación de Pata de Gallo (*Crow's Foot*).
 
 **Normalización**
 
 La metodología de los Seis Pasos está diseñada para que, al aplicar sus reglas de transformación, el modelo cumpla automáticamente con la **Tercera Forma Normal (3FN)**, sin necesidad de un proceso correctivo posterior:
 
-1. **1FN (Integridad de Dominio):** Garantizada desde el Paso 1 (atributos atómicos, sin grupos repetitivos, PK definida).  
-2. **2FN (Integridad de Entidad):** Asegurada en el **Paso 6.1**. Al crear tablas de unión para relaciones N:N, se garantiza que los atributos relacionales dependan de la totalidad de la clave.  
-3. **3FN (Integridad Referencial):** Asegurada en los **Pasos 6.2 y 6.3**. Al colocar Claves Foráneas (FK) en lugar de duplicar datos descriptivos, se eliminan las dependencias transitivas.  
+1. **1NF (Integridad de Dominio):** Garantizada desde el Paso 1 (atributos atómicos, sin grupos repetitivos, PK definida).  
+2. **2NF (Integridad de Entidad):** Asegurada en el **Paso 6.1**. Al crear tablas de unión para relaciones N:N, se garantiza que los atributos relacionales dependan de la totalidad de la clave.  
+3. **3NF (Integridad Referencial):** Asegurada en los **Pasos 6.2 y 6.3**. Al colocar Claves Foráneas (FK) en lugar de duplicar datos descriptivos, se eliminan las dependencias transitivas.  
 
 El proceso se realiza de manera iterativa, abordando cada tipo de cardinalidad por separado para mantener la integridad del modelo.
 
@@ -826,6 +852,7 @@ A continuación, se presenta el desglose de las 11 tablas con su estructura, tip
 | `last_name` | `VARCHAR(50)` | NOT NULL |
 | `first_name` | `VARCHAR(50)` | NOT NULL |
 | `middle_name` | `VARCHAR(50)` | |
+| `gender` | `VARCHAR(6)` | NOT NULL, DEFAULT 'MALE' |
 | `email` | `VARCHAR(100)` | NOT NULL, UNIQUE |
 | `mobile` | `VARCHAR(15)` | |
 | `htel` | `VARCHAR(15)` | |
@@ -928,9 +955,9 @@ CREATE TABLE app_user (
 
 ---
 
-##### 6.9 Implementación Técnica: Script SQL Estándar (SQL-92/SQL:2016)
+##### 6.9 Implementación Técnica: Script SQL Estándar (SQL-92)
 
-A continuación, se presenta la traducción del diagrama del modelo relaional a un script de implementación siguiendo el estándar ANSI SQL-92/SQL:2016. 
+A continuación, se presenta la traducción del diagrama del modelo relacional a un script de implementación siguiendo el estándar ANSI SQL-92 (cf. Digital Equipment Corporation, 1993). 
 
 > **Nota de Refinamiento Profesional:** A diferencia de transcripciones ingenuas que usan sintaxis propietaria (como `AUTO_INCREMENT` o `int(11)`), este script ha sido depurado y estandarizado. Utiliza `GENERATED ALWAYS AS IDENTITY` para claves subrogadas, tipos de datos universales y separa la creación de índices en sentencias posteriores, garantizando que este código sea portable y ejecutable en cualquier motor de base de datos moderno.
 
@@ -1011,6 +1038,7 @@ CREATE TABLE lecturer (
   last_name VARCHAR(50) NOT NULL,
   first_name VARCHAR(50) NOT NULL,
   middle_name VARCHAR(50),
+  gender VARCHAR(6) NOT NULL DEFAULT 'MALE',
   email VARCHAR(100) NOT NULL UNIQUE,
   mobile VARCHAR(15),
   htel VARCHAR(15),
@@ -1191,6 +1219,7 @@ CREATE TABLE lecturer (
   last_name VARCHAR(50) NOT NULL,
   first_name VARCHAR(50) NOT NULL,
   middle_name VARCHAR(50),
+  gender VARCHAR(6) NOT NULL DEFAULT 'MALE',
   email VARCHAR(100) NOT NULL UNIQUE,
   mobile VARCHAR(15),
   htel VARCHAR(15),
@@ -1294,16 +1323,20 @@ CREATE INDEX idx_student_class_reg_date ON student_class (registered_date);
 -   **Integridad de Fechas:** La restricción `CHECK (end_datetime IS NULL OR start_datetime <= end_datetime)` es evaluada de manera extremadamente eficiente por el motor de PostgreSQL, previniendo datos lógicamente imposibles a nivel de base de datos, no solo a nivel de aplicación.  
 -   **Concurrencia:** El uso de `GENERATED ALWAYS AS IDENTITY` se apoya en objetos `SEQUENCE` nativos de PostgreSQL, los cuales son seguros para transacciones concurrentes (MVCC), evitando bloqueos o condiciones de carrera al insertar múltiples registros simultáneamente.  
 
+---
+
 #### Conclusión
 
 Con la adaptación a PostgreSQL 16+ y la estandarización rigurosa de la nomenclatura en `snake_case` singular, el ciclo de diseño alcanza su máxima madurez. Hemos transitado desde las tablas planas y redundantes de la "ceguera" inicial del cliente, pasando por el rigor de la Matriz Entidad-Entidad y las afirmaciones de obligatoriedad, hasta transformar un requerimiento narrativo en un modelo relacional **normalizado hasta la 3FN**. 
 
 El resultado no es solo un conjunto de tablas, sino una **arquitectura de datos resiliente**, capaz de soportar el crecimiento de la institución, garantizar la trazabilidad de sus operaciones y servir como cimiento confiable para cualquier capa de aplicación que se construya sobre ella.
 
-> **Recuerda:** Tenga siempre a mano el Manual de Referencia del RDBMS al implementar su diseño, ya que las particularidades de los tipos de datos y los motores de almacenamiento pueden requerir ajustes menores en la sintaxis de los índices y las restricciones.  (Captain, 2015, p. 200).
+> **Recuerda:** Tenga siempre a mano el Manual de Referencia del RDBMS al implementar su diseño, ya que las particularidades de los tipos de datos y los motores de almacenamiento pueden requerir ajustes menores en la sintaxis de los índices y las restricciones. (Captain, 2015, p. 200).
 
+---
 
 #### Referencias
 
-*   Captain, F. A. (2015). *Six-step relational database design: A step by step approach to relational database design and development*. Fidel Captain.
-*   Everest, G. C. (1976). Basic data structure models explained with a common example. In *Computing Systems 1976, Proceedings Fifth Texas Conference on Computing Systems* (pp. 39-46). IEEE Computer Society Publications Office.
+- Captain, F. A. (2015). *Six-step relational database design: A step by step approach to relational database design and development*. Fidel Captain.  
+- Everest, G. C. (1976). Basic data structure models explained with a common example. In *Computing Systems 1976, Proceedings Fifth Texas Conference on Computing Systems* (pp. 39-46). IEEE Computer Society Publications Office.  
+- Digital Equipment Corporation. (1993) ANSI X3.135-1992, Database Language SQL. Maynard, Massachusetts <https://web.cecs.pdx.edu/~len/sql-92.pdf>  
