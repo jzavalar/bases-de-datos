@@ -2,8 +2,8 @@
 ### Estudio de Caso: Sistema de Registro Académico Universitario
 (draft)
 
-**Dr. Jesús Zavala Ruiz**
-Mayo de 2026
+**Dr. Jesús Zavala Ruiz**  
+(Junio de 2026)
 
 ---
 
