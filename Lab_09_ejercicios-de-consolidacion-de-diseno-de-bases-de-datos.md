@@ -1,8 +1,8 @@
 ### Laboratorio 09. Ejercicios Prácticos de Consolidación de Diseño de Bases de Datos
 ### Validación, Portabilidad e Ingeniería Inversa en el Diseño de Bases de Datos
 
-**Dr. Jesús Zavala Ruiz**
-(Junio de 2026)
+**Dr. Jesús Zavala Ruiz**  
+(Junio de 2026)  
 
 ---
 
@@ -16,7 +16,7 @@ Estos ejercicios cierran el ciclo metodológico de los Seis Pasos de Captain, ll
 
 ##### 1.1 Objetivo Pedagógico
 
-Validar la corrección sintáctica, la integridad referencial y la portabilidad de los scripts SQL-92/SQL:2016 y PostgreSQL 16+ desarrollados en el Paso 6 del Estudio de Caso 3. Este ejercicio permite al estudiante confrontar la teoría de la normalización con la realidad de la implementación física, verificando que las restricciones `CHECK`, `UNIQUE`, `FOREIGN KEY` y las claves subrogadas `GENERATED ALWAYS AS IDENTITY` funcionen según lo diseñado.
+Validar la corrección sintáctica, la integridad referencial y la portabilidad de los scripts SQL-92/SQL:2016 y PostgreSQL 16+ desarrollados en el Paso 6 del Estudio de Caso (Zavala Ruiz, 2026). Este ejercicio permite al estudiante confrontar la teoría de la normalización con la realidad de la implementación física, verificando que las restricciones `CHECK`, `UNIQUE`, `FOREIGN KEY` y las claves subrogadas `GENERATED ALWAYS AS IDENTITY` funcionen según lo diseñado.
 
 ##### 1.2 Contexto Metodológico
 
@@ -51,11 +51,11 @@ Como señala Captain (2015, p. 200), la implementación física es el momento en
 
 ##### 1.4 Entregables Esperados
 
-- Un informe técnico que documente:
-  - Las diferencias sintácticas o de comportamiento encontradas entre el script SQL-92 y el script PostgreSQL 16+.
-  - Los resultados de las pruebas de integridad (capturas de pantalla de los errores esperados).
-  - Las consultas `JOIN` ejecutadas y sus resultados.
-  - Una reflexión crítica sobre la portabilidad real del estándar SQL-92.
+- Un informe técnico que documente:  
+  - Las diferencias sintácticas o de comportamiento encontradas entre el script SQL-92 y el script PostgreSQL 16+.  
+  - Los resultados de las pruebas de integridad (capturas de pantalla de los errores esperados).  
+  - Las consultas `JOIN` ejecutadas y sus resultados.  
+  - Una reflexión crítica sobre la portabilidad real del estándar SQL-92.  
 
 ##### 1.5 Reflexión Final
 
@@ -66,9 +66,9 @@ En mi opinión, este ejercicio demuestra que la estandarización SQL es un ideal
 ##### 2.1 Objetivo Pedagógico
 
 Utilizar herramientas de Inteligencia Artificial (IA) generativa para realizar un ejercicio de **ingeniería inversa y transformación de dialectos SQL**, partiendo del script de creación de la base de datos Sakila (diseñada para MySQL) y transformándolo en:
-1. Un script estandarizado en SQL-92/SQL:2016.
-2. Un script optimizado para MariaDB 10+.
-3. Un script optimizado para PostgreSQL 16+ (conocido como Pagila).
+1. Un script estandarizado en SQL-92/SQL:2016.  
+2. Un script optimizado para MariaDB 10+.  
+3. Un script optimizado para PostgreSQL 16+ (conocido como Pagila).  
 
 Este ejercicio permite al estudiante evaluar las capacidades y limitaciones de la IA en la traducción entre dialectos SQL, así como reflexionar sobre la pérdida de semántica en la ingeniería inversa.
 
@@ -79,11 +79,11 @@ La ingeniería inversa es el proceso de reconstruir un modelo o script a partir 
 ##### 2.3 Instrucciones Paso a Paso
 
 **Fase 1: Obtención del Script Original**
-1. Descargar el script oficial de creación de la base de datos Sakila para MySQL desde el repositorio oficial: `https://dev.mysql.com/doc/index-other.html` (archivos `sakila-schema.sql` y `sakila-data.sql`).
-2. Analizar el script `sakila-schema.sql` e identificar:
-   - Las particularidades sintácticas de MySQL (ej. `AUTO_INCREMENT`, `ENUM`, `SET`, `ENGINE=InnoDB`, `unsigned`, `ZEROFILL`).
-   - Las relaciones entre tablas (identificar las FK).
-   - Las restricciones `CHECK` (si las hay) y los disparadores (`TRIGGER`).
+1. Descargar el script oficial de creación de la base de datos Sakila para MySQL desde el repositorio oficial: `https://dev.mysql.com/doc/index-other.html` (archivos `sakila-schema.sql` y `sakila-data.sql`).  
+2. Analizar el script `sakila-schema.sql` e identificar:  
+   - Las particularidades sintácticas de MySQL (ej. `AUTO_INCREMENT`, `ENUM`, `SET`, `ENGINE=InnoDB`, `unsigned`, `ZEROFILL`).  
+   - Las relaciones entre tablas (identificar las FK).  
+   - Las restricciones `CHECK` (si las hay) y los disparadores (`TRIGGER`).  
 
 **Fase 2: Transformación a SQL-92/SQL:2016 con IA**
 3. Utilizar una herramienta de IA generativa (ej. ChatGPT, Claude, Gemini) con el siguiente *prompt*:
@@ -106,12 +106,12 @@ La ingeniería inversa es el proceso de reconstruir un modelo o script a partir 
 ##### 2.4 Entregables Esperados
 
 - Un informe comparativo que incluya:
-  - El script SQL-92 generado por la IA (con las correcciones humanas).
-  - El script para MariaDB generado por la IA.
-  - El script para PostgreSQL 16+ (Pagila) generado por la IA.
-  - Una tabla comparativa de las diferencias sintácticas entre los tres dialectos (MySQL, MariaDB, PostgreSQL).
-  - Un registro de los errores encontrados y cómo se resolvieron (iteraciones con la IA).
-  - Una reflexión crítica sobre la capacidad de la IA para comprender la semántica de las reglas de negocio vs. solo traducir sintaxis.
+  - El script SQL-92 generado por la IA (con las correcciones humanas).  
+  - El script para MariaDB generado por la IA.  
+  - El script para PostgreSQL 16+ (Pagila) generado por la IA.  
+  - Una tabla comparativa de las diferencias sintácticas entre los tres dialectos (MySQL, MariaDB, PostgreSQL).  
+  - Un registro de los errores encontrados y cómo se resolvieron (iteraciones con la IA).  
+  - Una reflexión crítica sobre la capacidad de la IA para comprender la semántica de las reglas de negocio vs. solo traducir sintaxis.  
 
 ##### 2.5 Reflexión Final
 
@@ -125,10 +125,10 @@ En mi opinión, estos ejercicios preparan al estudiante para los desafíos reale
 
 #### Referencias
 
-- Captain, F. A. (2015). *Six-step relational database design: A step by step approach to relational database design and development*. Fidel Captain.
-- Everest, G. C. (1976). Basic data structure models explained with a common example. In *Computing Systems 1976, Proceedings Fifth Texas Conference on Computing Systems* (pp. 39-46). IEEE Computer Society Publications Office.
-- MySQL. (2024). *Sakila Sample Database*. Retrieved from <https://dev.mysql.com/doc/index-other.html>
+- Captain, F. A. (2015). *Six-step relational database design: A step by step approach to relational database design and development*. Fidel Captain.  
+- Everest, G. C. (1976). Basic data structure models explained with a common example. In *Computing Systems 1976, Proceedings Fifth Texas Conference on Computing Systems* (pp. 39-46). IEEE Computer Society Publications Office.  
+- MySQL. (2024). *Sakila Sample Database*. Retrieved from <https://dev.mysql.com/doc/index-other.html>  
 - PostgreSQL. (2024). *PostgreSQL 16 Documentation*. Retrieved from <https://www.postgresql.org/docs/16/>  
-- Zavala Ruiz, J. (2026, Junio). Metodología profesional de diseño de bases de datos: Estudio de Caso: Sistema de registro académico universitario. (draft). UEA Bases de Datos. <https://github.com/jzavalar/bases-de-datos/blob/main/Lectura_05_metodologia-de-diseno-de-bases-de-datos_estudio-de-caso.md> 
+- Zavala Ruiz, J. (2026, Junio). Metodología profesional de diseño de bases de datos: Estudio de Caso: Sistema de registro académico universitario. (draft). UEA Bases de Datos. <https://github.com/jzavalar/bases-de-datos/blob/main/Lectura_05_metodologia-de-diseno-de-bases-de-datos_estudio-de-caso.md>  
 
 **Dr. Jesús  
