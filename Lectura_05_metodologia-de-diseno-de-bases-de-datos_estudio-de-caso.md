@@ -1333,8 +1333,6 @@ El resultado no es solo un conjunto de tablas, sino una **arquitectura de datos 
 
 > **Recuerda:** Tenga siempre a mano el Manual de Referencia del RDBMS al implementar su diseño, ya que las particularidades de los tipos de datos y los motores de almacenamiento pueden requerir ajustes menores en la sintaxis de los índices y las restricciones. (Captain, 2015, p. 200).
 
----
-
 #### Referencias
 
 - Captain, F. A. (2015). *Six-step relational database design: A step by step approach to relational database design and development*. Fidel Captain.  
