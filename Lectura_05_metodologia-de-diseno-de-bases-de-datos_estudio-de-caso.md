@@ -1,4 +1,4 @@
-### Lectura 05.0. Metodología Profesional de Diseño de Bases de Datos
+### Lectura 05. Metodología Profesional de Diseño de Bases de Datos
 ### Estudio de Caso: Sistema de Registro Académico Universitario
 (draft)
 
