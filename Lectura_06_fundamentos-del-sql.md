@@ -12,13 +12,13 @@
 
 #### 1. Introducción
 
-El *lenguaje de consulta estructurado* o *SQL* (por sus siglas en inglés *Structured Query Language*) es el lenguaje estándar para acceder y manipular bases de datos relacionales. A diferencia de los lenguajes de programación procedurales como Python o Java, SQL es un lenguaje *declarativo* de cuarta generación (4GL): en lugar de especificar *cómo* obtener los datos paso a paso, se describe *qué* datos se desean obtener.
+El *lenguaje de consulta estructurada* o *SQL* (por sus siglas en inglés *Structured Query Language*) es el lenguaje estándar para acceder y manipular bases de datos relacionales. A diferencia de los lenguajes de programación procedurales como Python o Java, SQL es un lenguaje *declarativo* de cuarta generación (4GL): en lugar de especificar *cómo* obtener los datos paso a paso, se describe *qué* datos se desean obtener.
 
-SQL se convirtió en estándar de la ANSI en 1986 y de la ISO en 1987, con revisiones continuas hasta SQL:2023. Aunque existe un estándar, cada sistema gestor de bases de datos (SGBD) implementa extensiones propias. En estas notas nos enfocaremos principalmente en **PostgreSQL**, un sistema de gestión de bases de datos relacional de código abierto que cumple rigurosamente con el estándar SQL y es ampliamente utilizado en la industria.
+SQL se convirtió en estándar de la ANSI en 1986 y de la ISO en 1987, con revisiones continuas de 1992 hasta SQL:2023. Aunque existe un estándar, cada sistema gestor de bases de datos (SGBD o DBMS) implementa extensiones propias, llamadas *dialectos*. En estas notas nos enfocaremos principalmente en **PostgreSQL**, un sistema de gestión de bases de datos relacional de código abierto que cumple rigurosamente con el estándar SQL y es ampliamente utilizado en la industria.
 
 #### 1.1. ¿Qué es una base de datos relacional?
 
-Una *base de datos relacional* organiza la información en *tablas* compuestas por *filas* (registros o tuplas) y *columnas* (atributos o campos). Las tablas se relacionan entre sí mediante *claves primarias* y *claves foráneas*, estableciendo vínculos lógicos entre los datos.
+Una *base de datos relacional* organiza la información en *tablas* compuestas por *filas* (registros o tuplas) y *columnas* (atributos o campos). Las tablas se relacionan entre sí mediante *claves primarias* y *claves foráneas*, estableciendo vínculos lógicos (y estructurales) entre los datos.
 
 Por ejemplo, considérese una base de datos de una empresa con dos tablas:
 
@@ -45,7 +45,7 @@ Por ejemplo, considérese una base de datos de una empresa con dos tablas:
 └──────────────┴──────────┴───────────┴──────────┴─────────────────┴────────┘
 ```
 
-La columna `departamento_id` en la tabla `empleados` es una *clave foránea* que referencia a `id_departamento` en la tabla `departamentos`, estableciendo una relación entre ambas tablas.
+La columna `departamento_id` en la tabla `empleados` es una *clave foránea* que hace referencia a `id_departamento` en la tabla `departamentos`, estableciendo una relación entre ambas tablas.
 
 #### 1.2. Orientación a filas vs. orientación a columnas
 
