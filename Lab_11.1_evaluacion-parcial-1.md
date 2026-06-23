@@ -47,29 +47,39 @@ Al analizar este reporte, identificará varias deficiencias estructurales que de
 
 **Advertencia crítica:** No modifique ni limpie este archivo manualmente. Su propósito es servir como la fuente única de verdad para validar y hacer evidente cómo el proceso de normalización elimina todas las anomalías presentes. El análisis sistemático de este reporte le permitirá comprobar que cada paso de normalización responde a una anomalía concreta y medible, y no a una abstracción teórica.
 
+Este archivo de datos simula una base de datos actual en una hoja de cálculo, que requiere una reorganización.
+
 #### 4. Infraestructura y Entorno Técnico
 
 Para garantizar la reproducibilidad y el uso de estándares abiertos, este laboratorio abandona los entornos propietarios en favor de soluciones robustas y libres, alineadas con las mejores prácticas de la industria.
 
 ##### 4.1 Servidor Web: Apache HTTP Server
 
-Utilizaremos [Apache HTTP Server](https://httpd.apache.org/), un servidor web de software libre que ofrece alta estabilidad, seguridad y es ampliamente adoptado en la industria. Su inclusión en el laboratorio permitirá, en fases posteriores, exponer servicios de visualización de datos, APIs o interfaces de administración para la base de datos. Es fundamental instalar su versión estable más reciente y configurar adecuadamente los servicios del sistema y el firewall para garantizar la disponibilidad y seguridad del entorno.
+Utilizaremos [Apache HTTP Server](https://httpd.apache.org/), un servidor web de software abierto que ofrece alta estabilidad, seguridad y es ampliamente adoptado en la industria. Su inclusión en el laboratorio permitirá, en fases posteriores, exponer servicios de visualización de datos, APIs o interfaces de administración para la base de datos. Es fundamental instalar su versión estable más reciente y configurar adecuadamente los servicios del sistema y el firewall para garantizar la disponibilidad y seguridad del entorno.
 
 ##### 4.2 Motor de Base de Datos: MariaDB
 
-Utilizaremos [MariaDB](https://mariadb.org/), un sistema gestor de bases de datos relacional de software libre que ofrece compatibilidad total con MySQL y características avanzadas de optimización. Es fundamental instalar su versión estable más reciente y configurar adecuadamente las variables de entorno para garantizar el rendimiento y la seguridad del sistema.
+Utilizaremos [MariaDB](https://mariadb.org/), un sistema gestor de bases de datos relacional de software libre que ofrece compatibilidad total con MySQL (pues es su primera derivación) y características avanzadas de optimización. Es fundamental instalar su versión estable más reciente y configurar adecuadamente las variables de entorno para garantizar el rendimiento y la seguridad del sistema.
 
 ##### 4.3 Herramienta de Gestión: DBeaver Community Edition
 
 Como herramienta de gestión, emplearemos [DBeaver Community Edition](https://dbeaver.io/). Esta herramienta universal permite visualizar esquemas, editar datos y generar diagramas Entidad-Relación (ER) de manera intuitiva, consolidándose como el estándar para el analista moderno por su capacidad para conectarse a múltiples motores de bases de datos.
 
+Pruebe la instalación directamente desde Internet:  
+```bash
+sudo dnf install https://dbeaver.io/files/dbeaver-ce-latest-linux-x86_64.rpm
+[sudo] password for alumno: 
+Updating and loading repositories:
+Repositories loaded.
+ https://dbeaver.io/files/dbeaver-ce-latest-linux-x86_64.rpm            58% [==========        ] |   1.2 MiB/s | 242.4 MiB |  02m28s
+```
 ##### 4.4 Configuración del Entorno
 
 Asegúrese de verificar que el servicio de MariaDB esté activo y que DBeaver pueda establecer una conexión exitosa a dos bases de datos específicas:  
--   **`maven_movies_reporte`:** Entorno aislado para cargar el reporte maestro sin normalizar. (Desarrollo). (También podría ser una tabla separada de la base de datos `maven_movies`)   
--   **`maven_movies`:** Base de datos productiva que alojará el diseño normalizado. (Producción)
+-   **`maven_movies_reporte`:** Entorno aislado para cargar el reporte maestro sin normalizar. (Desarrollo).     
+-   **`maven_movies`:** Base de datos productiva que alojará el diseño normalizado. (Producción).  
 
-Esta separación de entornos previene la contaminación de datos, permite experimentar sin riesgos y refleja las prácticas profesionales de segregación entre desarrollo y producción.
+Esta separación de entornos previene la contaminación de datos, permite experimentar sin riesgos y refleja las prácticas profesionales de segregación entre desarrollo y producción. `maven_movies_reporte` también podría ser una tabla sin vinculación en la base de datos `maven_movies`.
 
 #### 5. Requerimientos Analíticos del Suscriptor
 
@@ -134,13 +144,13 @@ Identificar a los clientes de alto valor permite segmentar estrategias de retenc
 Más allá de la ejecución de consultas, este laboratorio exige materializar el conocimiento en documentos técnicos estandarizados. Estos entregables constituyen la evidencia de su competencia profesional y deben seguir los lineamientos presentados en el Laboratorio 10.
 
 ##### 6.1 Modelo Lógico Normalizado a 3NF
-Deberá presentar un Diagrama Entidad-Relación (ERD) que refleje la estructura óptima de la base de datos, validando dos aspectos fundamentales. Primero, la **normalización**: todas las tablas deben cumplir, por lo menos, con la Tercera Forma Normal (3NF), eliminando dependencias transitivas y redundancias, documentando cómo aplicó las formas 1FN, 2FN, 3FN y, donde aplique, BCNF. Segundo, las **vistas de reporte**: el modelo debe incluir la definición de *views* diseñadas para encapsular la lógica de los reportes solicitados, actuando como una capa de abstracción que protege la integridad de las tablas base y simplifica el acceso a la información recurrente.
+Deberá presentar un Diagrama Entidad-Relación (ERD) que refleje la estructura óptima de la base de datos, validando dos aspectos fundamentales. Primero, la **normalización**: todas las tablas deben cumplir, por lo menos, con la Tercera Forma Normal (3NF), eliminando dependencias transitivas y redundancias, documentando cómo aplicó las formas 1FN, 2FN, 3FN y, donde aplique, BCNF. Segundo, las **vistas de reporte**: el modelo debe incluir la definición de *views* diseñadas para encapsular la lógica de los reportes solicitados, actuando como una capa de abstracción que protege la integridad de las tablas base y simplifica el acceso a la información recurrente. Valide argumentativamente con un ejemplo, que se cumple.
 
 ##### 6.2 Diccionario de Datos
 Siguiendo el estándar del Laboratorio 10, documentará exhaustivamente el esquema. Deberá detallar el contenido (tablas, columnas, tipos de datos, restricciones, índices y descripciones semánticas) y explicar su propósito en el contexto del negocio de Maven Movies, vinculando cada decisión de diseño con los requerimientos analíticos del suscriptor.
 
 ##### 6.3 Modelo Físico
-Traducirá el modelo lógico a código ejecutable mediante un script DDL completo compatible con MariaDB. Debe incluir sentencias `CREATE TABLE`, claves foráneas, índices y las vistas mencionadas, siendo capaz de recrear la base de datos desde cero en un entorno limpio e integrando las reglas de negocio directamente en la base de datos.
+Traducirá el modelo lógico a código ejecutable mediante un script DDL completo compatible con MariaDB. Debe incluir sentencias `CREATE TABLE`, claves foráneas, índices y las vistas mencionadas, siendo capaz de recrear la base de datos desde cero en un entorno limpio e integrando las reglas de negocio directamente en la base de datos. Argumente y demuestre la necesidad de crear un modelo físico con SQL estándar y otro en el dialecto de MaríaDB.
 
 ##### 6.4 Script de Respaldo Automatizado
 La disponibilidad de los datos es tan importante como su integridad. Desarrollará un script que utilice herramientas nativas (`mysqldump` o DBeaver) para generar copias de seguridad completas. Como evidencia de la correcta implantación, deberá realizar un respaldo completo y documentar el proceso mediante los registros del sistema (*logs*) de la máquina virtual, filtrados para mostrar las operaciones relevantes de MariaDB. Esta práctica asegurará que las restricciones de integridad referencial hayan sido correctamente establecidas por el sistema gestor.
@@ -219,13 +229,13 @@ El primer paso es levantar la pila tecnológica que sostendrá el proyecto. Trab
 
 #### Bloque 2: Aislamiento del Reporte Maestro (10 min)
 
-Necesitamos un entorno seguro y aislado para analizar los 500 registros del archivo `lab_11.2_reporte_maestro_maven.csv`, evitando así contaminar la base de datos final. Además, por principios de seguridad, no trabajaremos directamente con el usuario `root` en las bases de datos de aplicación.
+Necesitamos un entorno seguro y aislado para analizar los 500 registros del archivo `Lab_11.2_reporte_maestro_maven.csv`, evitando así contaminar la base de datos final. Además, por principios de seguridad, no trabajaremos directamente con el usuario `root` en las bases de datos de aplicación.
 
 **Acciones:**  
 
 1.  **Crear Usuario Alumno:** Genera un usuario llamado `alumno` con una contraseña robusta y otórgale los privilegios necesarios.  
-2.  **Base de Datos del Reporte:** Crea la base de datos `maven_movies_reporte` con codificación `utf8mb4`.  
-3.  **Carga del CSV:** Crea la tabla `reporte_crudo` con las 15 columnas del encabezado y carga el archivo CSV utilizando `LOAD DATA INFILE`.  
+2.  **Base de Datos del Reporte:** Crea la base de datos `maven_movies_reporte` con codificación `utf8mb4`. Argumente por qué usar esa codificación.  
+3.  **Carga del CSV:** Crea la tabla `reporte_crudo` o `maven_movies_reporte` con las 15 columnas del encabezado y carga el archivo CSV utilizando `LOAD DATA INFILE`.  
 
 **Formulación del Prompt por el Estudiante:**
 
@@ -240,13 +250,13 @@ Redacta tu propio *prompt* aplicando la fórmula (Contexto, Rol, Tarea) solicita
 
 #### Bloque 3: Análisis, Normalización y Carga de Datos (30 min)
 
-Aquí es donde tu criterio humano cobra mayor relevancia. La IA puede sugerir estructuras, pero tú debes validar que las dependencias funcionales del reporte maestro se resuelvan correctamente en tu nuevo esquema 3NF/BCNF.
+Aquí es donde tu criterio humano cobra mayor relevancia. La IA puede sugerir estructuras, pero tú debes validar que las dependencias funcionales del reporte maestro se resuelvan correctamente en tu nuevo esquema 3NF/BCNF. Argumenta con un ejemplo.
 
 **Acciones:**
 
 1.  **Diseño del Esquema:** Analiza las anomalías del reporte (valores compuestos en nombres, dependencias transitivas de direcciones y correos). Diseña las tablas normalizadas.  
 2.  **Crear BD Normalizada:** Crea la base de datos `maven_movies`.  
-3.  **Extraer, Transformar y Cargar (ETL):** Escribe las consultas `INSERT INTO ... SELECT ...` para extraer los datos únicos desde el reporte crudo y poblar las nuevas tablas normalizadas.  
+3.  **Extraer, Transformar y Cargar (*Extract, Transform & Load*, ETL):** Escribe las consultas `INSERT INTO ... SELECT ...` para extraer los datos únicos desde el reporte crudo y poblar las nuevas tablas normalizadas.  
 
 **Formulación del Prompt por el Estudiante:**
 
