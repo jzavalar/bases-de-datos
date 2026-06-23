@@ -1,4 +1,4 @@
-### Laboratorio 11: Proyecto de Mitad de Curso – Análisis y Diseño para Maven Movies
+### Laboratorio 11: Proyecto de Mitad de Curso – Análisis y Diseño de la Base de Datos para Maven Movies
 ### Evaluación parcial 1
 
 **Dr. Jesús Zavala Ruiz**  
@@ -31,7 +31,7 @@ Esta carta define el contexto de negocio: no estamos escribiendo consultas SQL p
 
 #### 3. Insumo de Datos
 
-El punto de partida para el diseño de la base de datos es el archivo `lab_11.2_reporte_maestro_maven.csv`, disponible en los recursos del curso. Este archivo contiene **exactamente 500 registros** que simulan la "verdad cruda" de operaciones heredadas, reflejando la estructura típica de una hoja de cálculo sin ningún tipo de normalización.
+El punto de partida para el diseño de la base de datos es el archivo [`Lab_11.2_reporte_maestro_maven.csv`](https://github.com/jzavalar/bases-de-datos/blob/main/Lab_11.2_reporte_maestro_maven.csv), disponible en los recursos del curso. Este archivo contiene **exactamente 500 registros** que simulan la "verdad cruda" de operaciones heredadas, reflejando la estructura típica de una hoja de cálculo sin ningún tipo de normalización.
 
 La estructura del archivo se define mediante el siguiente encabezado:
 
@@ -66,8 +66,8 @@ Como herramienta de gestión, emplearemos [DBeaver Community Edition](https://db
 ##### 4.4 Configuración del Entorno
 
 Asegúrese de verificar que el servicio de MariaDB esté activo y que DBeaver pueda establecer una conexión exitosa a dos bases de datos específicas:  
--   **`maven_movies_reporte`:** Entorno aislado para cargar el reporte maestro sin normalizar.  
--   **`maven_movies`:** Base de datos productiva que alojará el diseño normalizado.  
+-   **`maven_movies_reporte`:** Entorno aislado para cargar el reporte maestro sin normalizar. (Desarrollo). (También podría ser una tabla separada de la base de datos `maven_movies`)   
+-   **`maven_movies`:** Base de datos productiva que alojará el diseño normalizado. (Producción)
 
 Esta separación de entornos previene la contaminación de datos, permite experimentar sin riesgos y refleja las prácticas profesionales de segregación entre desarrollo y producción.
 
