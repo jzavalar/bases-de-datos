@@ -35,7 +35,7 @@ El punto de partida para el diseño de la base de datos es el archivo [`Lab_11.2
 
 La estructura del archivo se define mediante el siguiente encabezado:
 
-```text
+```bash
 ID_Renta,Fecha_Renta,Cliente_Nombre,Cliente_Email,Cliente_Activo,Tienda_ID,Tienda_Direccion,Staff_Nombre,Staff_Email,Pelicula_Titulo,Pelicula_Categoria,Pelicula_Costo_Reemplazo,Inventario_ID,Pago_Monto,Pago_Fecha_Pago
 ```
 
