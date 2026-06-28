@@ -51,7 +51,10 @@ Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloq
 
 Con disco duro:
 ``` bash
-$ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/sda
+lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/sda
+```
+Salida esperada:
+``` text
 NAME                                    SIZE FSTYPE      LABEL  MOUNTPOINT
 sda                                   931.5G                    
 ├─sda1                                  600M vfat               /boot/efi
@@ -65,8 +68,11 @@ sda                                   931.5G
 
 Con disco de estado solido (cambie `/dev/sda` por `/dev/nvme0n1`):
 
+``` bash
+lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/nvme0n1
 ```
-$ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT /dev/nvme0n1
+
+``` text
 NAME                                            SIZE FSTYPE      LABEL  MOUNTPOINT
 nvme0n1                                         1.8T                    
 ├─nvme0n1p1                                     600M vfat               /boot/efi
@@ -87,8 +93,10 @@ LUKS (Linux Unified Key Setup) estandariza el cifrado de bloques en Linux. La ve
 (cambie `/dev/sda4` por `/dev/nvme0n1p4`) 
 
 ``` bash
-$ sudo cryptsetup luksFormat --type luks2 --label datos /dev/sda4
+sudo cryptsetup luksFormat --type luks2 --label datos /dev/sda4
+```
 
+``` text
 ¡ATENCIÓN!
 ==========
 Esto sobreescribirá los datos en /dev/sda4 de forma irrevocable.
@@ -106,9 +114,18 @@ Verifique la frase contraseña:
 Un dispositivo LUKS cerrado es ilegible para el sistema. `luksOpen` descifra la clave maestra en memoria RAM y expone un dispositivo virtual en `/dev/mapper/`. Este mapeador actúa como un filtro transparente: todo dato escrito se cifra antes de alcanzar el disco físico; todo dato leído se descifra antes de llegar a la aplicación.
 
 ``` bash
-$ sudo cryptsetup luksOpen /dev/sda4 datos
+sudo cryptsetup luksOpen /dev/sda4 datos
+```
+
+``` text
 Introduzca la frase contraseña de /dev/sda4: 
-$ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT | grep -E "sda4|datos"
+```
+
+``` bash
+lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT | grep -E "sda4|datos"
+```
+
+``` text
 └─sda4                                        673.9G crypto_LUKS datos  
   └─datos                                     673.9G                    
 ```
@@ -118,7 +135,10 @@ $ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT | grep -E "sda4|datos"
 Se formatea `/dev/mapper/datos`, **no** `/dev/sda4`, con un sistema de archivos `ext4` por su estabilidad, bajo consumo de memoria y compatibilidad probada con operaciones `discard` (TRIM) en el disco de estado sólido (SSD).
 
 ``` bash
-$ sudo mkfs.ext4 -L datos_vol /dev/mapper/datos
+sudo mkfs.ext4 -L datos_vol /dev/mapper/datos
+```
+
+``` text
 mke2fs 1.47.2 (1-Jan-2025)
 Se está creando un sistema de ficheros con 176661504 bloques de 4k y 44171264 nodos-i
 UUID del sistema de ficheros: 2a3e2d53-5f51-446a-b762-a693a26536fd
@@ -148,7 +168,10 @@ Para que el volumen sobreviva a reinicios, `systemd` debe conocer dos parámetro
 Antes de registrar el volumen cifrado en los archivos de configuración del sistema, es indispensable obtener su UUID. Este identificador es generado aleatoriamente durante la inicialización del contenedor LUKS y permanece inmutable a lo largo de la vida útil del dispositivo, incluso si el kernel reordena la nomenclatura de los bloques (ej. `/dev/sda4` → `/dev/sdb1` tras conectar un disco externo).
 
 ``` bash
-$ sudo blkid /dev/sda4
+sudo blkid /dev/sda4
+```
+
+``` text
 /dev/sda4: UUID="54acac45-d8c9-4b6d-8cd3-9f7cefb39ca7" TYPE="crypto_LUKS" LABEL="datos" PARTUUID="c607c2f0-fc0d-43e4-960d-ca538edfff6c"
 ```
 
@@ -159,12 +182,12 @@ El valor que figura tras `UUID=` corresponde al identificador de la partición f
 **`/etc/crypttab`** (desencriptación en arranque):
 
 ``` bash
-$ sudo vi /etc/crypttab
+sudo vi /etc/crypttab
 ```
 
 *(Presione `i` para entrar en modo inserción. Añada la línea al final. Presione `Esc`, luego `:wq` y `Enter` para guardar y salir.)*
 
-```         
+``` text
 datos UUID=54acac45-d8c9-4b6d-8cd3-9f7cefb39ca7 none luks,discard
 ```
 
@@ -178,7 +201,7 @@ datos UUID=54acac45-d8c9-4b6d-8cd3-9f7cefb39ca7 none luks,discard
 **`/etc/fstab`** (montaje del sistema de archivos):
 
 ``` bash
-$ sudo vi /etc/fstab
+sudo vi /etc/fstab
 ```
 
 *(Mismo procedimiento de edición que en el paso anterior.)*
@@ -199,18 +222,33 @@ $ sudo vi /etc/fstab
 El kernel carga un sistema mínimo en memoria (`initramfs`) antes de montar la partición raíz. `dracut` reconstruye esta imagen para incluir `systemd-cryptsetup` y leer `crypttab`. Posteriormente, `systemd` debe recargar su configuración para reconocer `fstab`.
 
 ``` bash
-$ sudo dracut -f
-$ sudo mkdir -p /backup
-$ sudo mount -a
+sudo dracut -f
+sudo mkdir -p /backup
+sudo mount -a
+```
+
+``` text
 mount: (hint) your fstab has been modified, but systemd still uses
        the old version; use 'systemctl daemon-reload' to reload.
-$ systemctl daemon-reload
-$ sudo mount -a
-$ df -h /backup
+```
+
+``` bash
+systemctl daemon-reload
+sudo mount -a
+df -h /backup
+```
+
+``` text
 S.ficheros        Tamaño Usados  Disp Uso% Montado en
 /dev/mapper/datos   663G   2.1M  629G   1% /backup
-$ sudo chown $USER:$USER /backup
-$ ls -ld /backup
+```
+
+``` bash
+sudo chown $USER:$USER /backup
+ls -ld /backup
+```
+
+``` text
 drwxr-xr-x 3 alumno alumno 4096 may 29 14:17 /backup
 ```
 
@@ -226,7 +264,7 @@ Para cerrar de forma segura un volumen cifrado en tu sistema Fedora, debe asegur
 Antes de desmontar o cerrar el volumen, asegúrese que ningún proceso esté accediendo a `/dev/mapper/datos`. Para ello, podemos usar los comandos `lsof` y `fuser`:
 
 ```bash
-$ lsof | grep /dev/mapper/datos
+lsof | grep /dev/mapper/datos
 ```
 
 No aparece nada, lo que indica que ningún proceso está usando ese volumen en ese momento.
@@ -234,7 +272,7 @@ No aparece nada, lo que indica que ningún proceso está usando ese volumen en e
 Luego, verificamos con `fuser`:
 
 ```bash
-$ fuser -m /dev/mapper/datos
+fuser -m /dev/mapper/datos
 ```
 
 Nuevamente, no hay salida, confirmando que el volumen no está en uso activo.
@@ -246,7 +284,10 @@ Estos comandos ayudan a detectar si algún proceso está accediendo al volumen. 
 El siguiente paso es comprobar si el volumen cifrado está montado en alguna ubicación del sistema. Ejecutamos:
 
 ```bash
-$ mount | grep /dev/mapper/datos
+mount | grep /dev/mapper/datos
+```
+
+```text
 /dev/mapper/datos on /backup type ext4 (rw,noatime,seclabel)
 ```
 
@@ -257,13 +298,13 @@ Esto indica que `/dev/mapper/datos` está montado en `/backup`. Para cerrar el v
 Se procede a desmontarlo con:
 
 ```bash
-$ sudo umount /backup
+sudo umount /backup
 ```
 
 Como no hay error, el volumen quedó desmontado. Para asegurarlo, puede volver a verificarlo:
 
 ```bash
-$ mount | grep /dev/mapper/datos
+mount | grep /dev/mapper/datos
 ```
 
 Como no aparece ninguna línea, se confirma que ya no está montado.
@@ -276,7 +317,7 @@ Como no aparece ninguna línea, se confirma que ya no está montado.
 Con el volumen desmontado, ahora sí puede cerrarlo de manera segura:
 
 ```bash
-$ sudo cryptsetup luksClose datos
+sudo cryptsetup luksClose datos
 ```
 
 Como no hubo errores, el volumen quedó cerrado correctamente.
@@ -298,26 +339,35 @@ Hasta este punto, el volumen cifrado está operativo y montado automáticamente.
 
 El comando `luksHeaderBackup` crea una copia binaria exacta de la cabecera LUKS, preservando todas las claves y configuraciones. Este respaldo debe generarse inmediatamente después de `luksFormat` y actualizarse cada vez que se modifique la configuración de claves.
 
-``` bash
-$ sudo cryptsetup luksHeaderBackup /dev/sda4 --header-backup-file ~/luks-header-datos.img
-$ ls -lh ~/luks-header-datos.img
+```bash
+sudo cryptsetup luksHeaderBackup /dev/sda4 --header-backup-file ~/luks-header-datos.img
+ls -lh ~/luks-header-datos.img
+```
+
+```text
 -rw------- 1 alumno alumno 16M may 29 14:20 /home/alumno/luks-header-datos.img
 ```
 
 Proteja su integridad con un checksum:
 
+```bash
+sudo sha256sum ~/luks-header-datos.img > ~/luks-header-datos.img.sha256
+ls -lh ~/luks-header-datos*
 ```
-$ sudo sha256sum ~/luks-header-datos.img > ~/luks-header-datos.img.sha256
-$ ls -lh ~/luks-header-datos*
+
+```text
 -r--------. 1 root    root    16M may 31 16:33 /home/alumno/luks-header-datos.img
 -rw-r--r--. 1 alumno  alumno  111 may 31 16:36 /home/alumno/luks-header-datos.img.sha256
 ```
 
 Corriga la propiedad de la imagen:
 
+```bash
+sudo chown alumno:alumno ~/luks-header-datos_zaricosa.img
+ls -lh ~/luks-header-datos*
 ```
-$ sudo chown alumno:alumno ~/luks-header-datos_zaricosa.img
-$ ls -lh ~/luks-header-datos*
+
+```text
 -r--------. 1 alumno  alumno    16M may 31 16:33 /home/alumno/luks-header-datos.img
 -rw-r--r--. 1 alumno  alumno  111 may 31 16:36 /home/alumno/luks-header-datos.img.sha256
 ```
@@ -330,7 +380,10 @@ $ ls -lh ~/luks-header-datos*
 Cuando se restaura o modifica la cabecera de un volumen cifrado, es fundamental que el volumen esté cerrado, ya que la cabecera es la parte que **contiene la clave y la estructura de cifrado del volumen**. Si el volumen está abierto (montado o en uso), la cabecera puede estar en uso y en memoria, lo que podría comprometer la integridad de la operación o causar errores. Por lo tanto, antes de realizar la restauración, debe asegurarse de que el volumen esté **cerrado** con el comando:
 
 ```bash
-$ sudo cryptsetup luksClose datos
+sudo cryptsetup luksClose datos
+```
+
+```text
 El dispositivo datos no está activo.
 ```
 
@@ -341,17 +394,27 @@ Luego, se podrás proceder con la restauración de la cabecera.
 
 ##### 2.1. Verificación previa a la restauración
 
+1. Verificar que el archivo de respaldo existe y tiene tamaño razonable (~16 MiB para LUKS2)  
 ``` bash
-##### 1. Verificar que el archivo de respaldo existe y tiene tamaño razonable (~16 MiB para LUKS2)
-$ ls -lh ~/luks-header-datos.img
+ls -lh ~/luks-header-datos.img
+```
+
+```text
 -rw------- 1 alumno alumno 16M may 29 14:20 /home/alumno/luks-header-datos.img
+```
 
-##### 2. Confirmar que el dispositivo destino es el esperado
-$ sudo blkid /dev/sda4
+2. Confirmar que el dispositivo destino es el esperado  
+``bash
+sudo blkid /dev/sda4
+```
+
+```text
 /dev/sda4: PARTUUID="c607c2f0-fc0d-43e4-960d-ca538edfff6c"
+```
+3. (Opcional) Inspeccionar metadatos del respaldo sin restaurar
 
-##### 3. (Opcional) Inspeccionar metadatos del respaldo sin restaurar
-$ sudo cryptsetup luksDump ~/luks-header-datos.img | head -20
+```bash
+sudo cryptsetup luksDump ~/luks-header-datos.img | head -20
 ```
 
 ##### 2.2. Verificación de integridad y ejecución de la restauración
@@ -363,7 +426,10 @@ Dado que la operación de restauración modifica irreversiblemente los metadatos
 Antes de interactuar con el dispositivo físico, es imperativo confirmar que `~/luks-header-datos.img` contiene una cabecera LUKS2 válida, estructurada y coherente con los parámetros originales. El comando `luksDump` inspecciona el archivo en modo de solo lectura, sin alterar ni el respaldo ni el disco.
 
 ```bash
-$ sudo cryptsetup luksDump ~/luks-header-datos.img | head -20
+sudo cryptsetup luksDump ~/luks-header-datos.img | head -20
+```
+
+```text
 LUKS header information
 Version:       	2
 Epoch:         	3
@@ -409,7 +475,7 @@ Keyslots:
 Una vez validado el respaldo, se procede a sobrescribir la cabecera del dispositivo físico. Este comando reemplaza los primeros ~16 MiB de `/dev/sda4` con el contenido binario del archivo de respaldo.
 
 ```bash
-$ sudo cryptsetup luksHeaderRestore /dev/sda4 --header-backup-file ~/luks-header-datos.img
+sudo cryptsetup luksHeaderRestore /dev/sda4 --header-backup-file ~/luks-header-datos.img
 ```
 
 **Comportamiento operativo:**
@@ -421,20 +487,34 @@ $ sudo cryptsetup luksHeaderRestore /dev/sda4 --header-backup-file ~/luks-header
 
 Para certificar que la cabecera fue aplicada correctamente y que el volumen es nuevamente accesible:
 
+1. Verificar que el dispositivo reporta la cabecera restaurada  
 ```bash
-##### 1. Verificar que el dispositivo reporta la cabecera restaurada
-$ sudo cryptsetup luksDump /dev/sda4 | grep -E "Version|Label|UUID"
+sudo cryptsetup luksDump /dev/sda4 | grep -E "Version|Label|UUID"
+```
+
+```text
 Version:       	2
 Label:         	datos
 UUID:          	54acac45-d8c9-4b6d-8cd3-9f7cefb39ca7
+```
 
-##### 2. Validar apertura con la frase de contraseña original
-$ sudo cryptsetup luksOpen /dev/sda4 datos
+2. Validar apertura con la frase de contraseña original  
+```bash
+sudo cryptsetup luksOpen /dev/sda4 datos
+```
+
+```text
 Introduzca la frase contraseña de /dev/sda4: 
+```
 
-##### 3. Confirmar montaje y disponibilidad de datos
-$ sudo mount /dev/mapper/datos /backup
-$ ls /backup/respaldos_home/
+3. Confirmar montaje y disponibilidad de datos
+
+```bash
+sudo mount /dev/mapper/datos /backup
+ls /backup/respaldos_home/
+```
+
+```text
 20260529
 ```
 
@@ -445,7 +525,10 @@ Esta secuencia garantiza que la recuperación de metadatos criptográficos se ej
 ##### 3.1. Verificar que la cabecera fue restaurada correctamente:
 
 ```bash
-$ sudo cryptsetup luksDump /dev/sda4 | grep -E "Version|Label"
+sudo cryptsetup luksDump /dev/sda4 | grep -E "Version|Label"
+```
+
+```text
 Version:        2
 Label:          datos
 ``` 
@@ -453,7 +536,10 @@ Label:          datos
 ##### 3.2. Intentar abrir el volumen con la frase de contraseña original:
 
 ```bash
-$ sudo cryptsetup luksOpen /dev/sda4 datos
+sudo cryptsetup luksOpen /dev/sda4 datos
+```
+
+```text
 Introduzca la frase contraseña de /dev/sda4: 
 ```
 
@@ -462,8 +548,11 @@ Como no hay salida, el dispositivo se abrió exitosamente. Si el mensaje fue `El
 ##### 3.3. Confirmar montaje y acceso a datos
 
 ```bash
-$ sudo mount /dev/mapper/datos /backup
-$ ls /backup/respaldos_home/
+sudo mount /dev/mapper/datos /backup
+ls /backup/respaldos_home/
+```
+
+```text
 20260529
 ```
 
@@ -500,15 +589,19 @@ Un respaldo de \~150 GiB puede extenderse entre 30 y 90 minutos. Si la terminal 
 
 ##### 1. Sesión resiliente con `tmux`
 
+1. Crear y adjuntar una sesión persistente llamada "respaldo"
+   
 ``` bash
-##### 1. Crear y adjuntar una sesión persistente llamada "respaldo"
-$ tmux new-session -d -s respaldo
-$ tmux attach -t respaldo
+tmux new-session -d -s respaldo
+tmux attach -t respaldo
+```
 
-##### 2. Dentro de tmux, preparar directorio y ejecutar rsync
-$ BACKUP_DIR="/backup/respaldos_home/$(date +%Y%m%d)"
-$ sudo mkdir -p "$BACKUP_DIR"
-$ sudo rsync -aAXHv --progress \
+2. Dentro de `tmux`, preparar directorio y ejecutar `rsync`  
+
+```bash
+BACKUP_DIR="/backup/respaldos_home/$(date +%Y%m%d)"
+sudo mkdir -p "$BACKUP_DIR"
+sudo rsync -aAXHv --progress \
   --exclude='.cache' \
   --exclude='.local/share/Trash' \
   --exclude='.thumbnails' \
@@ -516,31 +609,32 @@ $ sudo rsync -aAXHv --progress \
   /home/alumno/ "$BACKUP_DIR/"
 ```
 
-> 🔹 **Desvinculación segura sin detener el proceso:**\
-> Presione `Ctrl+B`, suelte ambas teclas y presione `D`. La terminal se liberará, pero `rsync` continuará ejecutándose en segundo plano dentro de `tmux`.
->
-> 🔹 **Reconexión o recuperación de la sesión:**
->
-> ``` bash
-> $ tmux attach -t respaldo
-> ```
->
-> El usuario recupera la consola exactamente en el punto donde quedó, sin interrupciones ni pérdida de contexto.
+**Desvinculación segura sin detener el proceso:**
 
-##### 2. Salida final del proceso de respaldo
+Presione `Ctrl+B`, suelte ambas teclas y presione `D`. La terminal se liberará, pero `rsync` continuará ejecutándose en segundo plano dentro de `tmux`.
+
+**Reconexión o recuperación de la sesión:**
+
+``` bash
+tmux attach -t respaldo
+```
+
+El usuario recupera la consola exactamente en el punto donde quedó, sin interrupciones ni pérdida de contexto.
+
+2. Salida final del proceso de respaldo  
 
 ```         
 sent 166,565,358,492 bytes  received 597,485 bytes  39,672,729.78 bytes/sec
 total size is 166,522,513,580  speedup is 1.00
 ```
 
-> **Interpretación:**\
-> La velocidad promedio (\~39.7 MB/s) es coherente con la sobrecarga mínima introducida por el cifrado LUKS2. `tmux` garantizó la ejecución ininterrumpida, demostrando su valor en operaciones de mantenimiento crítico.
+**Interpretación:**  
+La velocidad promedio (\~39.7 MB/s) es coherente con la sobrecarga mínima introducida por el cifrado LUKS2. `tmux` garantizó la ejecución ininterrumpida, demostrando su valor en operaciones de mantenimiento crítico.
 
-##### 3. Salida de la sesión resiliente `tmux`
+3. Salida de la sesión resiliente `tmux`  
 
 ``` bash
-$ exit
+exit
 ```
 
 #### VIII. Fase 6: Validación integral y prueba de ciclo completo
@@ -550,23 +644,36 @@ La validación definitiva consiste en cerrar el volumen, reiniciar el equipo y v
 ##### 1. Preparación y reinicio
 
 ``` bash
-$ sudo umount /backup
-$ sudo cryptsetup luksClose datos
-$ sudo reboot
+sudo umount /backup
+sudo cryptsetup luksClose datos
+sudo reboot
 ```
 
 ##### 2. Validación posterior al reinicio
 
 ``` bash
-$ df -h /backup
+df -h /backup
+```
+
+```text
 S.ficheros        Tamaño Usados  Disp Uso% Montado en
 /dev/mapper/datos   663G   156G  474G  25% /backup
+```
 
-$ lsblk -o NAME,FSTYPE,MOUNTPOINT | grep -E "sda4|datos"
+```bash
+lsblk -o NAME,FSTYPE,MOUNTPOINT | grep -E "sda4|datos"
+```
+
+```text
 └─sda4                                        crypto_LUKS 
   └─datos                                     ext4        /backup
+```
 
-$ systemctl status systemd-cryptsetup@datos.service --no-pager -l
+```bash
+systemctl status systemd-cryptsetup@datos.service --no-pager -l
+```
+
+```bash
 ● systemd-cryptsetup@datos.service - Cryptography Setup for datos
      Loaded: loaded (/etc/crypttab; generated)
     Drop-In: /usr/lib/systemd/system/service.d
@@ -583,10 +690,21 @@ $ systemctl status systemd-cryptsetup@datos.service --no-pager -l
 
 may 29 22:39:41 fedora systemd[1]: Starting systemd-cryptsetup@datos.service - Cryptography Setup for datos...
 may 29 22:39:45 fedora systemd[1]: Finished systemd-cryptsetup@datos.service - Cryptography Setup for datos.
+```
 
-$ sudo grep datos /etc/crypttab
+```bash
+sudo grep datos /etc/crypttab
+```
+
+```text
 datos UUID=54acac45-d8c9-4b6d-8cd3-9f7cefb39ca7 none luks,discard
-$ sudo grep backup /etc/fstab
+```
+
+```bash
+sudo grep backup /etc/fstab
+```
+
+```text
 /dev/mapper/datos /backup ext4 defaults,noatime 0 2
 ```
 
