@@ -921,7 +921,7 @@ En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los sigu
 
 #### 11. Cronograma y Políticas de Evaluación
 
-**Fecha límite de entrega:** Domingo 5 de julio de 2026, 24:00 horas.
+**Fecha límite de entrega:** Miércoles 8 de julio de 2026, 24:00 horas.
 
 *   **Trabajo estrictamente individual.**
 *   **Integridad Académica:** La detección de patrones generados por IA, o la ausencia de la bitácora física (cuaderno), resultará en la anulación automática del laboratorio y el inicio del procedimiento correspondiente por falta a la ética académica.
@@ -932,7 +932,7 @@ Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige l
 
 #### 12. Sesión de Defensa Oral y Verificación de Competencias
 
-**Fecha:** Miércoles 8 de julio de 2026, en el horario regular de la clase.
+**Fecha:** Miércoles 8 y 10 de julio de 2026, en el horario regular de la clase.
 
 Con el propósito de garantizar la integridad académica y verificar la apropiación real de las competencias desarrolladas durante el laboratorio, se llevará a cabo una **sesión de defensa oral individual** durante las sesiones de los días 8 y 10 de julio de 2026. Cada estudiante deberá presentarse con su cuaderno físico (bitácora analógica) y su script SQL (`laboratorio12_pagila.sql`) para participar en un ejercicio de verificación de 10 a 15 minutos, durante el cual el profesor formulará preguntas sobre:
 
