@@ -1,11 +1,11 @@
-# Laboratorio 12. Fundamentos del Lenguaje de Consulta Estructurada (SQL). Parte 2.
+#### Laboratorio 12. Fundamentos del Lenguaje de Consulta Estructurada (SQL). Parte 2.
 
 **Dr. Jesús Zavala Ruiz**   
-**Última actualización:** 26 de junio de 2026.  
+**Última actualización:** 29 de junio de 2026.  
 
 ---
 
-## 1. Introducción
+#### 1. Introducción
 
 El presente laboratorio tiene como propósito evaluar y consolidar el dominio de los fundamentos del lenguaje SQL, abarcando desde la formulación de consultas básicas hasta la administración y programación del lado del servidor en **PostgreSQL**. Las prácticas se ejecutarán sobre la máquina virtual **Fedora44-lab**, configurada previamente en el Laboratorio 05. Para ello, se empleará **Pagila**, la adaptación nativa para PostgreSQL del clásico esquema Sakila (una simulación de una tienda de renta de películas). A diferencia de su contraparte original, Pagila introduce características avanzadas y propias del estándar PostgreSQL: tablas particionadas (como la tabla `payment`), rangos de tiempo (`tsrange` en la tabla `rental`), columnas generadas computacionalmente, y funciones de dominio público. Este esquema proporciona un entorno de complejidad real, diseñado para que el estudiante enfrente los mismos desafíos arquitectónicos que se resuelven en la industria.
 
@@ -21,7 +21,7 @@ A nivel global, la Oficina de Estadísticas Laborales de Estados Unidos (BLS, 20
 
 Lo más relevante para un estudiante es que SQL es una habilidad "puerta de entrada": no requiere años de experiencia para ser útil. Desde el primer año de la carrera, un estudiante que domine consultas complejas, JOINs, funciones de ventana y administración básica de bases de datos puede acceder a posiciones de medio tiempo como analista de datos junior, desarrollador backend o administrador de bases de datos asistente, con remuneraciones que oscilan entre los 8,000 y 15,000 pesos mensuales. Esta temprana inserción no solo genera ingresos, sino que construye un portafolio de experiencia real que, al momento de graduarse, posiciona al profesional muy por encima de sus pares que carecen de práctica aplicada en entornos productivos.
 
-## 2. Metodología
+#### 2. Metodología
 
 Para garantizar la apropiación rigurosa de los conocimientos, el laboratorio se regirá por tres lineamientos ineludibles:
 
@@ -29,89 +29,219 @@ Para garantizar la apropiación rigurosa de los conocimientos, el laboratorio se
 2. **Restricción Absoluta de Inteligencia Artificial:** Queda estrictamente prohibido el uso de Modelos de Lenguaje (LLMs) para generar, depurar o explicar el código. La dependencia de estas herramientas anula el proceso de aprendizaje.  
 3. **Trazabilidad y Evidencia Forense:** En la administración de sistemas, lo que no está registrado en los logs, no ocurrió. El estudiante deberá configurar y extraer los registros de auditoría tanto del sistema operativo (Fedora 44) como del motor de base de datos (PostgreSQL) para demostrar la autoría y ejecución de las operaciones.
 
-## 3. Preparación del Entorno en Fedora 44
+#### 3. Preparación del Entorno en Fedora 44
 
-### 3.1. Verificación del Servicio
+#### 3.1. Verificación e Inicialización del Servicio
 
 Acceda a su máquina virtual Fedora44-lab y asegure el funcionamiento del motor de base de datos:
 
 ```bash
 ssh alumno@<ip_de_su_vm>
 sudo systemctl status postgresql
-sudo systemctl start postgresql   # En caso de estar inactivo
-sudo systemctl enable postgresql  # Para asegurar su inicio automático
-sudo systemctl restart postgresql   # En caso necesario
 ```
 
-### 3.2. Creación del Espacio de Trabajo
-Proceda a crear el rol de usuario y la base de datos, si no lo ha hecho, previamente. Se solicita prestar especial atención a las credenciales:
+Si el servicio muestra un error indicando que el directorio de datos no está inicializado:
+
+```text
+× postgresql.service - PostgreSQL database server
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: d>
+    Active: failed (Result: exit-code) since Mon 2026-06-29 21:42:41 CST; 6min ago
+    Process: 14683 ExecStartPre=/usr/libexec/postgresql-check-db-dir postgresql (co>
+```
+
+Ejecute el siguiente comando para inicializar la base de datos:
+
+```bash
+sudo /usr/bin/postgresql-setup --initdb
+```
+
+**Nota importante:** Si el directorio `/var/lib/pgsql/data` contiene archivos previos (incluso un directorio `log` vacío), el script de inicialización fallará. En ese caso, elimine el contenido residual:
+
+```bash
+sudo rm -rf /var/lib/pgsql/data/log
+sudo /usr/bin/postgresql-setup --initdb
+```
+
+Debe obtener una salida similar a:
+
+```text
+ * Initializing database in '/var/lib/pgsql/data'
+ * Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+```
+
+Posteriormente, inicie y habilite el servicio:
+
+```bash
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+sudo systemctl status postgresql
+```
+
+La salida esperada es:
+
+```text
+● postgresql.service - PostgreSQL database server
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: d>
+    Drop-In: /usr/lib/systemd/system/service.d
+             └─10-timeout-abort.conf
+     Active: active (running) since Mon 2026-06-29 21:54:19 CST; 2s ago
+   Main PID: 15343 (postgres)
+      Tasks: 7 (limit: 18959)
+     Memory: 17.6M (peak: 18.4M)
+        CPU: 145ms
+     CGroup: /system.slice/postgresql.service
+             ├─15343 /usr/bin/postgres -D /var/lib/pgsql/data
+             ├─15345 "postgres: logger "
+             ├─15346 "postgres: checkpointer "
+             ├─15347 "postgres: background writer "
+             ├─15349 "postgres: walwriter "
+             ├─15350 "postgres: autovacuum launcher "
+             └─15351 "postgres: logical replication launcher "
+```
+
+#### 3.2. Creación del Espacio de Trabajo
+
+Proceda a crear el rol de usuario y la base de datos. Se solicita prestar especial atención a las credenciales:
 
 ```bash
 sudo -u postgres psql
 ```
 
 ```sql
--- Creación del rol con privilegios de administración
-CREATE ROLE alumno WITH LOGIN PASSWORD 'uamIztapalapa' SUPERUSER CREATEDB CREATEROLE;
+-- Obtener la lista de bases de datos
+\list
 
--- Creación de la base de datos con codificación y localización específicas
-CREATE DATABASE pagila
-    WITH OWNER = alumno
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'es_MX.UTF-8'
-    LC_CTYPE = 'es_MX.UTF-8';
+-- Creación de la base de datos
+CREATE DATABASE pagila;
+
+-- Lista de usuarios:
+\du
+
+-- Creación del rol con contraseña
+CREATE ROLE alumno WITH LOGIN PASSWORD 'uamIztapalapa';
+
 \q
 ```
+
 Conéctese posteriormente con el nuevo rol:
+
 ```bash
 psql -U alumno -d pagila -h localhost
 ```
 
-### 3.3. Carga del Esquema y Datos de Pagila
+#### 3.3. Carga del Esquema y Datos de Pagila
+
 Descargue los archivos oficiales desde el repositorio de GitHub y cárguelos respetando el orden lógico (primero la estructura (schema), luego los datos):
 
 ```bash
-cd ~
-wget https://raw.githubusercontent.com/devrimgunduz/pagila/master/pagila-schema.sql
-wget https://raw.githubusercontent.com/devrimgunduz/pagila/master/pagila-data.sql
-wget https://github.com/devrimgunduz/pagila/blob/master/pagila-schema-diagram.png
+cd /tmp
+wget https://github.com/devrimgunduz/pagila/archive/refs/heads/master.zip
+unzip master.zip
+cd pagila-master
 
-psql -U alumno -d pagila -h localhost -f pagila-schema.sql
-psql -U alumno -d pagila -h localhost -f pagila-data.sql
+sudo -u postgres psql -d pagila -f pagila-schema.sql
+sudo -u postgres psql -d pagila -f pagila-data.sql
 ```
 
-### 3.4. Configuración de la Auditoría del Sistema Operativo (El Perímetro)
+La salida debe mostrar múltiples operaciones `CREATE TABLE`, `CREATE INDEX`, `COPY` y `setval`:
+
+```text
+CREATE TABLE
+ALTER TABLE
+CREATE INDEX
+...
+COPY 599
+COPY 6
+COPY 1000
+...
+ setval 
+--------
+    599
+(1 row)
+```
+
+Posteriormente, otorgue los permisos necesarios al usuario `alumno`:
+
+```bash
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE pagila TO alumno;"
+sudo -u postgres psql -d pagila -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO alumno;"
+sudo -u postgres psql -d pagila -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO alumno;"
+```
+
+Verifique que la base de datos fue creada correctamente:
+
+```bash
+sudo -u postgres psql -c "\l"
+```
+
+```text
+                                                       List of databases
+   Name    |  Owner   | Encoding | Locale Provider |   Collate   |    Ctype    | ICU Locale | ICU Rules |   Access privileges   
+-----------+----------+----------+-----------------+-------------+-------------+------------+-----------+-----------------------
+ pagila    | postgres | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           | =Tc/postgres         +
+           |          |          |                 |             |             |            |           | postgres=CTc/postgres+
+           |          |          |                 |             |             |            |           | alumno=CTc/postgres
+ postgres  | postgres | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           | 
+ template0 | postgres | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           | =c/postgres          +
+           |          |          |                 |             |             |            |           | postgres=CTc/postgres
+ template1 | postgres | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           | =c/postgres          +
+           |          |          |                 |             |             |            |           | postgres=CTc/postgres
+(4 rows)
+```
+
+#### 3.4. Configuración de la Auditoría del Sistema Operativo (El Perímetro)
+
 Siguiendo las mejores prácticas de seguridad, primero se asegura el perímetro a nivel de kernel antes de configurar el motor de base de datos. El demonio de auditoría de Linux (`auditd`) registrará el acceso al sistema y las interacciones con los binarios de PostgreSQL.
 
 ```bash
 # Instalación y activación del servicio de auditoría
 sudo dnf install audit -y
+```
 
+```text
 Updating and loading repositories:
  Fedora 44 - x86_64 - Updates               100% |  37.4 KiB/s |  14.2 KiB |  00m00s
 Repositories loaded.
 Package "audit-4.1.4-1.fc44.x86_64" is already installed.
 
 Nothing to do.
+```
 
+```bash
+# Habilitar auditd
 sudo systemctl enable --now auditd
 
-# Definición de reglas de auditoría para el laboratorio
-# 1. Monitorear conexiones de red iniciadas por el proceso de PostgreSQL
-sudo auditctl -a always,exit -F arch=b64 -S connect -F exe=/usr/bin/postgres -k postgresql_connections
+# Consultar estatus, start o restart, según se requiera 
+sudo systemctl status auditd
+sudo systemctl start auditd
+sudo systemctl restart auditd
+```
 
-# 2. Vigilar modificaciones en archivos de configuración y datos
+**Definición de reglas de auditoría para el laboratorio**
+
+1. Monitorear conexiones de red iniciadas por el proceso de PostgreSQL  
+```bash
+sudo auditctl -a always,exit -F arch=b64 -S connect -F exe=/usr/bin/postgres -k postgresql_connections
+```
+
+2. Vigilar modificaciones en archivos de configuración y datos  
+```bash
 # Regla moderna para configuración (optimizada)
 sudo auditctl -a always,exit -F arch=b64 -F path=/var/lib/pgsql/data/postgresql.conf -F perm=wa -k postgresql_config
+```
 
+```bash
 # Regla moderna para directorio de datos (optimizada)
 sudo auditctl -a always,exit -F arch=b64 -F path=/var/lib/pgsql/data -F perm=wa -k postgresql_data
+```
 
-# 3. Registrar la ejecución del cliente psql
+3. Registrar la ejecución del cliente psql
+```bash
 sudo auditctl -a always,exit -F arch=b64 -S execve -F exe=/usr/bin/psql -k psql_execution
 ```
 
-### 3.5. Configuración de la Auditoría Interna de PostgreSQL (El Motor)
+#### 3.5. Configuración de la Auditoría Interna de PostgreSQL (El Motor)
+
 Una vez asegurado el perímetro, se configura el motor para que registre cada sentencia SQL ejecutada, su duración y el contexto del usuario.
 
 #### 3.5.1. Crear el directorio de logs
@@ -131,8 +261,10 @@ Edite el archivo de configuración:
 sudo vi /var/lib/pgsql/data/postgresql.conf
 ```
 
-Agregue las siguientes directivas al final del archivo:
+Agregue las siguientes directivas **al final del archivo** (después de la sección `CUSTOMIZED OPTIONS`):
+
 ```ini
+# Configuración de auditoría
 log_statement = 'all'                  # Registra todas las sentencias SQL
 log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h ' # Contexto detallado
 logging_collector = on                 # Activa el proceso colector de logs
@@ -144,69 +276,141 @@ log_duration = on                      # Registra el tiempo de ejecución
 log_min_duration_statement = 0         # Registra la duración de todas las sentencias
 ```
 
-**Nota importante:** Las unidades válidas en log_rotation_age son: `us`, `ms`, `s`, `min`, `h`, y `d`.
+**Nota importante:** 
+- Las unidades válidas para `log_rotation_age` son: `us`, `ms`, `s`, `min`, `h`, y `d`. La unidad `w` (semanas) **no es válida** en PostgreSQL.
+- Las configuraciones personalizadas deben agregarse **al final del archivo** para evitar conflictos con directivas previas y facilitar la auditoría de cambios.
 
 #### 3.5.3. Verificar permisos y contexto SELinux
 
-Después de editar el archivo, verifique que los permisos y el contexto SELinux sean correctos:
+Después de editar el archivo, verifique que los permisos y el contexto SELinux sean correctos. Este paso es **crítico** en Fedora 44, ya que SELinux puede bloquear el acceso a archivos incluso cuando los permisos UNIX son correctos.
 
 ```bash
 # Verificar permisos
 sudo ls -la /var/lib/pgsql/data/postgresql.conf
+```
 
-# Debe mostrar:
-# -rw-------. 1 postgres postgres ... postgresql.conf
+```text
+-rw-------. 1 postgres postgres 33317 Jun 29 22:04 /var/lib/pgsql/data/postgresql.conf
+```
 
+```bash
 # Si el propietario no es postgres, corregir:
 sudo chown postgres:postgres /var/lib/pgsql/data/postgresql.conf
 sudo chmod 600 /var/lib/pgsql/data/postgresql.conf
 
 # Verificar contexto SELinux
 sudo ls -laZ /var/lib/pgsql/data/postgresql.conf
+```
 
-# Debe mostrar el contexto postgresql_db_t, no user_tmp_t
-# Si muestra un contexto incorrecto, restaurar:
+```text
+-rw-------. 1 postgres postgres unconfined_u:object_r:postgresql_db_t:s0 33317 Jun 29 22:04 /var/lib/pgsql/data/postgresql.conf
+```
+
+**Importante:** El contexto debe mostrar `postgresql_db_t:s0`. Si muestra `user_tmp_t:s0` u otro contexto incorrecto (común cuando se edita el archivo con `nano` o `vi`), restaure el contexto correcto:
+
+```bash
 sudo restorecon /var/lib/pgsql/data/postgresql.conf
 ```
 
-#### 3.5.4. Reiniciar el servicio
+#### 3.5.4. Configurar autenticación por contraseña
 
-Reinicie el servicio para aplicar los cambios:
+Por defecto, PostgreSQL en Fedora utiliza autenticación `peer`, que requiere que el usuario del sistema operativo coincida con el usuario de PostgreSQL. Para permitir la conexión del usuario `alumno`, modifique el archivo `pg_hba.conf`:
+
+```bash
+sudo vi /var/lib/pgsql/data/pg_hba.conf
+```
+
+Busque la línea:
+```
+local   all             all                                     peer
+```
+
+Y cámbiela a:
+```
+local   all             all                                     md5
+```
+
+Guarde el archivo y reinicie PostgreSQL:
+
+```bash
+sudo systemctl restart postgresql
+```
+
+#### 3.5.5. Reiniciar el servicio y verificar
+
+Reinicie el servicio para aplicar todos los cambios:
+
 ```bash
 sudo systemctl restart postgresql
 sudo systemctl status postgresql
 ```
 
+```text
+● postgresql.service - PostgreSQL database server
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: d>
+    Drop-In: /usr/lib/systemd/system/service.d
+             └─10-timeout-abort.conf
+     Active: active (running) since Mon 2026-06-29 22:04:30 CST; 194ms ago
+   Main PID: 16085 (postgres)
+      Tasks: 7 (limit: 18959)
+     Memory: 17.5M (peak: 18.8M)
+        CPU: 188ms
+     CGroup: /system.slice/postgresql.service
+             ├─16085 /usr/bin/postgres -D /var/lib/pgsql/data
+             ├─16086 "postgres: logger "
+             ├─16087 "postgres: checkpointer "
+             ├─16088 "postgres: background writer "
+             ├─16090 "postgres: walwriter "
+             ├─16091 "postgres: autovacuum launcher "
+             └─16092 "postgres: logical replication launcher "
+```
+
 Verifique que el servicio esté activo (debe mostrar `active (running)` en verde).
 
-#### 3.5.5. Verificar que los logs se están generando
+#### 3.5.6. Verificar que los logs se están generando
 
 ```bash
 sudo ls -lah /var/lib/pgsql/data/log/
 ```
 
+```text
+total 12K
+drwx------. 1 postgres postgres  100 Jun 29 22:04 .
+drwx------. 1 postgres postgres  588 Jun 29 22:04 ..
+-rw-------. 1 postgres postgres  898 Jun 29 22:04 postgresql-2026-06-29_220430.log
+-rw-------. 1 postgres postgres 2.2K Jun 29 22:04 postgresql-Mon.log
+```
+
 Debe mostrar archivos con el formato `postgresql-YYYY-MM-DD_HHMMSS.log`.
 
-#### 3.5.6. Probar la auditoría
+#### 3.5.7. Probar la auditoría
 
 Ejecute una consulta de prueba:
+
 ```bash
 psql -U alumno -d pagila -c "SELECT COUNT(*) FROM customer;"
 ```
 
-**Nota:** Si recibe un error de permisos, otorgue acceso al usuario:
-```bash
-sudo -u postgres psql -d pagila -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO alumno;"
+Cuando se solicite la contraseña, ingrese: `uamIztapalapa`
+
+```text
+Password for user alumno: 
+ count 
+-------
+   599
+(1 row)
 ```
 
 Verifique que la consulta fue registrada en el log:
+
 ```bash
-sudo grep "SELECT COUNT" /var/lib/pgsql/data/log/postgresql-*.log
+sudo find /var/lib/pgsql/data/log/ -name "postgresql-*.log" -exec grep -H "SELECT COUNT" {} \;
 ```
 
 Debe mostrar una entrada similar a:
-```
-2026-06-26 21:05:08 UTC [3787]: [4-1] user=alumno,db=pagila,app=psql,client=[local] LOG:  statement: SELECT COUNT(*) FROM customer;
+
+```text
+/var/lib/pgsql/data/log/postgresql-2026-06-29_220924.log:2026-06-29 22:10:01 CST [16355]: [1-1] user=alumno,db=pagila,app=psql,client=[local] LOG:  statement: SELECT COUNT(*) FROM customer;
 ```
 
 Esto confirma que la auditoría está registrando correctamente:  
@@ -218,8 +422,7 @@ Esto confirma que la auditoría está registrando correctamente:
 - Dirección IP/origen del cliente  
 - Sentencia SQL completa  
 
-
-## 4. Ejercicios del Laboratorio
+#### 4. Ejercicios del Laboratorio
 
 Antes de comenzar los ejercicios, debe tener a la mano el diagrama entidad-relación de la base de datos:
 
@@ -228,7 +431,7 @@ cd ~
 wget https://github.com/devrimgunduz/pagila/blob/master/pagila-schema-diagram.png
 ```
 
-### Parte 1: La Naturaleza Declarativa y el Orden de Ejecución Lógica
+#### Parte 1: La Naturaleza Declarativa y el Orden de Ejecución Lógica
 SQL es un lenguaje declarativo: el usuario especifica *qué* datos desea, y el motor determina *cómo* obtenerlos. Sin embargo, el orden sintáctico de escritura difiere del orden de ejecución lógica del motor. El motor procesa primero `FROM` (identifica las relaciones), luego `WHERE` (filtra tuplas), posteriormente `GROUP BY` (agrupa), y finalmente evalúa el `SELECT` (proyecta las columnas). Esta distinción ontológica explica por qué no es posible utilizar un alias definido en la cláusula `SELECT` dentro de la cláusula `WHERE`: al momento de evaluar el `WHERE`, el alias aún no existe en el contexto de ejecución.
 
 1. **(4 pts)** Proyecte el nombre completo (`first_name` + `last_name`), correo electrónico y estado activo (`activebool`) de todos los clientes de la tabla `customer`. Ordene el resultado por apellido en orden ascendente.
@@ -237,7 +440,7 @@ SQL es un lenguaje declarativo: el usuario especifica *qué* datos desea, y el m
 4. **(4 pts)** Seleccione los actores cuyo apellido inicie con una letra en el rango 'A' a 'D'. Ordene por apellido y nombre.
 5. **(4 pts)** Obtenga el Top 10 de las películas con mayor duración (`length`).
 
-### Parte 2: Transición del Procesamiento Escalar a la Agregación Relacional
+#### Parte 2: Transición del Procesamiento Escalar a la Agregación Relacional
 Las funciones de agregación (`SUM`, `COUNT`, `AVG`) transforman el procesamiento de tuplas individuales en el análisis de conjuntos. Aquí surge una confusión conceptual frecuente entre `WHERE` y `HAVING`. 
 *   **`WHERE`** opera a nivel de tupla, *antes* de que existan los grupos. No puede evaluar funciones de agregación.
 *   **`HAVING`** opera a nivel de grupo, *después* de que la agregación se ha computado. 
@@ -250,7 +453,7 @@ Las funciones de agregación (`SUM`, `COUNT`, `AVG`) transforman el procesamient
 4. **(4 pts)** Cuente los clientes agrupados por la primera letra de su apellido. Ordene de mayor a menor frecuencia.
 5. **(4 pts)** *Ejercicio de agregación condicional:* Utilizando la estructura `SUM(CASE WHEN ...)`, elabore un reporte por tienda (`store_id`) que muestre en columnas independientes: el total de clientes activos, el total de inactivos, y el total de clientes cuyo correo electrónico finaliza en 'sakilacustomer.org'.
 
-### Parte 3: Combinación de Relaciones y la Anatomía de los JOIN
+#### Parte 3: Combinación de Relaciones y la Anatomía de los JOIN
 El modelo relacional fragmenta la información para evitar redundancias. Los `JOIN` son los mecanismos que permiten reconstruir esta información. Internamente, un `LEFT JOIN` ejecuta tres pasos: (1) genera un producto cartesiano temporal entre ambas tablas, (2) filtra las filas donde el predicado `ON` es verdadero, y (3) **reincorpora** las tuplas de la tabla izquierda que no tuvieron coincidencia, rellenando las columnas de la tabla derecha con valores `NULL`. Este `NULL` es fundamental para detectar anomalías de integridad referencial (tuplas huérfanas).
 
 1. **(5 pts)** Muestre el título de las películas y el nombre de su categoría (utilizando `INNER JOIN`).
@@ -258,7 +461,7 @@ El modelo relacional fragmenta la información para evitar redundancias. Los `JO
 3. **(5 pts)** Identifique los actores que han participado en más de 40 películas.
 4. **(5 pts)** Utilizando `LEFT JOIN`, identifique las películas que **no** tienen registros de inventario físico (filtrando por `IS NULL`).
 
-### Parte 4: Descomposición Lógica mediante Subconsultas
+#### Parte 4: Descomposición Lógica mediante Subconsultas
 Las subconsultas permiten anidar consultas para resolver problemas complejos paso a paso. Pueden devolver un valor escalar, una columna de valores (para usar con `IN`) o una tabla derivada. Tenga precaución con las subconsultas correlacionadas, ya que pueden impactar severamente el rendimiento si no existen índices adecuados.
 
 1. **(5 pts)** Encuentre los clientes cuyo monto total de pagos exceda el promedio global de todos los pagos.
@@ -266,21 +469,21 @@ Las subconsultas permiten anidar consultas para resolver problemas complejos pas
 3. **(5 pts)** Identifique los actores que han participado en al menos una película con clasificación 'NC-17'.
 4. **(5 pts)** Determine los clientes que han realizado más rentas que el promedio de rentas por cliente.
 
-### Parte 5: Funciones de Ventana y Preservación del Detalle Relacional
+#### Parte 5: Funciones de Ventana y Preservación del Detalle Relacional
 A diferencia del `GROUP BY`, que colapsa las filas, las **Funciones de Ventana** (`OVER`) permiten realizar cálculos de conjunto manteniendo intacto el detalle de cada tupla. Son indispensables para calcular rangos, acumulados o diferencias entre filas consecutivas. Adicionalmente, Pagila utiliza el tipo de dato `tsrange` para la tabla `rental`. Para extraer las fechas de inicio y fin de este rango, es imperativo utilizar las funciones nativas `lower()` y `upper()`.
 
 1. **(5 pts)** Genere un ranking de clientes por tienda (`store_id`), ordenados por el monto total gastado, utilizando la función `ROW_NUMBER()`.
 2. **(5 pts)** Calcule los días transcurridos entre una renta y la siguiente para cada cliente, utilizando la función `LAG()` sobre `lower(rental_period)`.
 3. **(5 pts)** Muestre el monto acumulado de pagos por cliente, ordenado cronológicamente por fecha.
 
-### Parte 6: Manipulación de Datos y Responsabilidad Transaccional
+#### Parte 6: Manipulación de Datos y Responsabilidad Transaccional
 Las operaciones del Lenguaje de Manipulación de Datos (DML: `INSERT`, `UPDATE`, `DELETE`) alteran el estado persistente de la base de datos. La omisión accidental de la cláusula `WHERE` en un `UPDATE` o `DELETE` puede resultar en la mutación masiva e irreversible de la información. Siempre verifique sus condiciones con un `SELECT` previo.
 
 1. **(5 pts)** Inserte una nueva película titulada 'LABORATORIO SQL' (año 2026, idioma 1, 120 min, clasificación 'PG', renta 2.99).
 2. **(5 pts)** Incremente el `replacement_cost` en un 15% exclusivamente para las películas de la categoría 'Horror'.
 3. **(5 pts)** Elimine de la tabla `film_actor` cualquier registro donde el actor ya no exista en la tabla `actor`.
 
-### Parte 7: Programación del Lado del Servidor
+#### Parte 7: Programación del Lado del Servidor
 PostgreSQL permite encapsular lógica de negocio directamente en el motor mediante PL/pgSQL. Esto mejora el rendimiento (al evitar tráfico de red), centraliza la seguridad y garantiza la consistencia de las reglas de negocio.
 
 > **Nota de convención:** Siguiendo los estándares internacionales de desarrollo, los nombres de funciones, procedimientos y variables internas se escribirán **en inglés** (convención `snake_case`). Se incluye el significado en español en los comentarios.
@@ -330,58 +533,107 @@ END; $$ LANGUAGE plpgsql;
 2. **(7 pts)** **`apply_category_discount` (aplicar_descuento_por_categoría):** Cree un procedimiento que reciba un nombre de categoría y un porcentaje, y aplique dicho descuento al `rental_rate` de las películas correspondientes.
 3. **(6 pts)** **Trigger de Auditoría de Pagos:** Cree una tabla `payment_audit` y un trigger que registre cada inserción en la tabla `payment`, almacenando `payment_id`, `customer_id`, `amount`, `payment_date` y `changed_by` (utilizando `CURRENT_USER`).
 
-### Parte 8: Administración de Base de Datos y Control de Accesos
+#### Parte 8: Administración de Base de Datos y Control de Accesos
 1. **(5 pts)** Cree un rol llamado `analista_ventas` con contraseña 'uamIztapalapa'.
 2. **(5 pts)** Otorgue al rol `analista_ventas` únicamente el permiso `SELECT` sobre las tablas `customer`, `payment` y `rental`.
 3. **(5 pts)** Cree una vista llamada `vista_clientes_activos` que integre los datos geográficos completos de los clientes activos.
 4. **(5 pts)** Genere un respaldo exclusivo del esquema (estructura) de la base de datos Pagila utilizando `pg_dump -s` y guárdelo como `esquema_pagila.sql`.
 
-## 5. Extracción y Preservación de Evidencia Forense
+#### 5. Extracción y Preservación de Evidencia Forense
 
-Al concluir las prácticas, el estudiante deberá extraer los registros de auditoría para conformar su cadena de custodia. Para ello, se definirá un rango de fechas que abarque desde el inicio hasta la finalización del laboratorio, garantizando que toda la evidencia generada durante las sesiones sea capturada de forma íntegra y verificable.
+Al concluir las prácticas, el estudiante deberá extraer los registros de auditoría para conformar su cadena de custodia. Para ello, se definirá un rango de fechas que abarque desde el inicio hasta la finalización del laboratorio, garantizando que toda la evidencia generada durante las sesiones sea capturada de forma íntegra y verificable. El proceso se realiza en dos fases: primero en la **máquina virtual** (donde se generan las evidencias), y posteriormente en el **equipo anfitrión** (donde se verifican y empaquetan para su entrega).
 
-### 5.1. Definición del período de análisis
+#### 5.1. Definición del período de análisis (en la VM)
 
-Antes de ejecutar la extracción, el estudiante debe ajustar las variables `FECHA_INICIO` y `FECHA_FIN` a las fechas reales en que se desarrolló el laboratorio (formato `YYYY-MM-DD`):
+Dentro de la máquina virtual, el estudiante debe configurar las variables de fecha. **Importante:** Los comandos `ausearch` y `journalctl` utilizan formatos de fecha diferentes:
+
+- **`ausearch`** requiere formato `MM/DD/YYYY`
+- **`journalctl`** acepta formato `YYYY-MM-DD`
 
 ```bash
-# Configuración del período de análisis (ajustar según las fechas del laboratorio)
+# Dentro de la VM Fedora44-lab, como usuario alumno
+
+# Para ausearch (formato MM/DD/YYYY)
+FECHA_INICIO_AUSEARCH="06/25/2026"
+FECHA_FIN_AUSEARCH="06/30/2026"
+
+# Para journalctl (formato YYYY-MM-DD)
 FECHA_INICIO="2026-06-25"
-FECHA_FIN="2026-06-28"
+FECHA_FIN="2026-06-30"
+
+echo "Período de análisis: $FECHA_INICIO a $FECHA_FIN"
 ```
 
-> **Nota:** La fecha de inicio debe corresponder al día en que se configuró la auditoría, y la fecha de fin al día en que se realiza la extracción de evidencia.
+> **Nota:** La fecha de inicio debe corresponder al día en que se configuró la auditoría, y la fecha de fin al día en que se realiza la extracción de evidencia. Ajuste los valores según las fechas reales del laboratorio.
 
-### 5.2. Extracción de evidencias
+#### 5.2. Verificación de prerequisitos (en la VM)
 
-Ejecute el siguiente bloque de comandos para extraer los registros de las tres fuentes de auditoría:
+Antes de ejecutar la extracción, verifique que los servicios de auditoría están activos y que las reglas de `auditd` están configuradas:
 
 ```bash
+# Verificar que PostgreSQL está activo
+sudo systemctl status postgresql | grep "Active:"
+
+# Verificar que auditd está activo
+sudo systemctl status auditd | grep "Active:"
+
+# Verificar reglas de auditd (debe mostrar al menos 4 reglas)
+sudo auditctl -l
+```
+
+La salida esperada de `auditctl -l` debe incluir las reglas:
+- `postgresql_connections`
+- `postgresql_config`
+- `postgresql_data`
+- `psql_execution`
+
+Si alguna regla falta, reconfigúrela siguiendo las instrucciones de la sección 3.4.
+
+#### 5.3. Extracción de evidencias (en la VM)
+
+Ejecute el siguiente bloque de comandos **dentro de la máquina virtual** para extraer los registros de las tres fuentes de auditoría:
+
+```bash
+# Dentro de la VM Fedora44-lab
+
 # 1. Evidencia del Sistema Operativo (Perímetro)
 sudo journalctl -u sshd --since "$FECHA_INICIO" --until "$FECHA_FIN" > ~/logs_ssh.txt
-sudo ausearch -k postgresql_connections --start "$FECHA_INICIO" --end "$FECHA_FIN" > ~/logs_auditd_postgres.txt
-sudo ausearch -k psql_execution --start "$FECHA_INICIO" --end "$FECHA_FIN" > ~/logs_auditd_psql.txt
+sudo ausearch -k postgresql_connections --start "$FECHA_INICIO_AUSEARCH" --end "$FECHA_FIN_AUSEARCH" > ~/logs_auditd_postgres.txt
+sudo ausearch -k psql_execution --start "$FECHA_INICIO_AUSEARCH" --end "$FECHA_FIN_AUSEARCH" > ~/logs_auditd_psql.txt
 
 # 2. Evidencia del Motor de Base de Datos (Núcleo)
-# Con rotación semanal (7d), los logs se agrupan en archivos por semana.
-# Se copian todos los archivos generados dentro del rango de fechas.
-find /var/lib/pgsql/data/log/ -name "postgresql-*.log" \
-     -newermt "$FECHA_INICIO" ! -newermt "$FECHA_FIN" \
-     -exec cp {} ~/ \;
-cat ~/postgresql-*.log > ~/logs_postgresql.txt 2>/dev/null
-rm -f ~/postgresql-*.log
+# Usar sudo bash -c para que el glob se expanda con privilegios de root
+sudo bash -c 'cat /var/lib/pgsql/data/log/postgresql-*.log > /home/alumno/logs_postgresql.txt'
+sudo chown alumno:alumno ~/logs_postgresql.txt
 
-# 3. Sellado de Integridad (Hashes SHA-256)
+# 3. Generar una consulta de prueba para asegurar evidencia en auditd
+psql -U alumno -d pagila -c "SELECT 'AUDIT_EVIDENCE_TEST' AS test_message;"
+
+# Re-extraer logs de auditd (ahora incluirá la consulta de prueba)
+sudo ausearch -k psql_execution --start "$FECHA_INICIO_AUSEARCH" --end "$FECHA_FIN_AUSEARCH" > ~/logs_auditd_psql.txt
+
+# 4. Sellado de Integridad (Hashes SHA-256)
 sha256sum ~/logs_*.txt > ~/hashes_evidencias.txt
+
+# 5. Registro de la cadena de custodia (VM)
+cat > ~/cadena_custodia.txt << EOF
+=== REGISTRO DE CADENA DE CUSTODIA (VM) ===
+Fecha de extracción: $(date '+%Y-%m-%d %H:%M:%S %Z')
+Período analizado:   $FECHA_INICIO a $FECHA_FIN
+Responsable:         $(whoami)
+Equipo:              $(hostname)
+
+$(cat ~/hashes_evidencias.txt)
+EOF
 ```
 
-### 5.3. Verificación de la extracción
+#### 5.4. Verificación de la extracción (en la VM)
 
-Una vez ejecutados los comandos, verifique que todas las evidencias fueron generadas correctamente:
+Una vez ejecutados los comandos, verifique que todas las evidencias fueron generadas correctamente **dentro de la VM**:
 
 ```bash
 # Listar los archivos generados con su tamaño
-ls -lh ~/logs_*.txt ~/hashes_evidencias.txt
+ls -lh ~/logs_*.txt ~/hashes_evidencias.txt ~/cadena_custodia.txt
 
 # Visualizar los hashes generados
 cat ~/hashes_evidencias.txt
@@ -390,35 +642,226 @@ cat ~/hashes_evidencias.txt
 wc -l ~/logs_*.txt
 ```
 
-### 5.4. Registro de la cadena de custodia
+La salida esperada debe mostrar archivos con contenido (tamaño mayor a 0 bytes):
 
-Para garantizar la trazabilidad forense, el estudiante debe documentar la extracción en un archivo adicional:
-
-```bash
-cat > ~/cadena_custodia.txt << EOF
-=== REGISTRO DE CADENA DE CUSTODIA ===
-Fecha de extracción: $(date '+%Y-%m-%d %H:%M:%S %Z')
-Período analizado:   $FECHA_INICIO a $FECHA_FIN
-Responsable:         $(whoami)
-Equipo:              $(hostname)
-
-$(cat ~/hashes_evidencias.txt)
-EOF
-
-cat ~/cadena_custodia.txt
+```text
+-rw-r--r--. 1 alumno alumno  592 Jun 29 23:47 cadena_custodia.txt
+-rw-r--r--. 1 alumno alumno  395 Jun 29 23:47 hashes_evidencias.txt
+-rw-r--r--. 1 alumno alumno  215 Jun 29 23:47 logs_auditd_postgres.txt
+-rw-r--r--. 1 alumno alumno  414 Jun 29 23:47 logs_auditd_psql.txt
+-rw-r--r--. 1 alumno alumno 181K Jun 29 23:47 logs_postgresql.txt
+-rw-r--r--. 1 alumno alumno 4.2K Jun 29 23:47 logs_ssh.txt
 ```
 
-### 5.5. Notas importantes
+> **Importante:** Si `logs_auditd_psql.txt` está vacío (0 bytes), significa que las reglas de auditd se configuraron después de ejecutar las consultas. Ejecute la consulta de prueba del paso 5.3 y re-extraiga los logs.
 
-1. **Rotación semanal:** Con `log_rotation_age = 7d`, los logs de PostgreSQL se agrupan en archivos semanales. Si el laboratorio abarca más de una semana, el comando `find` capturará automáticamente todos los archivos generados dentro del rango definido.
+#### 5.5. Identificación de la IP de la VM (en el host)
 
-2. **Permisos:** Los comandos `journalctl` y `ausearch` requieren privilegios de superusuario para acceder a los logs del sistema.
+Antes de transferir las evidencias al equipo anfitrión, identifique la dirección IP de la máquina virtual. Desde el **host Fedora 44**, ejecute:
 
-3. **Integridad:** Los hashes SHA-256 deben calcularse inmediatamente después de la extracción y conservarse en un medio separado. Cualquier modificación posterior a los archivos de log invalidará los hashes, lo cual constituye un indicador de alteración de la evidencia.
+```bash
+# Desde el host Fedora 44
 
-4. **Conservación:** Los archivos generados (`logs_*.txt`, `hashes_evidencias.txt`, `cadena_custodia.txt`) deben almacenarse en un medio extraíble o ubicación segura para su posterior análisis forense.
+# Método 1: Usar domifaddr (recomendado)
+sudo virsh -c qemu:///system domifaddr fedora44-lab
 
-## 6. Entregables y Formato de Envío
+# Método 2: Usar los leases DHCP de la red default
+sudo virsh -c qemu:///system net-dhcp-leases default
+```
+
+La salida esperada es similar a:
+
+```text
+ Name       MAC address          Protocol     Address
+-------------------------------------------------------------------------------
+ vnet0      52:54:00:3a:eb:41    ipv4         192.168.122.24/24
+```
+
+Anote la dirección IP (en este ejemplo, `192.168.122.24`).
+
+#### 5.6. Transferencia de evidencias al host (desde el host)
+
+Una vez identificada la IP de la VM, transfiera las evidencias al equipo anfitrión usando SCP. Desde el **host Fedora 44**, ejecute:
+
+```bash
+# Desde el host Fedora 44
+
+# Configurar la IP de la VM (reemplazar con la IP real obtenida en el paso 5.5)
+VM_IP="192.168.122.24"
+
+# Verificar conectividad
+ping -c 3 $VM_IP
+
+# Crear directorio de destino
+mkdir -p ~/Laboratorio12_Evidencias
+
+# Transferir archivos por SCP (pedirá la contraseña del usuario alumno)
+scp alumno@$VM_IP:~/logs_*.txt ~/Laboratorio12_Evidencias/
+scp alumno@$VM_IP:~/hashes_evidencias.txt ~/Laboratorio12_Evidencias/
+scp alumno@$VM_IP:~/cadena_custodia.txt ~/Laboratorio12_Evidencias/
+```
+
+La salida esperada muestra el progreso de cada transferencia:
+
+```text
+logs_auditd_postgres.txt                          100%  215    80.9KB/s   00:00    
+logs_auditd_psql.txt                              100%  414   157.9KB/s   00:00    
+logs_postgresql.txt                               100%  181KB  14.8MB/s   00:00    
+logs_ssh.txt                                      100% 4273     1.6MB/s   00:00    
+hashes_evidencias.txt                             100%  395   122.4KB/s   00:00    
+cadena_custodia.txt                               100%  592   175.3KB/s   00:00    
+```
+
+#### 5.7. Verificación de integridad en el host
+
+**Punto crítico:** El archivo `hashes_evidencias.txt` transferido desde la VM contiene rutas absolutas (`/home/alumno/...`) que no existen en el host. Por lo tanto, es necesario **regenerar los hashes en el host** usando rutas relativas para validar la integridad de la transferencia.
+
+```bash
+# Desde el host Fedora 44
+
+# Posicionarse en el directorio de evidencias
+cd ~/Laboratorio12_Evidencias/
+
+# Listar los archivos recibidos
+ls -lh
+
+# Regenerar los hashes usando rutas relativas (solo el nombre del archivo)
+sha256sum logs_*.txt > hashes_evidencias_host.txt
+
+# Ver el contenido de los nuevos hashes
+cat hashes_evidencias_host.txt
+
+# Verificar la integridad
+sha256sum -c hashes_evidencias_host.txt
+```
+
+La salida esperada debe mostrar `OK` para cada archivo:
+
+```text
+b1e3a37f73e46c1d2554d45aedcd2d4a44df12522076dd824436c5eac8d51ca0  logs_auditd_postgres.txt
+769a48f35dfe753a0ace82d92a347f09442cd6f6eea87b0f5e39ff0bb850fe6e  logs_auditd_psql.txt
+1f18e1d204a04d1e56b4cad4613ca8cabbf4f04f1a974d20e8ecc68c3b03c1e7  logs_postgresql.txt
+3289673c8010c40b2e746e06decdfee2d18b5f13a099cacaa73e1de9dac3f777  logs_ssh.txt
+
+logs_auditd_postgres.txt: OK
+logs_auditd_psql.txt: OK
+logs_postgresql.txt: OK
+logs_ssh.txt: OK
+```
+
+> **Importante:** Si algún archivo muestra `FAILED`, la transferencia se corrompió y debe repetirse desde el paso 5.6.
+
+#### 5.8. Registro de la cadena de custodia en el host
+
+Para garantizar la trazabilidad forense completa, el estudiante debe documentar la recepción y verificación de las evidencias en el equipo anfitrión:
+
+```bash
+# Desde el host Fedora 44, dentro del directorio de evidencias
+cd ~/Laboratorio12_Evidencias/
+
+cat > cadena_custodia_host.txt << EOF
+=== REGISTRO DE CADENA DE CUSTODIA (HOST) ===
+Fecha de verificación: $(date '+%Y-%m-%d %H:%M:%S %Z')
+Responsable:           $(whoami)
+Equipo anfitrión:      $(hostname)
+Directorio:            $(pwd)
+IP de la VM origen:    $VM_IP
+
+$(cat hashes_evidencias_host.txt)
+EOF
+
+cat cadena_custodia_host.txt
+```
+
+La salida esperada es similar a:
+
+```text
+=== REGISTRO DE CADENA DE CUSTODIA (HOST) ===
+Fecha de verificación: 2026-06-29 23:52:26 CST
+Responsable:           alumno
+Equipo anfitrión:      fedora44-host
+Directorio:            /home/alumno/Laboratorio12_Evidencias
+IP de la VM origen:    192.168.122.24
+
+b1e3a37f73e46c1d2554d45aedcd2d4a44df12522076dd824436c5eac8d51ca0  logs_auditd_postgres.txt
+769a48f35dfe753a0ace82d92a347f09442cd6f6eea87b0f5e39ff0bb850fe6e  logs_auditd_psql.txt
+1f18e1d204a04d1e56b4cad4613ca8cabbf4f04f1a974d20e8ecc68c3b03c1e7  logs_postgresql.txt
+3289673c8010c40b2e746e06decdfee2d18b5f13a099cacaa73e1de9dac3f777  logs_ssh.txt
+```
+
+#### 5.9. Empaquetado final de la evidencia
+
+Una vez verificada la integridad y documentada la cadena de custodia, comprima todas las evidencias en un archivo único para su entrega:
+
+```bash
+# Desde el host Fedora 44, dentro del directorio de evidencias
+cd ~/Laboratorio12_Evidencias/
+
+# Crear archivo comprimido con todas las evidencias
+tar -czf ~/Laboratorio12_Evidencias_$(date +%Y%m%d).tar.gz \
+    logs_*.txt hashes_evidencias_host.txt cadena_custodia_host.txt
+
+# Verificar el contenido del archivo comprimido
+tar -tzf ~/Laboratorio12_Evidencias_$(date +%Y%m%d).tar.gz
+
+# Verificar el tamaño del archivo generado
+ls -lh ~/Laboratorio12_Evidencias_*.tar.gz
+```
+
+La salida esperada del `tar -tzf` debe mostrar:
+
+```text
+logs_auditd_postgres.txt
+logs_auditd_psql.txt
+logs_postgresql.txt
+logs_ssh.txt
+hashes_evidencias_host.txt
+cadena_custodia_host.txt
+```
+
+#### 5.10. Cierre de la sesión SSH con la máquina virtual
+
+Una vez transferidas y verificadas las evidencias en el host, cierre correctamente la sesión SSH con la máquina virtual para liberar recursos y mantener la seguridad del entorno:
+
+```bash
+# Desde el host Fedora 44
+
+# Verificar si hay sesiones SSH activas hacia la VM
+w | grep $VM_IP
+
+# Si hay sesiones activas, cerrarlas
+pkill -f "ssh.*$VM_IP"
+
+# Verificar que no queden sesiones
+w | grep $VM_IP || echo "No hay sesiones activas hacia la VM"
+```
+
+> **Importancia forense:** El cierre limpio de la sesión SSH deja constancia en los logs de auditoría (`logs_ssh.txt`) del momento exacto en que concluyó la intervención, reforzando la cadena de custodia. Una sesión SSH abandonada puede generar entradas espurias en los logs que comprometan la trazabilidad del laboratorio.
+
+#### 5.11. Notas importantes
+
+1. **Flujo de trabajo en dos fases:** La extracción de evidencias se realiza en **dos fases**: primero en la VM (donde se generan los archivos) y después en el host (donde se verifican y empaquetan). No intente ejecutar los comandos de extracción directamente en el host.
+
+2. **Formato de fechas:** Los comandos `ausearch` y `journalctl` utilizan formatos de fecha diferentes. El script maneja esta diferencia mediante variables separadas (`FECHA_INICIO_AUSEARCH` en formato `MM/DD/YYYY` y `FECHA_INICIO` en formato `YYYY-MM-DD`).
+
+3. **Reglas de auditd:** Las reglas de auditoría deben estar configuradas **antes** de ejecutar las consultas que desea capturar. Verifique que todas las reglas estén activas con `sudo auditctl -l`.
+
+4. **Archivos vacíos:** Si `logs_auditd_psql.txt` está vacío (0 bytes), significa que las reglas se configuraron después de ejecutar las consultas. Ejecute una consulta de prueba adicional y re-extraiga los logs.
+
+5. **Extracción de logs de PostgreSQL:** El directorio `/var/lib/pgsql/data/log/` requiere privilegios de superusuario. Use `sudo bash -c` para que el glob `*.log` se expanda con los permisos adecuados.
+
+6. **Regeneración de hashes en el host:** El archivo `hashes_evidencias.txt` original contiene rutas absolutas de la VM (`/home/alumno/...`) que no existen en el host. Es **obligatorio** regenerar los hashes en el host usando rutas relativas (`logs_*.txt`) para validar la integridad de la transferencia.
+
+7. **Integridad criptográfica:** Los hashes SHA-256 deben calcularse inmediatamente después de la extracción y conservarse en un medio separado. Cualquier modificación posterior a los archivos de log invalidará los hashes, lo cual constituye un indicador de alteración de la evidencia.
+
+8. **Confidencialidad:** Los archivos de log contienen información sensible de su infraestructura (usuarios, IPs, consultas SQL). No suba el archivo comprimido a repositorios públicos ni lo comparta por medios no cifrados.
+
+9. **Cierre limpio:** Siempre cierre las sesiones SSH antes de apagar o suspender la VM. Las sesiones SSH abiertas pueden dejar procesos residuales que consuman recursos y generen entradas espurias en los logs de auditoría.
+
+10. **Respaldo adicional:** Se recomienda crear una copia de seguridad del archivo comprimido en un medio extraíble o ubicación segura para su posterior análisis forense.
+
+
+#### 6. Entregables y Formato de Envío
 
 Todo el material deberá integrarse y comprimirse en un archivo denominado `Laboratorio12_ApellidoNombre.zip`, conteniendo:
 
@@ -428,7 +871,7 @@ Todo el material deberá integrarse y comprimirse en un archivo denominado `Labo
 4. **El Certificado de Integridad:** Archivo `hashes_evidencias.txt`.
 5. **El Informe Académico (PDF):** Documento `laboratorio12_informes.pdf` que incluya las respuestas al cuestionario teórico, la rúbrica de autoevaluación y el ensayo reflexivo.
 
-## 7. Cuestionario de Fundamentos Teóricos
+#### 7. Cuestionario de Fundamentos Teóricos
 
 En su informe PDF, responda a las siguientes preguntas con rigor técnico y claridad conceptual:
 
@@ -439,7 +882,7 @@ En su informe PDF, responda a las siguientes preguntas con rigor técnico y clar
 5. Establezca la diferencia práctica y forense entre los registros generados por `postgresql.conf` y los eventos capturados por `auditd` / `journalctl` en Fedora 44.
 6. ¿Cuál es el propósito criptográfico y legal de generar hashes SHA-256 de los archivos de log antes de su entrega?
 
-## 8. Rúbrica de Autoevaluación de Competencias
+#### 8. Rúbrica de Autoevaluación de Competencias
 
 *Marque las siguientes casillas en su PDF únicamente si es capaz de explicar el concepto en voz alta sin consultar material de apoyo.*
 
@@ -459,7 +902,7 @@ En su informe PDF, responda a las siguientes preguntas con rigor técnico y clar
 - [ ] Diseñé la totalidad de las consultas en papel antes de interactuar con el terminal.
 - [ ] Comprendo que cada interacción con el servidor deja una huella forense innegable e inmutable.
 
-## 9. Ensayo Reflexivo sobre el Proceso de Aprendizaje
+#### 9. Ensayo Reflexivo sobre el Proceso de Aprendizaje
 
 En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los siguientes ejes de metacognición:
 
@@ -469,14 +912,14 @@ En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los sigu
 4. **El Impacto de la IA en el Desarrollo Cognitivo:** Reflexione críticamente sobre por qué delegar el pensamiento lógico a un Modelo de Lenguaje en esta etapa de su formación lo convertiría en un profesional vulnerable y fácilmente reemplazable en el mercado laboral actual.
 5. **Conciencia Forense:** ¿Qué le hizo sentir al ver su propio usuario, su IP y sus consultas registrados en los logs del sistema operativo? ¿Cómo modifica esta experiencia su perspectiva sobre la privacidad y la seguridad en la administración de servidores institucionales?
 
-## 10. Recomendaciones Metodológicas
+#### 10. Recomendaciones Metodológicas
 
 1. **Exploración del Catálogo de Datos:** Antes de formular consultas, utilice los metacomandos `\dt` y `\d+ nombre_tabla` en `psql`. El esquema de Pagila contiene restricciones, índices y vistas que revelan la topología de las relaciones.
 2. **Análisis de Vistas Nativas:** Pagila incluye vistas complejas como `customer_list` o `sales_by_film_category`. Estudie su código fuente para comprender cómo los ingenieros originales resolvieron problemas de agregación y unión.
 3. **Interpretación de los Logs:** Los registros de PostgreSQL incluyen el tiempo de ejecución (`log_duration`). Aprenda a identificar qué consultas son ineficientes.
 4. **Confidencialidad de la Evidencia:** Los archivos de log contienen información sensible de su infraestructura. No suba el archivo ZIP a repositorios públicos.
 
-## 11. Cronograma y Políticas de Evaluación
+#### 11. Cronograma y Políticas de Evaluación
 
 **Fecha límite de entrega:** Domingo 5 de julio de 2026, 24:00 horas.
 
@@ -487,11 +930,7 @@ En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los sigu
 
 Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige la ingeniería de datos. La fricción que experimentan hoy en el diseño lógico es la competencia que garantizará su excelencia profesional mañana.
 
-**Dr. Jesús Zavala Ruiz**  
-*Universidad Autónoma Metropolitana - Iztapalapa*  
-*División de Ciencias Sociales y Humanísticas*  
-
-### Referencias Bibliográficas
+#### 12. Referencias Bibliográficas
 
 Boehm, B. W. (1981). *Software engineering economics*. Prentice-Hall.
 
