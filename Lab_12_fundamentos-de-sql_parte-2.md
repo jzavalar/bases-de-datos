@@ -932,9 +932,9 @@ Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige l
 
 #### 12. Sesión de Defensa Oral y Verificación de Competencias
 
-**Fecha:** Lunes 6 de julio de 2026, en el horario regular del laboratorio.
+**Fecha:** Miércoles 8 de julio de 2026, en el horario regular de la clase.
 
-Con el propósito de garantizar la integridad académica y verificar la apropiación real de las competencias desarrolladas durante el laboratorio, se llevará a cabo una **sesión de defensa oral individual** durante la sesión del día 6 de julio de 2026. Cada estudiante deberá presentarse con su cuaderno físico (bitácora analógica) y su script SQL (`laboratorio12_pagila.sql`) para participar en un ejercicio de verificación de 10 a 15 minutos, durante el cual el profesor formulará preguntas sobre:
+Con el propósito de garantizar la integridad académica y verificar la apropiación real de las competencias desarrolladas durante el laboratorio, se llevará a cabo una **sesión de defensa oral individual** durante las sesiones de los días 8 y 10 de julio de 2026. Cada estudiante deberá presentarse con su cuaderno físico (bitácora analógica) y su script SQL (`laboratorio12_pagila.sql`) para participar en un ejercicio de verificación de 10 a 15 minutos, durante el cual el profesor formulará preguntas sobre:
 
 1. **Explicación del razonamiento lógico:** El estudiante deberá explicar, en sus propias palabras, la lógica detrás de al menos tres consultas de su elección, identificando el orden de ejecución y justificando el uso de `JOIN`, `GROUP BY`, `HAVING` o funciones de ventana.
 
