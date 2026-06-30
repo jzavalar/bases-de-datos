@@ -1,7 +1,7 @@
 #### Laboratorio 12. Fundamentos del Lenguaje de Consulta Estructurada (SQL). Parte 2.
 
 **Dr. Jesús Zavala Ruiz**   
-**Última actualización:** 29 de junio de 2026.  
+**Última actualización:** 30 de junio de 2026.  
 
 ---
 
