@@ -1,9 +1,42 @@
-#### Laboratorio 12. Fundamentos del Lenguaje de Consulta Estructurada (SQL). Parte 2.
+### Laboratorio 12. Fundamentos del Lenguaje de Consulta Estructurada (SQL). Parte 2.
 
 **Dr. Jesús Zavala Ruiz**   
 **Última actualización:** 30 de junio de 2026.  
 
 ---
+
+#### Objetivo General
+
+Consolidar las competencias avanzadas en el lenguaje de consulta estructurado (SQL) y la programación del lado del servidor en PostgreSQL, mediante la resolución de problemas complejos de extracción, manipulación y administración de datos sobre el esquema Pagila, integrando simultáneamente prácticas de auditoría forense y trazabilidad operativa, como preparación integral para el Examen Final de la unidad de enseñanza-aprendizaje.
+
+#### Objetivos Específicos
+
+1. **Dominio del orden de ejecución lógica:** Internalizar la distinción entre el orden sintáctico de escritura y el orden de procesamiento interno del motor relacional, aplicando correctamente las cláusulas `FROM`, `WHERE`, `GROUP BY`, `HAVING` y `SELECT` en consultas de complejidad creciente.
+
+2. **Manipulación avanzada de conjuntos:** Desarrollar competencia en el uso de funciones de agregación, subconsultas correlacionadas, funciones de ventana (`ROW_NUMBER`, `LAG`, `SUM OVER`) y tipos de datos especializados (`tsrange`), preservando el detalle relacional cuando sea necesario.
+
+3. **Combinación relacional y detección de anomalías:** Aplicar las distintas modalidades de `JOIN` para reconstruir información fragmentada, identificando tuplas huérfanas mediante el uso estratégico de `LEFT JOIN` y filtros `IS NULL`.
+
+4. **Programación del lado del servidor:** Diseñar e implementar funciones, procedimientos almacenados y disparadores (triggers) en PL/pgSQL, aplicando control transaccional y encapsulando lógica de negocio directamente en el motor de base de datos.
+
+5. **Administración y control de accesos:** Configurar roles, permisos granulares, vistas y mecanismos de respaldo, aplicando el principio de mínimo privilegio en la administración de sistemas de bases de datos.
+
+6. **Trazabilidad y evidencia forense:** Configurar y operar sistemas de auditoría tanto a nivel del sistema operativo (`auditd` en Fedora 44) como del motor de base de datos (`postgresql.conf`), garantizando la no repudiación de operaciones mediante la extracción, verificación criptográfica y cadena de custodia de registros de auditoría.
+
+7. **Preparación para la evaluación integral:** Desarrollar la autonomía necesaria para resolver problemas de bases de datos sin asistencia externa, fortaleciendo las competencias que serán evaluadas en el Examen Final teórico-práctico.
+
+#### Competencias a Desarrollar
+
+Al concluir el laboratorio, el estudiante será capaz de:
+
+- **Analizar** esquemas relacionales complejos y formular consultas que integren múltiples tablas con operadores avanzados.
+- **Diseñar** programas del lado del servidor que automaticen reglas de negocio y garanticen la integridad de los datos.
+- **Administrar** sistemas de bases de datos PostgreSQL con criterios de seguridad y control de accesos.
+- **Auditar** operaciones de base de datos mediante registros forenses verificables criptográficamente.
+- **Depurar** consultas y procedimientos utilizando evidencia extraída de los logs del sistema.
+- **Sustentar** técnicamente las decisiones de diseño e implementación ante un panel evaluador.
+
+Se exhorta al estudiante a abordar este laboratorio con el mismo rigor que aplicará en el examen, utilizando la bitácora física, la evidencia forense y la defensa oral como mecanismos de verificación de su propio aprendizaje.
 
 #### 1. Introducción
 
