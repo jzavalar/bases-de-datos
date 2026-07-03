@@ -1,7 +1,7 @@
 ### Recursos Educativos para la UEA Bases de Datos (2151106)
 
 *dr. Jesús Zavala Ruiz*  
-*Mayo 2026*
+*Mayo de 2026*
 
 ---
 
@@ -63,7 +63,7 @@
 | **[MySQL Workbench](https://dev.mysql.com/downloads/workbench/)** | Herramienta oficial para modelado, desarrollo y administración de MySQL | Multilingüe | Gratuito, acceso abierto | Alternativa a pgAdmin; comparación de entornos de desarrollo |
 | **[Git / GitHub Desktop](https://desktop.github.com/)** | Control de versiones para gestión colaborativa de scripts SQL y documentación | Multilingüe | Gratuito, acceso abierto | Entrega de prácticas; trabajo en equipo; buenas prácticas de ingeniería de software |
 | **[phpMyAdmin](https://www.phpmyadmin.net/)** | Interfaz web para administración de MySQL/MariaDB; ideal para entornos LAMP y desarrollo web | Multilingüe | Gratuito, acceso abierto | Administración remota de bases de datos; práctica en entornos de desarrollo web |
-| **[OmniDB](https://www.omnidb.net/en/)** | Herramienta web multiplataforma para administración de múltiples SGBD con interfaz unificada | Inglés/Español | Gratuito (open-source) | Administración centralizada de PostgreSQL, MySQL, Oracle; práctica de gestión multi-SGBD |
+| **[OmniDB](https://www.omnidb.net/en/)** | Herramienta web multiplataforma para administración de múltiples DBMS con interfaz unificada | Inglés/Español | Gratuito (open-source) | Administración centralizada de PostgreSQL, MySQL, Oracle; práctica de gestión multi-SGBD |
 | **[MicroShift (OpenShift)](https://github.com/openshift/microshift)** | Kubernetes optimizado para edge computing y dispositivos con recursos limitados; versión ligera de OpenShift | Inglés | Gratuito (open-source) | Comprensión de arquitecturas distribuidas; despliegue de bases de datos en entornos edge; sistemas intensivos en software con restricciones de recursos |
 | **[Querida, encogí el clúster](https://github.com/rootzilopochtli/querida-encogi-el-cluster)** | Proyecto educativo de automatización para despliegue de MicroShift en nube pública (AWS/GCP) y local (Fedora Edge); incluye scripts Ansible y documentación técnica | Español/Inglés | Gratuito (open-source) | Laboratorios prácticos de edge computing; comprensión de orquestación de contenedores; integración de bases de datos en arquitecturas distribuidas; soberanía del sistema operativo |
 
@@ -74,6 +74,7 @@ De estos recursos dos son particularmente importantes: *MicroShift* y *Querida, 
 | Recurso | Descripción | Idioma | Acceso | Pertinencia Curricular |
 |---------|-------------|--------|--------|----------------------|
 | **[DB-Engines Ranking](https://db-engines.com/en/ranking)** | Comparativa mensual de popularidad, características y tendencias de SGBD | Inglés | Gratuito, acceso abierto | Pensamiento crítico en selección de tecnologías; análisis comparativo de SGBD |
+| **[DBDB.io (Database of Databases)](https://dbdb.io/)** | Base de datos académica de sistemas de gestión de bases de datos, mantenida por la Universidad Carnegie Mellon. Documenta características técnicas, modelos de datos, lenguajes de consulta, arquitecturas y casos de uso de cientos de SGBDs | Inglés | Gratuito, acceso abierto | Comprensión del ecosistema de SGBD; identificación de características técnicas; exploración de alternativas especializadas; investigación de arquitecturas de bases de datos |
 | **[PostgreSQL Weekly](https://postgresweekly.com/)** | Boletín semanal con noticias, artículos y actualizaciones de la comunidad PostgreSQL | Inglés | Gratuito, suscripción por correo | Actualización tecnológica; exposición a casos de uso reales y mejores prácticas |
 | **[UAM Biblioteca Digital](https://bidi.uam.mx/)** | Acceso a bases de datos académicas: ACM Digital Library, IEEE Xplore, ScienceDirect | Español/Inglés | Acceso institucional (credenciales UAM) | Investigación bibliográfica; soporte para trabajos de investigación y exposiciones |
 
