@@ -785,10 +785,8 @@ ORDER BY level, film_id;
 
 **Resultado (ejemplo):**
 ```
- level | film_id |            title            | prefix | last_char |        path   
-      
--------+---------+-----------------------------+--------+-----------+---------------
-------
+ level | film_id |            title            | prefix | last_char |        path         
+-------+---------+-----------------------------+--------+-----------+---------------------
      1 |       2 | ACE GOLDFINGER              | ACE    | R         | {2}
      2 |     709 | RACER EGG                   | RAC    | G         | {2,709}
      2 |     710 | RAGE GAMES                  | RAG    | S         | {2,710}
@@ -887,20 +885,10 @@ WHERE film_id IN (SELECT film_id FROM film_category WHERE category_id = 5);
 
 Resultado:
 ```
- film_id |         title          |                                                        description                                                        | release_year | language_id | original_language_id | rental_duration | rental_rate | length | replacement_cost | rating |          last_update          |                       special_features                       |                                             
-                                          fulltext                                  
-                                                     
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-      13 | ALI FOREVER            | A Action-Packed Drama of a Dentist And a Crocodi
-le who must Battle a Feminist in The Canadian Rockies                     |         
-2021 |           4 |                      |               4 |        4.99 |    150 |
-            21.99 | PG     | 2022-09-10 16:46:03.905795+00 | {"Deleted Scenes","Behi
-nd the Scenes"}                       | 'action':5 'action-pack':4 'ali':1 'battl':1
-6 'canadian':21 'crocodil':13 'dentist':10 'drama':7 'feminist':18 'forev':2 'must':
-15 'pack':6 'rocki':22
-      14 | ALICE FANTASIA         | A Emotional Drama of a A Shark And a Database Ad
-ministrator who must Vanquish a Pioneer in Soviet Georgia                 |         
-...
+| film_id | title           | description                                                                 | release_year | language_id | original_language_id | rental_duration | rental_rate | length | replacement_cost | rating | last_update                | special_features                    | fulltext                                                                                                                                 |
+|---------|-----------------|-----------------------------------------------------------------------------|--------------|-------------|----------------------|-----------------|-------------|--------|------------------|--------|----------------------------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| 13      | ALI FOREVER     | A Action-Packed Drama of a Dentist And a Crocodile who must Battle a Feminist in The Canadian Rockies | 2021         | 4           |                      | 4               | 4.99        | 150    | 21.99            | PG     | 2022-09-10 16:46:03.905795+00 | {"Deleted Scenes","Behind the Scenes"} | 'action':5 'action-pack':4 'ali':1 'battl':16 'canadian':21 'crocodil':13 'dentist':10 'drama':7 'feminist':18 'forev':2 'must':15 'pack':6 'rocki':22 |
+| 14      | ALICE FANTASIA  | A Emotional Drama of a A Shark And a Database Administrator who must Vanquish a Pioneer in Soviet Georgia | ...          | ...         | ...                  | ...             | ...         | ...    | ...              | ...    | ...                        | ...                                 | ...                                                                                                                                      |...
 (143 rows)
 
 ```
@@ -1030,31 +1018,24 @@ WHERE (
 ```text
                                                            QUERY PLAN               
                                              
-------------------------------------------------------------------------------------
----------------------------------------------
- Seq Scan on customer c  (cost=404.15..210448.01 rows=200 width=10) (actual time=10.
-460..1024.088 rows=296.00 loops=1)
+---------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on customer c  (cost=404.15..210448.01 rows=200 width=10) (actual time=10.460..1024.088 rows=296.00 loops=1)
    Filter: (((SubPlan 1))::numeric > (InitPlan 2).col1)
    Rows Removed by Filter: 303
    Buffers: shared hit=90009
    InitPlan 2
-     ->  Aggregate  (cost=404.14..404.15 rows=1 width=32) (actual time=8.232..8.234 
-rows=1.00 loops=1)
+     ->  Aggregate  (cost=404.14..404.15 rows=1 width=32) (actual time=8.232..8.234 rows=1.00 loops=1)
            Buffers: shared hit=150
-           ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual time=7
-.962..8.125 rows=599.00 loops=1)
+           ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual time=7.962..8.125 rows=599.00 loops=1)
                  Group Key: rental.customer_id
                  Batches: 1  Memory Usage: 73kB
                  Buffers: shared hit=150
-                 ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 width=4) (act
-ual time=0.007..1.883 rows=16044.00 loops=1)
+                 ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 width=4) (actual time=0.007..1.883 rows=16044.00 loops=1)
                        Buffers: shared hit=150
    SubPlan 1
-     ->  Aggregate  (cost=350.62..350.63 rows=1 width=8) (actual time=1.691..1.692 r
-ows=1.00 loops=599)
+     ->  Aggregate  (cost=350.62..350.63 rows=1 width=8) (actual time=1.691..1.692 rows=1.00 loops=599)
            Buffers: shared hit=89850
-           ->  Seq Scan on rental r  (cost=0.00..350.55 rows=27 width=0) (actual tim
-e=0.066..1.682 rows=26.78 loops=599)
+           ->  Seq Scan on rental r  (cost=0.00..350.55 rows=27 width=0) (actual time=0.066..1.682 rows=26.78 loops=599)
                  Filter: (customer_id = c.customer_id)
                  Rows Removed by Filter: 16017
                  Buffers: shared hit=89850
@@ -1116,42 +1097,32 @@ WHERE customer_rentals.rental_count > system_avg.avg_rentals;
 ```text
                                                                   QUERY PLAN        
                                                           
-------------------------------------------------------------------------------------
-----------------------------------------------------------
- Hash Join  (cost=812.29..831.52 rows=200 width=10) (actual time=22.866..23.087 rows
-=296.00 loops=1)
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=812.29..831.52 rows=200 width=10) (actual time=22.866..23.087 rows=296.00 loops=1)
    Hash Cond: (c.customer_id = rental_1.customer_id)
    Buffers: shared hit=309
-   ->  Seq Scan on customer c  (cost=0.00..14.99 rows=599 width=10) (actual time=0.0
-15..0.088 rows=599.00 loops=1)
+   ->  Seq Scan on customer c  (cost=0.00..14.99 rows=599 width=10) (actual time=0.015..0.088 rows=599.00 loops=1)
          Buffers: shared hit=9
-   ->  Hash  (cost=809.79..809.79 rows=200 width=4) (actual time=22.794..22.797 rows
-=296.00 loops=1)
+   ->  Hash  (cost=809.79..809.79 rows=200 width=4) (actual time=22.794..22.797 rows=296.00 loops=1)
          Buckets: 1024  Batches: 1  Memory Usage: 19kB
          Buffers: shared hit=300
-         ->  Nested Loop  (cost=794.80..809.79 rows=200 width=4) (actual time=22.473
-..22.735 rows=296.00 loops=1)
+         ->  Nested Loop  (cost=794.80..809.79 rows=200 width=4) (actual time=22.473..22.735 rows=296.00 loops=1)
                Join Filter: (((count(*)))::numeric > (avg((count(*)))))
                Rows Removed by Join Filter: 303
                Buffers: shared hit=300
-               ->  Aggregate  (cost=404.14..404.15 rows=1 width=32) (actual time=13.
-089..13.090 rows=1.00 loops=1)
+               ->  Aggregate  (cost=404.14..404.15 rows=1 width=32) (actual time=13.089..13.090 rows=1.00 loops=1)
                      Buffers: shared hit=150
-                     ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (act
-ual time=12.917..13.023 rows=599.00 loops=1)
+                     ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual time=12.917..13.023 rows=599.00 loops=1)
                            Group Key: rental.customer_id
                            Batches: 1  Memory Usage: 73kB
                            Buffers: shared hit=150
-                           ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 wid
-th=4) (actual time=0.006..2.875 rows=16044.00 loops=1)
+                           ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 width=4) (actual time=0.006..2.875 rows=16044.00 loops=1)
                                  Buffers: shared hit=150
-               ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual ti
-me=9.377..9.499 rows=599.00 loops=1)
+               ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual time=9.377..9.499 rows=599.00 loops=1)
                      Group Key: rental_1.customer_id
                      Batches: 1  Memory Usage: 73kB
                      Buffers: shared hit=150
-                     ->  Seq Scan on rental rental_1  (cost=0.00..310.44 rows=16044 
-width=4) (actual time=0.014..2.134 rows=16044.00 loops=1)
+                     ->  Seq Scan on rental rental_1  (cost=0.00..310.44 rows=16044 width=4) (actual time=0.014..2.134 rows=16044.00 loops=1)
                            Buffers: shared hit=150
  Planning Time: 0.293 ms
  Execution Time: 23.216 ms
