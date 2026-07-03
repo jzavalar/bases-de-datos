@@ -187,6 +187,7 @@ SELECT x.key, x.val_x, y.val_y
 FROM x
 INNER JOIN y ON x.key = y.key;
 ```
+Obvio, no funcionará...
 
 **Ejemplo con Pagila:** Películas con su categoría
 
@@ -333,13 +334,15 @@ WHERE c.customer_id <= 5;
 
 **Resultado:**
 ```
- customer_name |      address       |  district   |    city    |   country   
----------------+--------------------+-------------+------------+-------------
- MARY SMITH    | 1013 Tabuk Blvd    | California  | A Coruña   | Spain
- PATRICIA J.   | 932 Santiago St    | Texas       | Abha       | Saudi Arabia
- LINDA W.      | 1993 Tabuk Blvd    | California  | Adana      | Turkey
- BARBARA J.    | 947 Tabuk Blvd     | California  | Abu Dhabi  | UAE
- ELIZABETH B.  | 1234 Tabuk Blvd    | California  | Acapulco   | Mexico
+  customer_name   |      address      |  district  |      city      |    country    
+------------------+-------------------+------------+----------------+---------------
+ MARY SMITH       | 1913 Hanoi Way    | Nagasaki   | Sasebo         | Japan
+ PATRICIA JOHNSON | 1121 Loja Avenue  | California | San Bernardino | United States
+ LINDA WILLIAMS   | 692 Joliet Street | Attika     | Athenai        | Greece
+ BARBARA JONES    | 1566 Inegl Manor  | Mandalay   | Myingyan       | Myanmar
+ ELIZABETH BROWN  | 53 Idfu Parkway   | Nantou     | Nantou         | Taiwan
+(5 rows)
+
 ```
 
 Cada JOIN **reduce** el conjunto de datos filtrando por la condición de relación (intersección sucesiva).
@@ -363,12 +366,12 @@ ORDER BY film_count DESC;
 
 **Resultado:**
 ```
- actor_id |    actor_name    | film_count 
-----------+------------------+------------
-      107 | JIM MOSTEL       |         45
-       23 | WILL WILSON      |         43
-       81 | KENNETH PALTROW  |         42
-      139 | CUBA ALLEN       |         41
+ actor_id |   actor_name   | film_count 
+----------+----------------+------------
+      107 | GINA DEGENERES |         42
+      102 | WALTER TORN    |         41
+(2 rows)
+
 ```
 
 **Análisis:** 
@@ -411,6 +414,17 @@ WHERE customer_totals.total_spent > (
 );
 ```
 
+Salida:
+```
+ customer_id | first_name  |  last_name   | total_spent 
+-------------+-------------+--------------+-------------
+           1 | MARY        | SMITH        |      118.68
+           2 | PATRICIA    | JOHNSON      |      128.73
+           3 | LINDA       | WILLIAMS     |      135.74
+           5 | ELIZABETH   | BROWN        |      144.62
+           7 | MARIA       | MILLER       |      151.67
+...
+```
 ##### 5.1.2. Subconsultas de Columna (con IN)
 
 Devuelven una **columna de valores** para usar con `IN` (pertenencia a conjunto).
@@ -432,6 +446,23 @@ WHERE f.film_id IN (
 LIMIT 10;
 ```
 
+Salida:
+```
+ film_id |        title        | rental_rate 
+---------+---------------------+-------------
+     184 | CORE SUIT           |        2.99
+     477 | JAWBREAKER BROOKLYN |        0.99
+     273 | EFFECT GLADIATOR    |        0.99
+     539 | LUCK OPUS           |        2.99
+     858 | SUBMARINE BED       |        4.99
+     874 | TADPOLE PARK        |        2.99
+     826 | SPEED SUIT          |        4.99
+     386 | GUMP DATE           |        4.99
+     424 | HOLOCAUST HIGHBALL  |        0.99
+     491 | JUMPING WRATH       |        0.99
+(10 rows)
+
+```
 **Análisis desde teoría de conjuntos:**
 - La subconsulta define: C = {film_id | category ∈ {'Action', 'Comedy'}}
 - La consulta externa filtra: {f ∈ Film | f.film_id ∈ C}
@@ -448,6 +479,24 @@ INNER JOIN film_category fc ON f.film_id = fc.film_id
 INNER JOIN category c ON fc.category_id = c.category_id
 WHERE c.name IN ('Action', 'Comedy')
 LIMIT 10;
+```
+
+Salida:
+```
+ film_id |        title         | rental_rate 
+---------+----------------------+-------------
+       2 | ACE GOLDFINGER       |        4.99
+       3 | ADAPTATION HOLES     |        2.99
+       7 | AIRPLANE SIERRA      |        4.99
+      12 | ALASKA PHANTOM       |        0.99
+      13 | ALI FOREVER          |        4.99
+      14 | ALICE FANTASIA       |        0.99
+      15 | ALIEN CENTER         |        2.99
+      23 | ANACONDA CONFESSIONS |        0.99
+      25 | ANGELS LIFE          |        2.99
+      30 | ANYTHING SAVANNAH    |        2.99
+(10 rows)
+
 ```
 
 **Nota:** Se usa `DISTINCT` porque una película podría estar en múltiples categorías.
@@ -476,6 +525,17 @@ WHERE EXISTS (
     WHERE fa.actor_id = a.actor_id
     AND f.rating = 'NC-17'
 );
+```
+
+```
+ actor_id | first_name  |  last_name   
+----------+-------------+--------------
+        1 | PENELOPE    | GUINESS
+        2 | NICK        | WAHLBERG
+        3 | ED          | CHASE
+        4 | JENNIFER    | DAVIS
+        5 | JOHNNY      | LOLLOBRIGIDA
+...
 ```
 
 **Análisis desde teoría de conjuntos:**
@@ -510,13 +570,15 @@ WHERE c.customer_id <= 5;
 
 **Resultado:**
 ```
- customer_id | first_name | last_name | rental_count | system_average 
--------------+------------+-----------+--------------+----------------
-           1 | MARY       | SMITH     |           10 |        10.5
-           2 | PATRICIA   | JOHNSON   |           12 |        10.5
-           3 | LINDA      | WILLIAMS  |           11 |        10.5
-           4 | BARBARA    | JONES     |            9 |        10.5
-           5 | ELIZABETH  | BROWN     |           10 |        10.5
+ customer_id | first_name | last_name | rental_count |   system_average    
+-------------+------------+-----------+--------------+---------------------
+           1 | MARY       | SMITH     |           32 | 26.7846410684474124
+           2 | PATRICIA   | JOHNSON   |           27 | 26.7846410684474124
+           3 | LINDA      | WILLIAMS  |           26 | 26.7846410684474124
+           4 | BARBARA    | JONES     |           22 | 26.7846410684474124
+           5 | ELIZABETH  | BROWN     |           38 | 26.7846410684474124
+(5 rows)
+
 ```
 
 #### 6. Expresiones de Tabla Comunes (CTE)
@@ -571,15 +633,14 @@ ORDER BY cr.rental_count DESC;
 
 **Resultado:**
 ```
- customer_id | first_name | last_name | rental_count 
--------------+------------+-----------+--------------
-          58 | TAMMY      | SMITH     |           39
-         148 | ELEANOR    | HUNT      |           37
-         236 | MARCIA     | DEAN      |           36
-         526 | KARL       | SEAL      |           35
-         178 | MARION     | SNYDER    |           35
+ customer_id | first_name  |  last_name   | rental_count 
+-------------+-------------+--------------+--------------
+         148 | ELEANOR     | HUNT         |           46
+         526 | KARL        | SEAL         |           45
+         236 | MARCIA      | DEAN         |           42
+         144 | CLARA       | SHAW         |           42
+          75 | TAMMY       | SANDERS      |           41
 ...
-(150 rows)
 ```
 
 **Ventajas del CTE:**
@@ -629,13 +690,17 @@ ORDER BY cs.total_revenue DESC;
 
 **Resultado:**
 ```
- category_name | total_rentals | total_revenue | rentals_above_avg | revenue_above_avg 
----------------+---------------+---------------+-------------------+-------------------
- Sports        |          1973 |        5312.74 |            589.33 |           1589.41
- Animation     |          1966 |        5304.74 |            582.33 |           1581.41
- Drama         |          1963 |        5299.74 |            579.33 |           1576.41
- Comedy        |          1957 |        5281.74 |            573.33 |           1558.41
- Foreign       |          1941 |        5245.74 |            557.33 |           1522.41
+ category_name | total_rentals | total_revenue | rentals_above_avg | revenue_above_a
+vg 
+---------------+---------------+---------------+-------------------+----------------
+---
+ Foreign       |          2433 |      10507.67 |             59.13 |            536.
+47
+ Children      |          2396 |      10437.05 |             22.13 |            465.
+85
+ Animation     |          2343 |      10369.55 |            -30.88 |            398.
+35
+(10 rows)
 ...
 (10 rows)
 ```
@@ -677,13 +742,7 @@ SELECT n FROM numbers;
 ----
   1
   2
-  3
-  4
-  5
-  6
-  7
-  8
-  9
+...
  10
 (10 rows)
 ```
@@ -731,12 +790,15 @@ ORDER BY level, film_id;
 
 **Resultado (ejemplo):**
 ```
- level | film_id |        title         | prefix | last_char |    path     
--------+---------+----------------------+--------+-----------+-------------
-     1 |      91 | ACE GOLDFINGER       | ACE    | R         | {91}
-     2 |     712 | RIVER OUTLAW         | RIV    | W         | {91,712}
-     2 |     721 | ROBBERS JOON         | ROB    | N         | {91,721}
-     3 |     315 | FORWARD TEMPLE       | FOR    | E         | {91,712,315}
+ level | film_id |            title            | prefix | last_char |        path   
+      
+-------+---------+-----------------------------+--------+-----------+---------------
+------
+     1 |       2 | ACE GOLDFINGER              | ACE    | R         | {2}
+     2 |     709 | RACER EGG                   | RAC    | G         | {2,709}
+     2 |     710 | RAGE GAMES                  | RAG    | S         | {2,710}
+     2 |     711 | RAGING AIRPLANE             | RAG    | E         | {2,711}
+     2 |     712 | RAIDERS ANTITRUST           | RAI    | T         | {2,712}
 ...
 ```
 
@@ -776,7 +838,22 @@ WITH customer_data AS MATERIALIZED (
     GROUP BY customer_id
 )
 SELECT * FROM customer_data;
+```
 
+Resultado:
+```
+ customer_id | rental_count 
+-------------+--------------
+          87 |           30
+         184 |           23
+         477 |           22
+         273 |           35
+...
+(599 rows)
+
+```
+
+```sql
 -- Forzar inline (no materializar)
 WITH customer_data AS NOT MATERIALIZED (
     SELECT customer_id, COUNT(*) AS rental_count
@@ -784,6 +861,19 @@ WITH customer_data AS NOT MATERIALIZED (
     GROUP BY customer_id
 )
 SELECT * FROM customer_data;
+```
+
+Resultado:
+```
+ customer_id | rental_count 
+-------------+--------------
+          87 |           30
+         184 |           23
+         477 |           22
+         273 |           35
+...
+(599 rows)
+
 ```
 
 **Recomendación:** En la mayoría de los casos, deje que PostgreSQL decida automáticamente.
@@ -799,6 +889,37 @@ Muchas operaciones pueden expresarse tanto con JOINs como con subconsultas:
 SELECT * FROM film
 WHERE film_id IN (SELECT film_id FROM film_category WHERE category_id = 5);
 ```
+
+Resultado:
+```
+ film_id |         title          |                                                 
+       description                                                        | release_
+year | language_id | original_language_id | rental_duration | rental_rate | length |
+ replacement_cost | rating |          last_update          |                       s
+pecial_features                       |                                             
+                                          fulltext                                  
+                                                     
+---------+------------------------+-------------------------------------------------
+--------------------------------------------------------------------------+---------
+-----+-------------+----------------------+-----------------+-------------+--------+
+------------------+--------+-------------------------------+------------------------
+--------------------------------------+---------------------------------------------
+------------------------------------------------------------------------------------
+-----------------------------------------------------
+      13 | ALI FOREVER            | A Action-Packed Drama of a Dentist And a Crocodi
+le who must Battle a Feminist in The Canadian Rockies                     |         
+2021 |           4 |                      |               4 |        4.99 |    150 |
+            21.99 | PG     | 2022-09-10 16:46:03.905795+00 | {"Deleted Scenes","Behi
+nd the Scenes"}                       | 'action':5 'action-pack':4 'ali':1 'battl':1
+6 'canadian':21 'crocodil':13 'dentist':10 'drama':7 'feminist':18 'forev':2 'must':
+15 'pack':6 'rocki':22
+      14 | ALICE FANTASIA         | A Emotional Drama of a A Shark And a Database Ad
+ministrator who must Vanquish a Pioneer in Soviet Georgia                 |         
+...
+(143 rows)
+
+```
+
 
 **JOIN equivalente:**
 ```sql
@@ -824,6 +945,18 @@ INNER JOIN payment p ON c.customer_id = p.customer_id
 WHERE p.amount > 10;
 ```
 
+Resultado:
+```
+ first_name | amount 
+------------+--------
+ NANCY      |  10.99
+ ANDREW     |  10.99
+ VINCENT    |  10.99
+ BRADLEY    |  10.99
+...
+(114 rows)
+
+```
 ##### 7.3. Cuándo Preferir Subconsultas
 
 ✅ **Use subconsultas cuando:**  
@@ -842,6 +975,16 @@ WHERE customer_id IN (
     GROUP BY customer_id 
     HAVING SUM(amount) > 200
 );
+```
+
+Salida:
+```
+ customer_id | first_name 
+-------------+------------
+         148 | ELEANOR
+         526 | KARL
+(2 rows)
+
 ```
 
 ##### 7.4. Comparación de Rendimiento
@@ -867,6 +1010,18 @@ WHERE (
 );
 ```
 
+Salida:
+```
+ customer_id | first_name  
+-------------+-------------
+           1 | MARY
+           2 | PATRICIA
+           5 | ELIZABETH
+           6 | JENNIFER
+           7 | MARIA
+(296 rows)
+
+```
 **Plan de ejecución:**
 ```sql
 EXPLAIN ANALYZE
@@ -888,14 +1043,40 @@ WHERE (
 
 **Salida:**
 ```text
-Seq Scan on customer c  (cost=0.00..15369.50 rows=200 width=8) (actual time=2.345..45.678 rows=150 loops=1)
-  Filter: ((SubPlan 1) > (SubPlan 2))
-  Rows Removed by Filter: 449
-  SubPlan 1
-    ->  Aggregate  (cost=38.25..38.26 rows=1 width=8) (actual time=0.045..0.046 rows=1 loops=599)
-          ->  Index Only Scan using idx_fk_customer_id on rental r
-Planning Time: 0.234 ms
-Execution Time: 46.123 ms
+                                                           QUERY PLAN               
+                                             
+------------------------------------------------------------------------------------
+---------------------------------------------
+ Seq Scan on customer c  (cost=404.15..210448.01 rows=200 width=10) (actual time=10.
+460..1024.088 rows=296.00 loops=1)
+   Filter: (((SubPlan 1))::numeric > (InitPlan 2).col1)
+   Rows Removed by Filter: 303
+   Buffers: shared hit=90009
+   InitPlan 2
+     ->  Aggregate  (cost=404.14..404.15 rows=1 width=32) (actual time=8.232..8.234 
+rows=1.00 loops=1)
+           Buffers: shared hit=150
+           ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual time=7
+.962..8.125 rows=599.00 loops=1)
+                 Group Key: rental.customer_id
+                 Batches: 1  Memory Usage: 73kB
+                 Buffers: shared hit=150
+                 ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 width=4) (act
+ual time=0.007..1.883 rows=16044.00 loops=1)
+                       Buffers: shared hit=150
+   SubPlan 1
+     ->  Aggregate  (cost=350.62..350.63 rows=1 width=8) (actual time=1.691..1.692 r
+ows=1.00 loops=599)
+           Buffers: shared hit=89850
+           ->  Seq Scan on rental r  (cost=0.00..350.55 rows=27 width=0) (actual tim
+e=0.066..1.682 rows=26.78 loops=599)
+                 Filter: (customer_id = c.customer_id)
+                 Rows Removed by Filter: 16017
+                 Buffers: shared hit=89850
+ Planning Time: 0.292 ms
+ Execution Time: 1024.323 ms
+(22 rows)
+
 ```
 
 **¿Por qué es lenta?**
@@ -948,13 +1129,49 @@ WHERE customer_rentals.rental_count > system_avg.avg_rentals;
 
 **Salida:**
 ```text
-Hash Join  (cost=15320.50..15345.75 rows=150 width=8) (actual time=8.234..10.567 rows=150 loops=1)
-  Hash Cond: (c.customer_id = customer_rentals.customer_id)
-  ->  Seq Scan on customer c  (actual time=0.012..0.234 rows=599 loops=1)
-  ->  Hash  (actual time=7.890..7.890 rows=599 loops=1)
-        ->  Seq Scan on rental  (actual time=0.012..3.456 rows=16044 loops=1)
-Planning Time: 0.456 ms
-Execution Time: 10.890 ms
+                                                                  QUERY PLAN        
+                                                          
+------------------------------------------------------------------------------------
+----------------------------------------------------------
+ Hash Join  (cost=812.29..831.52 rows=200 width=10) (actual time=22.866..23.087 rows
+=296.00 loops=1)
+   Hash Cond: (c.customer_id = rental_1.customer_id)
+   Buffers: shared hit=309
+   ->  Seq Scan on customer c  (cost=0.00..14.99 rows=599 width=10) (actual time=0.0
+15..0.088 rows=599.00 loops=1)
+         Buffers: shared hit=9
+   ->  Hash  (cost=809.79..809.79 rows=200 width=4) (actual time=22.794..22.797 rows
+=296.00 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 19kB
+         Buffers: shared hit=300
+         ->  Nested Loop  (cost=794.80..809.79 rows=200 width=4) (actual time=22.473
+..22.735 rows=296.00 loops=1)
+               Join Filter: (((count(*)))::numeric > (avg((count(*)))))
+               Rows Removed by Join Filter: 303
+               Buffers: shared hit=300
+               ->  Aggregate  (cost=404.14..404.15 rows=1 width=32) (actual time=13.
+089..13.090 rows=1.00 loops=1)
+                     Buffers: shared hit=150
+                     ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (act
+ual time=12.917..13.023 rows=599.00 loops=1)
+                           Group Key: rental.customer_id
+                           Batches: 1  Memory Usage: 73kB
+                           Buffers: shared hit=150
+                           ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 wid
+th=4) (actual time=0.006..2.875 rows=16044.00 loops=1)
+                                 Buffers: shared hit=150
+               ->  HashAggregate  (cost=390.66..396.65 rows=599 width=12) (actual ti
+me=9.377..9.499 rows=599.00 loops=1)
+                     Group Key: rental_1.customer_id
+                     Batches: 1  Memory Usage: 73kB
+                     Buffers: shared hit=150
+                     ->  Seq Scan on rental rental_1  (cost=0.00..310.44 rows=16044 
+width=4) (actual time=0.014..2.134 rows=16044.00 loops=1)
+                           Buffers: shared hit=150
+ Planning Time: 0.293 ms
+ Execution Time: 23.216 ms
+(28 rows)
+
 ```
 
 **¿Por qué es rápida?**
@@ -972,6 +1189,9 @@ Todos los valores de `loops=1`. Cada operación se ejecuta **una sola vez**.
 **Nota sobre índices:** Los tiempos asumen que existe un índice en `rental.customer_id`:
 ```sql
 CREATE INDEX idx_rental_customer_id ON rental(customer_id);
+```
+```
+CREATE INDEX
 ```
 
 ##### 7.4.4. Regla General
@@ -1008,6 +1228,18 @@ WHERE f1.film_id <= 5
 LIMIT 5;
 ```
 
+Resultado:
+```
+      film_1      | release_year | length_1 |      film_2      | length_2 
+------------------+--------------+----------+------------------+----------
+ ACE GOLDFINGER   |         2023 |       48 | AFFAIR PREJUDICE |      117
+ AFRICAN EGG      |         2019 |      130 | AIRPLANE SIERRA  |       62
+ ADAPTATION HOLES |         2017 |       50 | ALTER VICTORY    |       57
+ ACADEMY DINOSAUR |         2012 |       86 | AMADEUS HOLY     |      113
+ ACE GOLDFINGER   |         2023 |       48 | ARABIA DOGMA     |       62
+(5 rows)
+```
+
 **Análisis:** La condición `f1.film_id < f2.film_id` evita duplicados simétricos.
 
 ##### 8.2. LATERAL JOIN
@@ -1034,6 +1266,23 @@ LEFT JOIN LATERAL (
 WHERE a.actor_id <= 3;
 ```
 
+Resultado:
+```
+ first_name | last_name |         title         | release_year 
+------------+-----------+-----------------------+--------------
+ PENELOPE   | GUINESS   | MULHOLLAND BEAST      |         2024
+ PENELOPE   | GUINESS   | BULWORTH COMMANDMENTS |         2024
+ PENELOPE   | GUINESS   | KING EVOLUTION        |         2023
+ NICK       | WAHLBERG  | HAPPINESS UNITED      |         2024
+ NICK       | WAHLBERG  | RUSHMORE MERMAID      |         2024
+ NICK       | WAHLBERG  | DESTINY SATURDAY      |         2022
+ ED         | CHASE     | LUCK OPUS             |         2024
+ ED         | CHASE     | WEEKEND PERSONAL      |         2023
+ ED         | CHASE     | ALONE TRIP            |         2022
+(9 rows)
+
+```
+
 #### 9. Resumen de Conceptos Clave
 
 | Concepto SQL | Operación de Conjuntos | Notación Matemática | Descripción |
@@ -1051,6 +1300,8 @@ WHERE a.actor_id <= 3;
 | **CTE** | Conjunto nombrado | CTE = {...} | Conjunto temporal con nombre |
 
 #### 10. Ejercicios Prácticos
+
+Realice por sus cuenta los siguientes ejercicios.
 
 ##### Ejercicio 1: Ruta Geográfica Completa
 Escriba una consulta que muestre:
