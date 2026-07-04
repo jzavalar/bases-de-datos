@@ -119,7 +119,7 @@ sudo dnf -y config-manager --set-enabled PowerTools
 # Para Rocky Linux necesita instalar esto en lugar de lo anterior
 sudo dnf config-manager --enable crb
 
-# Para Rocky 8+ necesita tambi'en habilitar esto
+# Para Rocky 8+ necesita tambien habilitar esto
 sudo crb enable
 
 # Ahora, finalmente, instale PostGIS
