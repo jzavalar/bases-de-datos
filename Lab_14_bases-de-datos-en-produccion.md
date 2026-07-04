@@ -1,7 +1,7 @@
 ### Laboratorio 14: Bases de Datos en Producción
 
-**Dr. Jesús Zavala Ruiz**
-**Ultima actualización:** 4 de julio de 2026
+**Dr. Jesús Zavala Ruiz**  
+**Ultima actualización:** 4 de julio de 2026  
 
 ---
 
