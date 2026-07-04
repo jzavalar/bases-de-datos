@@ -119,6 +119,8 @@ Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutar
 *   **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.
 *   **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.
 
+*Nota didáctica:* En la vida real, el servidor Tang (para NBDE) y el servidor FreeIPA estarían en máquinas separadas. Para este "monolito de laboratorio", simularemos estos servicios en la misma MV. Dado que no contamos con un servidor DNS externo, configure el archivo `/etc/hosts` para resolver los nombres ficticios:
+
 ```bash
 echo "192.168.122.25 pgsql.ejemplo.com tang.ejemplo.com ipa.ejemplo.com" | sudo tee -a /etc/hosts
 ```
@@ -128,6 +130,28 @@ echo "192.168.122.25 pgsql.ejemplo.com tang.ejemplo.com ipa.ejemplo.com" | sudo 
 > En este laboratorio utilizamos el dominio `ejemplo.com` (y sus subdominios como `ipa.ejemplo.com` o `pgsql.ejemplo.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente.
 > 
 > **Sin embargo, es fundamental aclarar que en un entorno de producción real**, como el que requiere *Innovatech Solutions*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `innovatech.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
+
+> **Nota Técnica: El peligro del "Organizational Lock-in" y el Factor Autobús**
+> 
+> En la administración de sistemas y bases de datos en producción, existe un riesgo tan crítico como cualquier vulnerabilidad técnica: el **organizational lock-in** (también conocido como *vendor lock-in interno* o dependencia de un solo punto de falla humano). Este fenómeno ocurre cuando el conocimiento especializado sobre la seguridad, configuración y operación de un sistema crítico reside exclusivamente en una sola persona.
+> 
+> En la industria de la ciberseguridad, esto se cuantifica mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si fueran atropelladas por un autobús (o simplemente renunciaran, se enfermaran o fueran comprometidas), dejarían al proyecto sin capacidad operativa. Un bus factor de 1 es una vulnerabilidad organizacional grave.
+> 
+> **Los riesgos de asignar la seguridad de la base de datos a una sola persona incluyen:**
+> 
+> 1. **Pérdida catastrófica de conocimiento:** Si el DBA o administrador único abandona la organización, se lleva consigo las contraseñas maestras, las ubicaciones de las claves de cifrado, los procedimientos de recuperación ante desastres y la lógica detrás de las políticas de SELinux y `pg_hba.conf`. La organización queda expuesta y paralizada.
+> 2. **Insider Threat amplificado:** Una sola persona con acceso total y sin supervisión representa el vector de ataque más peligroso. No existe *segregación de funciones* (*segregation of duties*), lo que facilita el fraude, el sabotaje o la exfiltración de datos sin detección.
+> 3. **Ausencia de revisión por pares:** Sin un segundo par de ojos, los errores de configuración (como un `pg_hba.conf` permisivo o una clave LUKS mal gestionada) permanecen sin detectar hasta que un atacante los explota.
+> 4. **Bloqueo operativo:** La organización queda secuestrada por la disponibilidad de esa persona. Vacaciones, enfermedades o emergencias personales se convierten en incidentes de continuidad del negocio.
+> 5. **Incumplimiento normativo:** Estándares como PCI-DSS, ISO 27001, HIPAA y NIST 800-53 exigen explícitamente la segregación de funciones, la rotación de conocimiento y la documentación de procedimientos críticos. Un bus factor de 1 viola estos controles.
+> 
+> **Mitigación:** Por esta razón, este laboratorio presenta un **equipo multidisciplinario** (DBA Senior, DBA Junior, SysAdmin, Security Officer, etc.). La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:
+> - Todo conocimiento crítico debe estar documentado en *runbooks* accesibles.
+> - Las credenciales y claves deben gestionarse mediante bóvedas de secretos (como HashiCorp Vault o FreeIPA).
+> - Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de *four-eyes* o doble control).
+> - La rotación de roles y el *cross-training* son obligatorios, no opcionales.
+> 
+> Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una bomba de tiempo organizacional.**
 
 ##### 4.2. Instalación de Rocky Linux 10 y Modo FIPS
 
@@ -141,7 +165,6 @@ Una vez instalado, inicie sesión como el usuario `alumno` (contraseña: `uamIzt
 sudo dnf update -y
 sudo reboot
 ```
-
 ##### 4.3. Políticas Criptográficas y Cumplimiento (OpenSCAP)
 
 Rocky Linux 10 centraliza la seguridad criptográfica a nivel de sistema operativo. Verifique que el sistema esté usando políticas robustas:
