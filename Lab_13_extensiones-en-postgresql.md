@@ -101,10 +101,7 @@ Cada dominio explota mecanismos internos distintos del motor. Las extensiones de
 
 ##### 6.1. Contexto y preparación del entorno
 
-Este ejercicio se ejecuta en una máquina virtual con Fedora 44, con credenciales unificadas para el sistema operativo y PostgreSQL. PostGIS es la extensión de referencia industrial para datos geoespaciales: permite almacenar, indexar y consultar geometrías mediante funciones especializadas, operadores espaciales y métodos de acceso GIST. Para profundizar, consulte las fuentes oficiales:
-- Guía de inicio: <https://postgis.net/documentation/getting_started/>  
-- Taller introductorio: <https://postgis.net/workshops/postgis-intro/index.html>  
-- Manual técnico v3.6: <https://postgis.net/docs/manual-3.6/>  
+Este ejercicio se ejecuta en una máquina virtual con Fedora 44, con credenciales unificadas para el sistema operativo y PostgreSQL. PostGIS es la extensión de referencia industrial para datos geoespaciales: permite almacenar, indexar y consultar geometrías mediante funciones especializadas, operadores espaciales y métodos de acceso GIST. En otras palabras, PostGIS convierte a PostgreSQL en un Sistema de Información Geográfica (Geographical Information System, GIS) y lo habilita para manejar [bases de datos espaciales](https://postgis.net/workshops/postgis-intro/introduction.html). 
 
 ##### 6.2. Instalación de PostgreSQL y PostGIS
 
@@ -245,12 +242,20 @@ La eliminación revoca automáticamente todos los objetos asociados; no se requi
 
 **Consideraciones para entornos productivos:** PostGIS y PostgreSQL siguen ciclos de actualización independientes; verifique compatibilidad antes de actualizar. En entornos multiusuario, instale PostGIS en un esquema dedicado para evitar colisiones de nombres. Para cargas masivas (>10⁵ geometrías), deshabilite temporalmente `full_page_writes` y use `COPY` con transacciones agrupadas para reducir sobrecarga de WAL. Emplee `ST_IsValid()` en triggers de inserción para rechazar geometrías topológicamente inconsistentes.
 
-**Recursos complementarios:** Complete el taller interactivo "PostGIS Introduction" para practicar carga de Shapefiles y transformación de coordenadas. Consulte la sección "Spatial Reference Systems" del manual oficial para comprender gestión de SRID. Experimente con `ST_AsGeoJSON()` para integrar resultados espaciales con aplicaciones web modernas.
+Para profundizar, consulte las fuentes oficiales:
+- Guía de inicio: <https://postgis.net/documentation/getting_started/>  
+- Taller introductorio: <https://postgis.net/workshops/postgis-intro/index.html>  
+- Manual técnico v3.6: <https://postgis.net/docs/manual-3.6/>  
+
+**Recursos complementarios:** Complete el taller interactivo "PostGIS Introduction" para practicar carga de archivos *Shapefiles* (.shp) y transformación de coordenadas. Consulte la sección "Spatial Reference Systems" del manual oficial para comprender gestión de SRID. Experimente con `ST_AsGeoJSON()` para integrar resultados espaciales con aplicaciones web modernas. Si le llama la atención el mundo de la geografía y los sistemas de información geográfica (SIG o GIS), comience por aprender cartografía con los tres volúmenes de *Basic Cartography* de Anson y Ormeling (1993, 2002, 1996).    
 
 #### 7. Referencias
 
+Anson, R. W., & Ormeling, F. J. (Eds.). (1993). *Basic cartography for students and technicians Vol. 1* (2nd ed.). Pergamon Press.  
+Anson, R. W., & Ormeling, F. J. (Eds.). (2002). *Basic cartography for students and technicians Vol. 2* (2nd ed.). Butterworth-Heinemann.  
+Anson, R. W., & Ormeling, F. J. (Eds.). (1996). *Basic cartography for students and technicians Vol. 3*. Butterworth-Heinemann.  
 Deprez, D. (2021). *The art of PostgreSQL*. Manning Publications.  
-Obe, R. O., & Hsu, L. S. (2021). *PostGIS in action* (3.ª ed.). Manning Publications.  
+Obe, R. O., & Hsu, L. S. (2021). *PostGIS in action* (3rd. ed.). Manning Publications.  
 PostGIS Project Steering Committee. (2026). *PostGIS getting started guide*. <https://postgis.net/documentation/getting_started/>  
 PostGIS Project Steering Committee. (2026). *Introduction to PostGIS*. PostGIS Workshop. <https://postgis.net/workshops/postgis-intro/index.html>  
 PostGIS Project Steering Committee. (2026). *PostGIS 3.6 manual*. <https://postgis.net/docs/manual-3.6/>  
@@ -258,7 +263,7 @@ PostGIS Project Steering Committee. (2026). *PostGIS* [Computer software]. GitHu
 PostgreSQL Extension Network. (2026). *PGXN: PostgreSQL Extension Network*. <https://pgxn.org/>  
 PostgreSQL Global Development Group. (2026). *Additional supplied modules*. PostgreSQL Documentation. <https://www.postgresql.org/docs/current/contrib.html>  
 PostgreSQL Global Development Group. (2026). *Contrib modules* [Computer software]. GitHub. <https://github.com/postgres/postgres/tree/master/contrib>  
-Worsley, J., & Drake, J. (2016). *PostgreSQL: Up and running* (3.ª ed.). O'Reilly Media.  
+Worsley, J., & Drake, J. (2016). *PostgreSQL: Up and running* (3rd. ed.). O'Reilly Media.  
 
 > **Nota final:** El ecosistema de extensiones demuestra que PostgreSQL puede evolucionar sin comprometer su núcleo relacional. Inicie con módulos `contrib`, valide su comportamiento en entornos aislados y progrese hacia extensiones externas conforme consolide fundamentos de optimización, modelado avanzado y administración de bases de datos. La consulta directa de repositorios y documentación técnica es indispensable para desarrollar competencias profesionales en arquitectura de datos.
 > 
