@@ -30,7 +30,7 @@ Para enfrentar este desafío, se integrará a un equipo multidisciplinario. Es f
 
 **Nota Técnica: El peligro del "Organizational Lock-in"**
 
-En la administración de sistemas y bases de datos en producción, existe un riesgo tan crítico como cualquier vulnerabilidad técnica: el **organizational lock-in** (también conocido como *vendor lock-in interno* o dependencia de un solo punto de falla humano). Este fenómeno ocurre cuando el conocimiento especializado sobre la seguridad, configuración y operación de un sistema crítico reside exclusivamente en una sola persona. En la industria de la ciberseguridad, esto se cuantifica mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si fueran atropelladas por un autobús (o simplemente renunciaran, se enfermaran o fueran comprometidas), dejarían al proyecto sin capacidad operativa. Un bus factor de 1 es una vulnerabilidad organizacional grave.
+> En la administración de sistemas y bases de datos en producción, existe un riesgo tan crítico como cualquier vulnerabilidad técnica: el **organizational lock-in** (también conocido como *vendor lock-in interno* o dependencia de un solo punto de falla humano). Este fenómeno ocurre cuando el conocimiento especializado sobre la seguridad, configuración y operación de un sistema crítico reside exclusivamente en una sola persona. En la industria de la ciberseguridad, esto se cuantifica mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si fueran atropelladas por un autobús (o simplemente renunciaran, se enfermaran o fueran comprometidas), dejarían al proyecto sin capacidad operativa. Un bus factor de 1 es una vulnerabilidad organizacional grave.
 
 Los riesgos de asignar la seguridad de la base de datos a una sola persona incluyen:
 
@@ -62,17 +62,17 @@ Carlos Ramírez (Developer Lead) le pregunta en la primera reunión: *"¿Podemos
 
 En la práctica profesional, es obligatorio separar las bases de datos en al menos tres entornos:
 
-*   **Desarrollo (DEV):** Donde los ingenieros construyen nuevas funcionalidades. Usa datos anonimizados o sintéticos. La seguridad es relajada y las caídas son aceptables.
-*   **Pruebas / QA (TEST):** Donde se validan las funcionalidades antes de producción. Usa copias recientes de producción. La seguridad es media y se permiten ventanas de mantenimiento.
-*   **Producción (PROD):** El sistema real que atiende a los usuarios finales. Contiene datos vivos y críticos. La seguridad es máxima (todas las medidas de este laboratorio se aplican aquí). La disponibilidad debe ser del 99.9% o superior.
+-   **Desarrollo (DEV):** Donde los ingenieros construyen nuevas funcionalidades. Usa datos anonimizados o sintéticos. La seguridad es relajada y las caídas son aceptables.  
+-   **Pruebas / QA (TEST):** Donde se validan las funcionalidades antes de producción. Usa copias recientes de producción. La seguridad es media y se permiten ventanas de mantenimiento.  
+-   **Producción (PROD):** El sistema real que atiende a los usuarios finales. Contiene datos vivos y críticos. La seguridad es máxima (todas las medidas de este laboratorio se aplican aquí). La disponibilidad debe ser del 99.9% o superior.  
 
 *Regla fundamental:* Los cambios nunca pasan directamente de desarrollo a producción. Siempre deben atravesar el entorno de pruebas.
 
 Es importante señalar que este laboratorio se enfoca exclusivamente en el endurecimiento y aseguramiento de la base de datos en el entorno de producción. Otros aspectos del ciclo de vida del sistema corresponden a cursos subsecuentes del plan de estudios de la Licenciatura:
 
-*   **Modelado de datos y diseño de esquemas:** Bases de Datos (curso actual).
-*   **Diseño de la arquitectura de la aplicación y flujos de datos:** Análisis y Diseño de Sistemas.
-*   **Implementación de pipelines CI/CD, contenedores y separación automática de entornos:** Ingeniería de Software.
+-   **Modelado de datos y diseño de esquemas:** Bases de Datos (curso actual).  
+-   **Diseño de la arquitectura de la aplicación y flujos de datos:** Análisis y Diseño de Sistemas.  
+-   **Implementación de pipelines CI/CD, contenedores y separación automática de entornos:** Ingeniería de Software.  
 
 Este laboratorio es una pieza fundamental del rompecabezas, pero la excelencia en ingeniería de sistemas requiere la integración coordinada de todas estas disciplinas.
 
@@ -82,28 +82,28 @@ Patricia Flores (SysAdmin) y Javier López (Security Officer) han definido la ar
 
 ##### 2.1. Rocky Linux 10 como Base
 
-Rocky Linux es una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con Red Hat Enterprise Linux (RHEL). Provee la estabilidad, compatibilidad y soporte a largo plazo de RHEL, manteniendo la soberanía tecnológica y eliminando costos de licenciamiento, mientras ofrece seguridad nativa a nivel de kernel mediante SELinux.
+**Rocky Linux** es una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con Red Hat Enterprise Linux (RHEL). Provee la estabilidad, compatibilidad y soporte a largo plazo de RHEL, manteniendo la soberanía tecnológica y eliminando costos de licenciamiento, mientras ofrece seguridad nativa a nivel de kernel mediante SELinux.
 
 ##### 2.2. FreeIPA como Directorio de Identidades
 
-FreeIPA (Free Identity, Policy, Audit) es una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados. En una organización con cientos de empleados, gestionar cuentas locales en cada servidor es insostenible y peligroso. FreeIPA centraliza la autenticación, permitiendo la revocación inmediata de accesos y el cumplimiento de políticas corporativas.
+**FreeIPA** (*Free Identity, Policy, Audit*) es una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados. En una organización con cientos de empleados, gestionar cuentas locales en cada servidor es insostenible y peligroso. FreeIPA centraliza la autenticación, permitiendo la revocación inmediata de accesos y el cumplimiento de políticas corporativas.
 
 ##### 2.3. PostgreSQL como Motor de Base de Datos
 
-PostgreSQL es el Sistema Gestor de Bases de Datos relacional de código abierto más avanzado. Garantiza integridad ACID, extensibilidad y mecanismos de seguridad avanzados. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un port a PostgreSQL de la famosa Sakila), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos.
+**PostgreSQL** es el Sistema Gestor de Bases de Datos relacional de código abierto más avanzado. Garantiza integridad ACID, extensibilidad y mecanismos de seguridad avanzados. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un port a PostgreSQL de la famosa Sakila), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos.
 
 #### 3. Panorama de Amenazas
 
 Antes de configurar cualquier parámetro, Javier López (Security Officer) le pide una reunión. Quiere entender contra qué están defendiendo los datos. Los vectores de ataque más comunes en entornos productivos incluyen:
 
-*   **Inyección SQL (SQLi):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.
-*   **Fuerza Bruta y Credential Stuffing:** Intentos masivos de autenticación contra el servicio expuesto.
-*   **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.
-*   **Sniffing de Red (MitM):** Interceptación de consultas y datos sensibles transmitidos en texto plano.
-*   **Denegación de Servicio (DoS):** Saturación de conexiones o ejecución de consultas maliciosas.
-*   **Explotación del Sistema Operativo:** Compromiso del host subyacente para acceder directamente a los archivos de datos (`$PGDATA`).
-*   **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas.
-*   **Insider Threat:** Empleados con acceso legítimo que abusan de sus privilegios.
+-   **Inyección SQL (SQLi):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.  
+-   **Fuerza Bruta y Credential Stuffing:** Intentos masivos de autenticación contra el servicio expuesto.  
+-   **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.  
+-   **Sniffing de Red (MitM):** Interceptación de consultas y datos sensibles transmitidos en texto plano.  
+-   **Denegación de Servicio (DoS):** Saturación de conexiones o ejecución de consultas maliciosas.  
+-   **Explotación del Sistema Operativo:** Compromiso del host subyacente para acceder directamente a los archivos de datos (`$PGDATA`).  
+-   **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas.  
+-   **Insider Threat:** Empleados con acceso legítimo que abusan de sus privilegios.  
 
 #### 4. Fase 1: Creación del Entorno y Endurecimiento del Sistema Operativo
 
