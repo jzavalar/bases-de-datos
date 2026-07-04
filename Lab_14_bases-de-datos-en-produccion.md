@@ -13,7 +13,7 @@ Una base de datos en producción no solo debe ser funcional; debe ser segura, au
 
 Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de Innovatech Solutions, una empresa mexicana especializada en soluciones de gestión empresarial para el sector retail. La voz de Sofía es urgente pero calmada: 
 
-*"Necesitamos que el nuevo sistema de fidelización de clientes esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
+> *"Necesitamos que el nuevo sistema de fidelización de clientes esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
 
 Usted ha sido contratado como Consultor Senior en Seguridad de Bases de Datos. Su misión no es solo hacer que PostgreSQL funcione, sino asegurarla integralmente.
 
