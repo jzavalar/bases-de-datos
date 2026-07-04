@@ -1,7 +1,7 @@
 ### Laboratorio 13. Extensiones en PostgreSQL
 (Opcional, pero recomendado)
 
-**Autor:** Dr. Jesús Zavala Ruiz  
+**Dr. Jesús Zavala Ruiz**  
 **Última actualización:** 4 de julio de 2026  
 
 ---
