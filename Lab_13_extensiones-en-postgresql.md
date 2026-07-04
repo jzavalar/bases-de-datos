@@ -2,7 +2,7 @@
 (Opcional, pero recomendado)
 
 **Autor:** Dr. Jesús Zavala Ruiz  
-**Última actualización:** 3 de julio de 2026  
+**Última actualización:** 4 de julio de 2026  
 
 ---
 
@@ -110,26 +110,37 @@ Este ejercicio se ejecuta en una máquina virtual con Fedora 44, con credenciale
 Desde la terminal del usuario `alumno`, actualice el sistema y configure el repositorio oficial de PostgreSQL:
 
 ```bash
-sudo dnf update -y
-sudo dnf install -y https://download.postgresql.org/pub/repos/yum/18/fedora/fedora-44-x86_64/pgdg-fedora-repo-latest.noarch.rpm
-sudo dnf -qy module disable postgresql
-```
+# Instalar el repo EPEL:
+sudo dnf -y install epel-release
 
-La instrucción `module disable postgresql` evita conflictos con el módulo predeterminado de Fedora, que podría ofrecer una versión incompatible. Luego instale los binarios del motor y la extensión geoespacial con sus dependencias (PROJ, GEOS, GDAL) (Osgeo, 2026):
+# Habilitar el repo PowerTools (requerudo por algunas de las dependencias):
+sudo dnf -y config-manager --set-enabled PowerTools
 
-```bash
-sudo dnf install -y postgresql18 postgresql18-server postgresql18-contrib postgis35_18 postgresql18-postgis-3.5
+# Para Rocky Linux necesita instalar esto en lugar de lo anterior
+sudo dnf config-manager --enable crb
+
+# Para Rocky 8+ necesita tambi'en habilitar esto
+sudo crb enable
+
+# Ahora, finalmente, instale PostGIS
+# Elija las versiones correctas de PostGIS y PostgreSQL
+sudo dnf -y install postgis35_18
+
+# Reinicie postgres
+sudo systemctl restart postgresql
 ```
 
 El paquete `postgis35_18` sigue la convención de Fedora: `postgis<versión>_<versión-pg>`. La biblioteca `postgis-3.5.so` se instala en `/usr/pgsql-18/lib/`, ruta que PostgreSQL consulta automáticamente. Inicialice el clúster y habilite el servicio:
 
 ```bash
-sudo /usr/pgsql-18/bin/postgresql-18-setup initdb
-sudo systemctl enable --now postgresql-18
-sudo systemctl status postgresql-18
+sudo postgresql-setup --initdb
+sudo systemctl enable postgresql.service
+sudo systemctl start postgresql.service
 ```
 
 En Fedora, el servicio se registra como `postgresql-18` para permitir coexistencia de versiones. La herramienta de configuración establece autenticación `peer` para usuarios locales, facilitando el acceso sin contraseña para el rol `postgres`.
+
+La instrucción `module disable postgresql` evita conflictos con el módulo predeterminado de Fedora, que podría ofrecer una versión incompatible. Luego instale los binarios del motor y la extensión geoespacial con sus dependencias (PROJ, GEOS, GDAL):
 
 ##### 6.3. Configuración de roles y activación de PostGIS
 
