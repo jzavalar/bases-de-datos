@@ -6,7 +6,7 @@
 
 ---
 
-#### 1. Objetivo(s)
+#### 1. Objetivos
 
 Al finalizar este laboratorio, el alumno comprenderá la arquitectura de extensibilidad de PostgreSQL y será capaz de gestionar el ciclo de vida de extensiones mediante comandos SQL y operaciones del sistema. Como ejercicio integrador, instalará y configurará PostGIS 3.5 en PostgreSQL 18 para ejecutar operaciones espaciales fundamentales en un entorno controlado.
 
@@ -18,12 +18,14 @@ PostgreSQL no es una caja negra. A diferencia de otros motores de bases de datos
 
 Este modelo de extensibilidad responde a principios de diseño claros. La **modularidad** mantiene estable el núcleo del motor: las capacidades especializadas se externalizan para evitar dependencias innecesarias. La **innovación abierta** permite que investigadores, empresas y la comunidad desarrollen funcionalidades avanzadas —geoespaciales, analíticas, de inteligencia artificial— sin modificar el código fuente oficial. Y la convención de nomenclatura `pg_`, aunque frecuente, no tiene significado técnico: es una herencia histórica del directorio `contrib/`. Extensiones tan relevantes como `postgis`, `timescaledb` o `pgvector` no usan este prefijo, y eso no limita su funcionalidad en absoluto.
 
-Para trabajar en este laboratorio, el alumno se conectará a una máquina virtual con Fedora 44 Cloud Base mediante SSH usando autenticación por clave pública. Las credenciales son unificadas para simplificar el acceso:
+Para trabajar en este laboratorio, el alumno se conectará a una máquina virtual con Fedora 44 Cloud Base, mediante SSH usando autenticación por clave pública. Las credenciales son unificadas para simplificar el acceso:
 
 - Usuario del SO y PostgreSQL: `alumno`  
 - Contraseña: `uamIztapalapa`  
 - Clave SSH privada en el host: `~/.ssh/fedora-lab-key`  
-- IP de la VM: `192.168.122.24`  
+- IP de la VM: `192.168.122.24` (variable, según el entorno)  
+
+La máquina virtual fue creada en el [Laboratorio 5](https://github.com/jzavalar/bases-de-datos/blob/main/Lab_05_creacion-de-laboratorio-con-fedora-postgresql-y-pagila.md).
 
 Desde una terminal en el sistema anfitrión, la conexión se establece con:
 
@@ -37,7 +39,7 @@ ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.24
 
 Las extensiones se clasifican según su origen y nivel de confianza. Las distribuidas con el código fuente oficial (`contrib`) son mantenidas por PostgreSQL Global Development Group e incluyen módulos como `pg_stat_statements`, `pg_trgm` o `hstore`. Estas pueden ser *trusted* (instalables por usuarios con privilegio `CREATE`) o *untrusted* (requieren `SUPERUSER`). Las extensiones comunitarias, publicadas en PGXN, dependen de mantenimiento de terceros pero suelen estar bien documentadas (`pg_partman`, `pg_repack`, `pgaudit`). Finalmente, las extensiones corporativas como `timescaledb`, `citus` o `pgvector` son desarrolladas por empresas y ofrecen licencias abiertas o duales.
 
-La distinción entre *trusted* y *untrusted* es crucial: una extensión *trusted* no accede al sistema de archivos ni ejecuta código privilegiado, mientras que una *untrusted* puede requerir inicialización en memoria compartida o interacción con recursos de bajo nivel. PostgreSQL verifica esta propiedad mediante el campo `exttrusted` en el catálogo interno. Esta clasificación determina directamente el modelo de seguridad aplicable en entornos académicos y productivos.
+La distinción entre *trusted* y *untrusted* es crucial: una extensión *trusted* (confiable) no accede al sistema de archivos ni ejecuta código privilegiado, mientras que una *untrusted* (no confiable) puede requerir inicialización en memoria compartida o interacción con recursos de bajo nivel. PostgreSQL verifica esta propiedad mediante el campo `exttrusted` en el catálogo interno. Esta clasificación determina directamente el modelo de seguridad aplicable en entornos académicos y productivos.
 
 #### 4. Comandos esenciales y ciclo de vida
 
@@ -101,7 +103,7 @@ Cada dominio explota mecanismos internos distintos del motor. Las extensiones de
 
 ##### 6.1. Contexto y preparación del entorno
 
-Este ejercicio se ejecuta en una máquina virtual con Fedora 44, con credenciales unificadas para el sistema operativo y PostgreSQL. PostGIS es la extensión de referencia industrial para datos geoespaciales: permite almacenar, indexar y consultar geometrías mediante funciones especializadas, operadores espaciales y métodos de acceso GIST. En otras palabras, PostGIS convierte a PostgreSQL en un Sistema de Información Geográfica (Geographical Information System, GIS) y lo habilita para manejar [bases de datos espaciales](https://postgis.net/workshops/postgis-intro/introduction.html). 
+Este ejercicio se ejecuta en una máquina virtual con Fedora 44, con credenciales unificadas para el sistema operativo y PostgreSQL. PostGIS es la extensión de referencia industrial para datos geoespaciales: permite almacenar, indexar y consultar geometrías mediante funciones especializadas, operadores espaciales y métodos de acceso GIST (Geographic Information Science and Technology o Ciencia y Tecnología de la Información Geográfica). En otras palabras, PostGIS convierte a PostgreSQL en un Sistema de Información Geográfica (Geographical Information System, GIS) y lo habilita para manejar [bases de datos espaciales](https://postgis.net/workshops/postgis-intro/introduction.html). 
 
 ##### 6.2. Instalación de PostgreSQL y PostGIS
 
@@ -113,7 +115,7 @@ sudo dnf install -y https://download.postgresql.org/pub/repos/yum/18/fedora/fedo
 sudo dnf -qy module disable postgresql
 ```
 
-La instrucción `module disable postgresql` evita conflictos con el módulo predeterminado de Fedora, que podría ofrecer una versión incompatible. Luego instale los binarios del motor y la extensión geoespacial con sus dependencias (PROJ, GEOS, GDAL):
+La instrucción `module disable postgresql` evita conflictos con el módulo predeterminado de Fedora, que podría ofrecer una versión incompatible. Luego instale los binarios del motor y la extensión geoespacial con sus dependencias (PROJ, GEOS, GDAL) (Osgeo, 2026):
 
 ```bash
 sudo dnf install -y postgresql18 postgresql18-server postgresql18-contrib postgis35_18 postgresql18-postgis-3.5
@@ -240,22 +242,45 @@ psql -U alumno -d postgres -h localhost -c "DROP DATABASE gis_lab;"
 
 La eliminación revoca automáticamente todos los objetos asociados; no se requiere `DROP EXTENSION` explícito.
 
-**Consideraciones para entornos productivos:** PostGIS y PostgreSQL siguen ciclos de actualización independientes; verifique compatibilidad antes de actualizar. En entornos multiusuario, instale PostGIS en un esquema dedicado para evitar colisiones de nombres. Para cargas masivas (>10⁵ geometrías), deshabilite temporalmente `full_page_writes` y use `COPY` con transacciones agrupadas para reducir sobrecarga de WAL. Emplee `ST_IsValid()` en triggers de inserción para rechazar geometrías topológicamente inconsistentes.
+##### 6.6. Consideraciones para entornos productivos 
+
+PostGIS y PostgreSQL siguen ciclos de actualización independientes; verifique compatibilidad antes de actualizar. En entornos multiusuario, instale PostGIS en un esquema dedicado para evitar colisiones de nombres. Para cargas masivas (más de 10⁵ geometrías), deshabilite temporalmente `full_page_writes` y use `COPY` con transacciones agrupadas para reducir sobrecarga de WAL. Emplee `ST_IsValid()` en triggers de inserción para rechazar geometrías topológicamente inconsistentes.
 
 Para profundizar, consulte las fuentes oficiales:
+
 - Guía de inicio: <https://postgis.net/documentation/getting_started/>  
 - Taller introductorio: <https://postgis.net/workshops/postgis-intro/index.html>  
 - Manual técnico v3.6: <https://postgis.net/docs/manual-3.6/>  
 
-**Recursos complementarios:** Complete el taller interactivo "PostGIS Introduction" para practicar carga de archivos *Shapefiles* (.shp) y transformación de coordenadas. Consulte la sección "Spatial Reference Systems" del manual oficial para comprender gestión de SRID. Experimente con `ST_AsGeoJSON()` para integrar resultados espaciales con aplicaciones web modernas. Si le llama la atención el mundo de la geografía y los sistemas de información geográfica (SIG o GIS), comience por aprender cartografía con los tres volúmenes de *Basic Cartography* de Anson y Ormeling (1993, 2002, 1996).    
+##### 6.7. Recursos complementarios 
 
-#### 7. Referencias
+Complete el taller interactivo "PostGIS Introduction" para practicar carga de archivos *Shapefiles* (.shp) y su conversión a base de datos y la transformación de coordenadas. Consulte la sección "Spatial Reference Systems" del manual oficial para comprender gestión del SRID (*Spatial Reference System Identifier* o Identificador del Sistema de Referencia Espacial). Experimente con `ST_AsGeoJSON()` para integrar resultados espaciales con aplicaciones web modernas. Si le llama la atención el mundo de la geografía y los sistemas de información geográfica (SIG o GIS) comience por aprender cartografía con los tres volúmenes de *Basic Cartography for students and technicians* de Anson y Ormeling (1993, 2002, 1996) y el software de la [Open Source Geospatial Foundation](https://www.osgeo.org/projects/).
+
+#### 7. Conclusiones
+
+Este laboratorio ha permitido explorar la arquitectura de extensibilidad que distingue a PostgreSQL de otros sistemas de gestión de bases de datos relacionales. A lo largo de la sesión, el alumno ha transitado desde los fundamentos conceptuales —comprendiendo que una extensión es un objeto de primera clase, no un complemento accesorio— hasta la implementación práctica de PostGIS en un entorno controlado con Fedora 44 y PostgreSQL 18.
+
+La capacidad de PostgreSQL para integrar funcionalidades especializadas sin modificar su núcleo relacional representa una ventaja estratégica tanto para fines académicos como productivos. El estudiante ha aprendido a clasificar extensiones según su origen y nivel de confianza, a gestionar su ciclo de vida mediante comandos SQL (`CREATE`, `ALTER`, `DROP EXTENSION`) y a evaluar su aplicabilidad según el dominio funcional del proyecto. El ejercicio con PostGIS consolidó estos conceptos al poner en práctica operaciones espaciales fundamentales: creación de geometrías con referencia espacial, indexación GIST para optimización de consultas y cálculo de distancias geodésicas mediante el tipo `geography`.
+
+Más allá de la ejecución técnica, este laboratorio invita a reflexionar sobre el papel de la extensibilidad en el diseño de sistemas manejadores de datos modernos. PostgreSQL no impone una visión única de lo que debe ser una base de datos; en cambio, proporciona mecanismos para que la comunidad, la academia y la industria definan esas visiones mediante módulos especializados. Esta filosofía de innovación abierta es la que ha permitido la emergencia de extensiones como `pgvector` para inteligencia artificial, `timescaledb` para series temporales o `citus` para distribución horizontal, posicionando a PostgreSQL como una plataforma multipropósito capaz de adaptarse a desafíos emergentes.
+
+Como próximos pasos, se recomienda al estudiante:
+
+- Explorar otras extensiones del catálogo según intereses de investigación o proyectos personales.  
+- Profundizar en la documentación oficial de PostGIS para dominar transformaciones de coordenadas, análisis topológico y publicación de datos espaciales vía servicios web.  
+- Experimentar con la combinación de extensiones (por ejemplo, `pgvector` + `pg_trgm` para búsqueda híbrida semántica-lexical) y evaluar sinérgias funcionales.  
+- Documentar hallazgos y dificultades en bitácoras de laboratorio, fomentando la práctica reflexiva y la construcción colaborativa de conocimiento.  
+
+La competencia en administración de extensiones no se limita a ejecutar comandos: implica comprender los sacrificios o compensaciones en el rendimiento, gestionar dependencias binarias, aplicar principios de seguridad y anticipar impactos en mantenimiento a largo plazo. Estas habilidades, desarrolladas mediante práctica guiada y consulta crítica de fuentes técnicas, constituyen la base para el diseño de arquitecturas de datos robustas, escalables y alineadas con los requerimientos de contextos institucionales y profesionales.
+
+#### 8. Referencias
 
 Anson, R. W., & Ormeling, F. J. (Eds.). (1993). *Basic cartography for students and technicians Vol. 1* (2nd ed.). Pergamon Press.  
 Anson, R. W., & Ormeling, F. J. (Eds.). (2002). *Basic cartography for students and technicians Vol. 2* (2nd ed.). Butterworth-Heinemann.  
 Anson, R. W., & Ormeling, F. J. (Eds.). (1996). *Basic cartography for students and technicians Vol. 3*. Butterworth-Heinemann.  
 Deprez, D. (2021). *The art of PostgreSQL*. Manning Publications.  
 Obe, R. O., & Hsu, L. S. (2021). *PostGIS in action* (3rd. ed.). Manning Publications.  
+OSGeo. (2026). Open Source Geospatial Foundation [Computer software]. <https://www.osgeo.org/projects/>
 PostGIS Project Steering Committee. (2026). *PostGIS getting started guide*. <https://postgis.net/documentation/getting_started/>  
 PostGIS Project Steering Committee. (2026). *Introduction to PostGIS*. PostGIS Workshop. <https://postgis.net/workshops/postgis-intro/index.html>  
 PostGIS Project Steering Committee. (2026). *PostGIS 3.6 manual*. <https://postgis.net/docs/manual-3.6/>  
@@ -264,6 +289,4 @@ PostgreSQL Extension Network. (2026). *PGXN: PostgreSQL Extension Network*. <htt
 PostgreSQL Global Development Group. (2026). *Additional supplied modules*. PostgreSQL Documentation. <https://www.postgresql.org/docs/current/contrib.html>  
 PostgreSQL Global Development Group. (2026). *Contrib modules* [Computer software]. GitHub. <https://github.com/postgres/postgres/tree/master/contrib>  
 Worsley, J., & Drake, J. (2016). *PostgreSQL: Up and running* (3rd. ed.). O'Reilly Media.  
-
-> **Nota final:** El ecosistema de extensiones demuestra que PostgreSQL puede evolucionar sin comprometer su núcleo relacional. Inicie con módulos `contrib`, valide su comportamiento en entornos aislados y progrese hacia extensiones externas conforme consolide fundamentos de optimización, modelado avanzado y administración de bases de datos. La consulta directa de repositorios y documentación técnica es indispensable para desarrollar competencias profesionales en arquitectura de datos.
-> 
+ 
