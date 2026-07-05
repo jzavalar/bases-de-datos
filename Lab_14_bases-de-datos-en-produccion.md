@@ -13,7 +13,7 @@ Una base de datos en producción no solo debe ser funcional; debe ser segura, au
 
 Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de Example.com, una empresa ficticia especializada en soluciones de gestión empresarial para el sector retail. La voz de Sofía es urgente pero calmada: 
 
-> *"Necesitamos que el nuevo sistema de fidelización de clientes esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
+> *"Necesitamos que el nuevo sistema del* Programa de Recompensas para Premiar la lealtad de los Clientes *esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
 
 Usted ha sido contratado como Consultor Senior en Seguridad de Bases de Datos. Su misión no es solo hacer que PostgreSQL funcione, sino asegurarla integralmente junto a un equipo multidisciplinario:
 
@@ -511,7 +511,7 @@ En un entorno de producción, la seguridad y el rendimiento son dos caras de la 
 
 ##### 13.1. Contexto: El Desafío de los 200 Usuarios Concurrentes
 
-Durante la reunión de planificación, Carlos Ramírez (Developer Lead) expresa una preocupación crítica: *"El sistema de fidelización atenderá a unos 200 usuarios concurrentes en horas pico, principalmente ejecutando reportes de ventas y consultas complejas sobre la base `pagila`. Si la base de datos se congela, perdemos clientes."*
+Durante la reunión de planificación, Carlos Ramírez (Developer Lead) expresa una preocupación crítica: *"El sistema del Programa de Recompensas para Premiar la lealtad de los Clientes atenderá a unos 200 usuarios concurrentes en horas pico, principalmente ejecutando reportes de ventas y consultas complejas sobre la base `pagila`. Si la base de datos se congela, perdemos clientes."*
 
 Roberto Hernández (DBA Senior) asiente y toma la palabra: *"La configuración por defecto de PostgreSQL está diseñada para ser conservadora y funcionar en cualquier hardware, desde una Raspberry Pi hasta un servidor de 128 núcleos. Para producción, debemos ajustar los parámetros de memoria, WAL (Write-Ahead Logging) y el planificador de consultas para aprovechar nuestra Máquina Virtual de 8 GB de RAM."*
 
