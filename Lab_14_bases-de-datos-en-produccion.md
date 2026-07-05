@@ -1,7 +1,7 @@
 ### Laboratorio 14: Bases de Datos en Producción
 
 **Dr. Jesús Zavala Ruiz**  
-**Ultima actualización:** 4 de julio de 2026  
+**Última actualización:** 4 de julio de 2026  
 
 ---
 
@@ -15,82 +15,52 @@ Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Va
 
 > *"Necesitamos que el nuevo sistema de fidelización de clientes esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
 
-Usted ha sido contratado como Consultor Senior en Seguridad de Bases de Datos. Su misión no es solo hacer que PostgreSQL funcione, sino asegurarla integralmente.
+Usted ha sido contratado como Consultor Senior en Seguridad de Bases de Datos. Su misión no es solo hacer que PostgreSQL funcione, sino asegurarla integralmente junto a un equipo multidisciplinario:
 
-Para enfrentar este desafío, se integrará a un equipo multidisciplinario. Es fundamental comprender que en un entorno real, la base de datos no existe en el vacío; es el núcleo de un ecosistema complejo:
+-   **Roberto Hernández (*DBA Senior*):** 15 años de experiencia. Será su mentor técnico en las entrañas de PostgreSQL.  
+-   **Ana Martínez (*DBA Junior*):** Recién egresada, entusiasta, conoce la teoría pero necesita guía en producción.  
+-   **Carlos Ramírez (*Developer Lead*):** Lidera el equipo de desarrollo. Necesita que la base de datos sea rápida y confiable.  
+-   **Laura Sánchez (*Developer*):** Desarrolladora backend. Trabajarán juntos en la integración de la aplicación.  
+-   **Miguel Torres (*QA/Tester*):** Obsesionado con encontrar bugs. Probará cada configuración de seguridad para intentar romperla.  
+-   **Patricia Flores (*SysAdmin*):** Experta en Linux. Configurará el sistema operativo, la red y el almacenamiento.  
+-   **Javier López (*Security Officer*):** Auditará cada decisión técnica para asegurar el cumplimiento normativo.  
+-   **Sofía Vargas (*Project Manager*):** Coordina los tiempos, entregables y la comunicación con la directiva.  
 
--   **Roberto Hernández (DBA Senior):** 15 años de experiencia. Será su mentor técnico en las entrañas de PostgreSQL.  
--   **Ana Martínez (DBA Junior):** Recién egresada, entusiasta, conoce la teoría pero necesita guía en producción.  
--   **Carlos Ramírez (Developer Lead):** Lidera el equipo de desarrollo. Necesita que la base de datos sea rápida y confiable.  
--   **Laura Sánchez (Developer):** Desarrolladora backend. Trabajarán juntos en la integración de la aplicación.  
--   **Miguel Torres (QA/Tester):** Obsesionado con encontrar bugs. Probará cada configuración de seguridad para intentar romperla.  
--   **Patricia Flores (SysAdmin):** Experta en Linux. Configurará el sistema operativo, la red y el almacenamiento.  
--   **Javier López (Security Officer):** Auditará cada decisión técnica para asegurar el cumplimiento normativo.  
--   **Sofía Vargas (Project Manager):** Coordina los tiempos, entregables y la comunicación con la directiva.  
+##### 1.1. El concepto de Hardening (Endurecimiento)
 
-**Nota Técnica: El peligro del "Organizational Lock-in"**
+En el contexto de la ciberseguridad y la administración de sistemas, el término ***hardening*** se refiere al proceso sistemático de reforzar la seguridad de un sistema operativo, aplicación o base de datos. Por defecto, los sistemas se instalan priorizando la usabilidad y la compatibilidad, lo que a menudo implica dejar puertos abiertos y cuentas predeterminadas. El *hardening* busca revertir esto: su objetivo principal es **reducir la superficie de ataque**. En la industria, este proceso se guía por estándares internacionales reconocidos, como los **CIS Benchmarks**, las guías de **NIST** o normativas como **PCI-DSS** e **ISO 27001**. A lo largo de este laboratorio, aplicaremos *hardening* en múltiples capas, desde el núcleo del sistema operativo (Rocky Linux) hasta el motor de base de datos (PostgreSQL).
 
-> En la administración de sistemas y bases de datos en producción, existe un riesgo tan crítico como cualquier vulnerabilidad técnica: el **organizational lock-in** (también conocido como *vendor lock-in interno* o dependencia de un solo punto de falla humano). Este fenómeno ocurre cuando el conocimiento especializado sobre la seguridad, configuración y operación de un sistema crítico reside exclusivamente en una sola persona. En la industria de la ciberseguridad, esto se cuantifica mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si fueran atropelladas por un autobús (o simplemente renunciaran, se enfermaran o fueran comprometidas), dejarían al proyecto sin capacidad operativa. Un bus factor de 1 es una vulnerabilidad organizacional grave.
+##### 1.2. Separación de Entornos
 
-Los riesgos de asignar la seguridad de la base de datos a una sola persona incluyen:
-
-1. **Pérdida catastrófica de conocimiento:** Si el DBA o administrador único abandona la organización, se lleva consigo las contraseñas maestras, las ubicaciones de las claves de cifrado, los procedimientos de recuperación ante desastres y la lógica detrás de las políticas de SELinux y `pg_hba.conf`. La organización queda expuesta y paralizada.  
-2. **Insider Threat amplificado:** Una sola persona con acceso total y sin supervisión representa el vector de ataque más peligroso. No existe *segregación de funciones* (*segregation of duties*), lo que facilita el fraude, el sabotaje o la exfiltración de datos sin detección.  
-3. **Ausencia de revisión por pares:** Sin un segundo par de ojos, los errores de configuración (como un `pg_hba.conf` permisivo o una clave LUKS mal gestionada) permanecen sin detectar hasta que un atacante los explota.  
-4. **Bloqueo operativo:** La organización queda secuestrada por la disponibilidad de esa persona. Vacaciones, enfermedades o emergencias personales se convierten en incidentes de continuidad del negocio.  
-5. **Incumplimiento normativo:** Estándares como PCI-DSS, ISO 27001, HIPAA y NIST 800-53 exigen explícitamente la segregación de funciones, la rotación de conocimiento y la documentación de procedimientos críticos. Un bus factor de 1 viola estos controles.  
-
-**Mitigación:** Por esta razón, este laboratorio presenta un **equipo multidisciplinario** (DBA Senior, DBA Junior, SysAdmin, Security Officer, etc.). La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:  
-- Todo conocimiento crítico debe estar documentado en manuales operativos (*runbooks*) accesibles.  
-- Las credenciales y claves deben gestionarse mediante bóvedas de secretos (como HashiCorp Vault o FreeIPA).  
-- Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de doble control o *four-eyes*).  
-- La rotación de roles y el entrenamiento cuzado (*cross-training*) son obligatorios, no opcionales.  
-
-Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una bomba de tiempo organizacional.**
-
-##### 1.3. Separación de Entornos
-
-En el contexto de la ciberseguridad y la administración de sistemas, el término ***hardening*** (endurecimiento o aseguramiento) se refiere al proceso sistemático de reforzar la seguridad de un sistema operativo, aplicación o base de datos. 
-
-Por defecto, los sistemas se instalan y configuran priorizando la **usabilidad y la compatibilidad**, lo que a menudo implica dejar puertos abiertos, servicios activos y cuentas predeterminadas. El *hardening* busca revertir esto: su objetivo principal es **reducir la superficie de ataque** (*attack surface*). Esto se logra deshabilitando servicios innecesarios, aplicando parches de seguridad, eliminando cuentas por defecto y forzando políticas de acceso estrictas.
-
-Si la instalación de un servidor es como construir una casa, el *hardening* es el proceso de instalar cerraduras de alta seguridad, alarmas y rejas, asegurándose de que ninguna ventana quede abierta por descuido.
-
-En la industria, este proceso no se hace a ciegas; se guía por estándares y perfiles de seguridad internacionales reconocidos, como los **CIS Benchmarks** (Center for Internet Security), las guías de **NIST** o normativas de cumplimiento como **PCI-DSS** e **ISO 27001**. A lo largo de este laboratorio, aplicaremos *hardening* en múltiples capas (Defensa en Profundidad), desde el núcleo del sistema operativo (Rocky Linux) hasta el motor de base de datos (PostgreSQL).
-
-Carlos Ramírez (Developer Lead) le pregunta en la primera reunión: *"¿Podemos probar los cambios de seguridad directamente en el servidor de producción para ir más rápido?"*. Su respuesta debe ser un rotundo NO.
-
-En la práctica profesional, es obligatorio separar las bases de datos en al menos tres entornos:
+Carlos Ramírez (*Developer Lead*) le pregunta en la primera reunión: *"¿Podemos probar los cambios de seguridad directamente en el servidor de producción para ir más rápido?"*. Su respuesta debe ser un rotundo NO. En la práctica profesional, es obligatorio separar las bases de datos en al menos tres entornos:
 
 -   **Desarrollo (DEV):** Donde los ingenieros construyen nuevas funcionalidades. Usa datos anonimizados o sintéticos. La seguridad es relajada y las caídas son aceptables.  
 -   **Pruebas / QA (TEST):** Donde se validan las funcionalidades antes de producción. Usa copias recientes de producción. La seguridad es media y se permiten ventanas de mantenimiento.  
 -   **Producción (PROD):** El sistema real que atiende a los usuarios finales. Contiene datos vivos y críticos. La seguridad es máxima (todas las medidas de este laboratorio se aplican aquí). La disponibilidad debe ser del 99.9% o superior.  
 
-*Regla fundamental:* Los cambios nunca pasan directamente de desarrollo a producción. Siempre deben atravesar el entorno de pruebas.
+*Regla fundamental:* Los cambios nunca pasan directamente de desarrollo a producción. Siempre deben atravesar el entorno de pruebas. Es importante señalar que este laboratorio se enfoca exclusivamente en el endurecimiento de la base de datos en el entorno de producción. Otros aspectos del ciclo de vida del sistema (modelado de datos, diseño de arquitectura, pipelines CI/CD) corresponden a cursos subsecuentes del plan de estudios.
 
-Es importante señalar que este laboratorio se enfoca exclusivamente en el endurecimiento y aseguramiento de la base de datos en el entorno de producción. Otros aspectos del ciclo de vida del sistema corresponden a cursos subsecuentes del plan de estudios de la Licenciatura:
+##### Nota Técnica: El peligro de la Dependencia de Persona Clave (Organizational Lock-in)
 
--   **Modelado de datos y diseño de esquemas:** Bases de Datos (curso actual).  
--   **Diseño de la arquitectura de la aplicación y flujos de datos:** Análisis y Diseño de Sistemas.  
--   **Implementación de pipelines CI/CD, contenedores y separación automática de entornos:** Ingeniería de Software.  
+En la administración de sistemas y bases de datos en producción, existe un riesgo tan crítico como cualquier vulnerabilidad técnica: la **Dependencia de Persona Clave** (*Key Person Dependency*), también conocida formalmente como Punto Único de Falla Humano. Este fenómeno ocurre cuando el conocimiento especializado sobre la seguridad, configuración y operación de un sistema crítico reside exclusivamente en una sola persona.
 
-Este laboratorio es una pieza fundamental del rompecabezas, pero la excelencia en ingeniería de sistemas requiere la integración coordinada de todas estas disciplinas.
+En la cultura de la ingeniería de software y DevOps, este riesgo se cuantifica coloquialmente mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si desaparecieran repentinamente, dejarían al proyecto sin capacidad operativa. Un *bus factor* de 1 es una vulnerabilidad organizacional grave que viola principios fundamentales establecidos en marcos como ISO 27001 y NIST SP 800-53, específicamente en los controles de Segregación de Funciones, Planes de Sucesión y Gestión de Riesgos del Personal.
+
+**Mitigación:** Por esta razón, este laboratorio presenta un equipo multidisciplinario. La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:  
+-   Todo conocimiento crítico debe estar documentado en procedimientos (*runbooks*) accesibles y versionados.  
+-   Las credenciales y claves deben gestionarse mediante bóvedas de secretos (*secrets vaults*) con control de acceso basado en roles.  
+-   Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de doble control o *four-eyes*).  
+-   La rotación de roles y el entrenamiento cruzado (*cross-training*) son obligatorios, no opcionales.  
+
+Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una bomba de tiempo organizacional.**
 
 #### 2. El Stack Empresarial Mínimo: Soberanía Tecnológica
 
-Patricia Flores (SysAdmin) y Javier López (Security Officer) han definido la arquitectura. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* representan riesgos financieros y estratégicos. Para Example.com Solutions, se ha establecido el siguiente triplete tecnológico como el stack empresarial mínimo de referencia para garantizar la soberanía tecnológica:
+Patricia Flores (*SysAdmin*) y Javier López (*Security Officer*) han definido la arquitectura. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* representan riesgos financieros y estratégicos. Para Example.com, se ha establecido el siguiente triplete tecnológico como el stack empresarial mínimo de referencia para garantizar la soberanía tecnológica:
 
-##### 2.1. Rocky Linux 10 como Base
-
-**Rocky Linux** es una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con Red Hat Enterprise Linux (RHEL). Provee la estabilidad, compatibilidad y soporte a largo plazo de RHEL, manteniendo la soberanía tecnológica y eliminando costos de licenciamiento, mientras ofrece seguridad nativa a nivel de kernel mediante SELinux.
-
-##### 2.2. FreeIPA como Directorio de Identidades
-
-**FreeIPA** (*Free Identity, Policy, Audit*) es una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados. En una organización con cientos de empleados, gestionar cuentas locales en cada servidor es insostenible y peligroso. FreeIPA centraliza la autenticación, permitiendo la revocación inmediata de accesos y el cumplimiento de políticas corporativas.
-
-##### 2.3. PostgreSQL como Motor de Base de Datos
-
-**PostgreSQL** es el Sistema Gestor de Bases de Datos relacional de código abierto más avanzado. Garantiza integridad ACID, extensibilidad y mecanismos de seguridad avanzados. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un port a PostgreSQL de la famosa Sakila), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos.
+-   **Rocky Linux:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con Red Hat Enterprise Linux (RHEL). Provee estabilidad y soporte a largo plazo, manteniendo la soberanía tecnológica y eliminando costos de licenciamiento, mientras ofrece seguridad nativa a nivel de kernel mediante SELinux.  
+-   **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados. FreeIPA centraliza la autenticación, permitiendo la revocación inmediata de accesos y el cumplimiento de políticas corporativas.  
+-   **PostgreSQL:** El Sistema Manejador de Bases de Datos relacional de código abierto más avanzado. Garantiza integridad ACID, extensibilidad y mecanismos de seguridad avanzados. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un port a PostgreSQL de la famosa Sakila), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos.
 
 #### 3. Panorama de Amenazas
 
@@ -131,28 +101,6 @@ echo "192.168.122.25 pgsql.example.com tang.example.com ipa.example.com" | sudo 
 > 
 > **Sin embargo, es fundamental aclarar que en un entorno de producción real**, como el que requiere *Example.com*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `uam.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
 
-> **Nota Técnica: El peligro del "Organizational Lock-in" y el Factor Autobús**
-> 
-> En la administración de sistemas y bases de datos en producción, existe un riesgo tan crítico como cualquier vulnerabilidad técnica: el **organizational lock-in** (también conocido como *vendor lock-in interno* o dependencia de un solo punto de falla humano). Este fenómeno ocurre cuando el conocimiento especializado sobre la seguridad, configuración y operación de un sistema crítico reside exclusivamente en una sola persona.
-> 
-> En la industria de la ciberseguridad, esto se cuantifica mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si fueran atropelladas por un autobús (o simplemente renunciaran, se enfermaran o fueran comprometidas), dejarían al proyecto sin capacidad operativa. Un bus factor de 1 es una vulnerabilidad organizacional grave.
-> 
-> **Los riesgos de asignar la seguridad de la base de datos a una sola persona incluyen:**
-> 
-> 1. **Pérdida catastrófica de conocimiento:** Si el DBA o administrador único abandona la organización, se lleva consigo las contraseñas maestras, las ubicaciones de las claves de cifrado, los procedimientos de recuperación ante desastres y la lógica detrás de las políticas de SELinux y `pg_hba.conf`. La organización queda expuesta y paralizada.
-> 2. **Insider Threat amplificado:** Una sola persona con acceso total y sin supervisión representa el vector de ataque más peligroso. No existe *segregación de funciones* (*segregation of duties*), lo que facilita el fraude, el sabotaje o la exfiltración de datos sin detección.
-> 3. **Ausencia de revisión por pares:** Sin un segundo par de ojos, los errores de configuración (como un `pg_hba.conf` permisivo o una clave LUKS mal gestionada) permanecen sin detectar hasta que un atacante los explota.
-> 4. **Bloqueo operativo:** La organización queda secuestrada por la disponibilidad de esa persona. Vacaciones, enfermedades o emergencias personales se convierten en incidentes de continuidad del negocio.
-> 5. **Incumplimiento normativo:** Estándares como PCI-DSS, ISO 27001, HIPAA y NIST 800-53 exigen explícitamente la segregación de funciones, la rotación de conocimiento y la documentación de procedimientos críticos. Un bus factor de 1 viola estos controles.
-> 
-> **Mitigación:** Por esta razón, este laboratorio presenta un **equipo multidisciplinario** (DBA Senior, DBA Junior, SysAdmin, Security Officer, etc.). La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:
-> - Todo conocimiento crítico debe estar documentado en *runbooks* accesibles.
-> - Las credenciales y claves deben gestionarse mediante bóvedas de secretos (como HashiCorp Vault o FreeIPA).
-> - Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de *four-eyes* o doble control).
-> - La rotación de roles y el *cross-training* son obligatorios, no opcionales.
-> 
-> Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una bomba de tiempo organizacional.**
-
 ##### 4.2. Instalación de Rocky Linux 10 y Modo FIPS
 
 Descargue la ISO de Rocky Linux 10 y cree la MV. Durante la instalación, Patricia Flores (SysAdmin) le indica que, para cumplir con normativas gubernamentales, el sistema debe operar en modo FIPS (Federal Information Processing Standards).
@@ -165,6 +113,7 @@ Una vez instalado, inicie sesión como el usuario `alumno` (contraseña: `uamIzt
 sudo dnf update -y
 sudo reboot
 ```
+
 ##### 4.3. Políticas Criptográficas y Cumplimiento (OpenSCAP)
 
 Rocky Linux 10 centraliza la seguridad criptográfica a nivel de sistema operativo. Verifique que el sistema esté usando políticas robustas:
@@ -523,9 +472,9 @@ Reinicie PostgreSQL y verifique los logs:
 sudo tail -f /var/lib/pgsql/data/log/postgresql-*.log | grep AUDIT
 ```
 
-Excelente adición. En un entorno de producción, la seguridad y el rendimiento son dos caras de la misma moneda. Un sistema seguro pero inoperante por lentitud es un fracaso, al igual que un sistema rápido pero vulnerable. 
-
 #### 13. Fase 10: Tuning y Optimización de Rendimiento en Producción
+
+En un entorno de producción, la seguridad y el rendimiento son dos caras de la misma moneda. Un sistema seguro pero inoperante por lentitud es un fracaso, al igual que un sistema rápido pero vulnerable. 
 
 ##### 13.1. Contexto: El Desafío de los 200 Usuarios Concurrentes
 
@@ -533,23 +482,18 @@ Durante la reunión de planificación, Carlos Ramírez (Developer Lead) expresa 
 
 Roberto Hernández (DBA Senior) asiente y toma la palabra: *"La configuración por defecto de PostgreSQL está diseñada para ser conservadora y funcionar en cualquier hardware, desde una Raspberry Pi hasta un servidor de 128 núcleos. Para producción, debemos ajustar los parámetros de memoria, WAL (Write-Ahead Logging) y el planificador de consultas para aprovechar nuestra Máquina Virtual de 8 GB de RAM."*
 
-##### 13.2. Ajustes de Memoria en `postgresql.conf`
+##### 13.2. Ajustes de Memoria en postgresql.conf
 
 La memoria es el recurso más crítico para el rendimiento de PostgreSQL. Roberto guía al equipo en la modificación de los siguientes parámetros en `/var/lib/pgsql/data/postgresql.conf`:
-
-###### 13.2.1. Caché Compartida y Caché Efectiva
 
 *   **`shared_buffers`**: Es la memoria que PostgreSQL dedica exclusivamente a cachear datos de disco. La regla general es asignar el 25% de la RAM total del sistema. Para nuestra MV de 8 GB, asignaremos 2 GB.
     ```ini
     shared_buffers = 2GB
     ```
-*   **`effective_cache_size`**: Este parámetro no asigna memoria, sino que le indica al planificador de consultas cuánta memoria está disponible en el sistema (incluyendo el caché del sistema operativo). Esto ayuda a PostgreSQL a decidir si usar índices o hacer barridos de tabla. Se recomienda entre el 50% y 75% de la RAM total.
+*   **`effective_cache_size`**: Este parámetro no asigna memoria, sino que le indica al planificador de consultas cuánta memoria está disponible en el sistema (incluyendo el caché del sistema operativo). Se recomienda entre el 50% y 75% de la RAM total.
     ```ini
     effective_cache_size = 6GB
     ```
-
-###### 13.2.2. Memoria de Trabajo y Mantenimiento
-
 *   **`work_mem`**: Es la memoria utilizada por cada operación de ordenamiento (ORDER BY) o hash (JOIN). Si se establece muy alto y hay 200 conexiones concurrentes, el sistema podría quedarse sin RAM (OOM Killer). Un valor conservador pero eficiente es adecuado.
     ```ini
     work_mem = 32MB
@@ -589,7 +533,7 @@ PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (H
     effective_io_concurrency = 200
     ```
 
-##### 13.5. Diagnóstico Continuo con `pg_stat_statements`
+##### 13.5. Diagnóstico Continuo con pg_stat_statements
 
 *"Lo que no se mide, no se puede mejorar"*, advierte Javier López (Security Officer). Para auditar el rendimiento, Roberto activa la extensión `pg_stat_statements`, que rastrea estadísticas de ejecución de todas las consultas SQL.
 
@@ -627,44 +571,22 @@ Y configurar PostgreSQL para usarlas:
 huge_pages = try
 ```
 
-#### 14. Entregables y Rúbrica
+#### 14. Entregables, Validación y Rúbrica
 
-##### 14.1. Informe Técnico de Hardening y Tuning (Actualizado)
-Usted deberá entregar un informe que contenga:
-1.  **Justificación estratégica:** Stack empresarial, soberanía tecnológica y defensa en profundidad.
-2.  **Mapa de amenazas y mitigaciones:** Cómo cada fase (SO, Red, DBMS) mitiga los vectores de ataque.
-3.  **Evidencias de Seguridad:** Capturas de `sestatus`, `clevis luks list`, `pgAudit`, y autenticación LDAP.
+##### 14.1. Informe Técnico de Hardening y Tuning
+
+Usted deberá entregar un informe ejecutivo y técnico que contenga:
+1.  **Justificación Estratégica:** Stack empresarial, soberanía tecnológica y defensa en profundidad.
+2.  **Mapa de Amenazas y Mitigaciones:** Cómo cada fase (SO, Red, DBMS) mitiga los vectores de ataque identificados en la Sección 3.
+3.  **Evidencias de Seguridad:** Capturas de pantalla de `sestatus`, `update-crypto-policies --show`, `clevis luks list`, `fapolicyd` activo, `aide` inicializado, logs de `pgAudit`, y autenticación LDAP.
 4.  **Evidencias de Tuning y Rendimiento:** 
     *   Captura del archivo `postgresql.conf` con los parámetros de memoria (`shared_buffers`, `work_mem`, etc.).
     *   Salida de la consulta a `pg_stat_statements` demostrando el rastreo de consultas.
+5.  **Prueba de Cifrado:** Script SQL demostrando la inserción y consulta de datos cifrados con `pgcrypto` sobre la base de datos `pagila`.
+6.  **Prueba de LDAP:** Captura mostrando la autenticación exitosa vía FreeIPA y el rechazo tras la deshabilitación del usuario.
+7.  **Script de Validacion** Entregue un script en Bash (`validar_hardening.sh`) que audite automáticamente el cumplimiento.
 
-#### 13. Entregables
-
-##### 13.1. Informe Técnico de Hardening
-
-Usted deberá entregar un informe ejecutivo y técnico que contenga:
-1.  **Justificación estratégica:** Por qué se eligió el stack Rocky Linux + FreeIPA + PostgreSQL.
-2.  **Mapa de amenazas:** Cómo cada fase mitiga los vectores de ataque identificados en la Sección 3.
-3.  **Evidencias técnicas:** Capturas de pantalla de `sestatus`, `update-crypto-policies --show`, `clevis luks list`, `fapolicyd` activo, `aide` inicializado, y logs de `pgAudit`.
-4.  **Prueba de Cifrado:** Script SQL demostrando la inserción y consulta de datos cifrados con `pgcrypto` sobre la base de datos `pagila`.
-5.  **Prueba de LDAP:** Captura mostrando la autenticación exitosa vía FreeIPA y el rechazo tras la deshabilitación del usuario.
-
-##### 13.2. Script de Validación Automatizada
-
-Entregue un script en Bash (`validar_hardening.sh`) que audite automáticamente el cumplimiento:
-
-```bash
-#!/bin/bash
-echo "=== Validación de Hardening PostgreSQL ==="
-echo -n "SELinux Enforcing: "; getenforce | grep -q "Enforcing" && echo "OK" || echo "FALLA"
-echo -n "SCRAM-SHA-256: "; sudo -u postgres psql -t -c "SHOW password_encryption;" | grep -q "scram-sha-256" && echo "OK" || echo "FALLA"
-echo -n "SSL habilitado: "; sudo -u postgres psql -t -c "SHOW ssl;" | grep -q "on" && echo "OK" || echo "FALLA"
-echo -n "LUKS/NBDE activo: "; cryptsetup status pgdata_crypt &>/dev/null && echo "OK" || echo "FALLA"
-echo -n "pgAudit cargado: "; sudo -u postgres psql -t -c "SHOW shared_preload_libraries;" | grep -q "pgaudit" && echo "OK" || echo "FALLA"
-echo "=== Validación Completa ==="
-```
-
-#### 14. Rúbrica de Autoevaluación
+##### 14.2. Rúbrica de Autoevaluación
 
 | Criterio | Peso |
 |---|---|
@@ -676,12 +598,11 @@ echo "=== Validación Completa ==="
 | **Tuning de Rendimiento (`postgresql.conf`, `pg_stat_statements`)** | **15%** |
 | Claridad técnica, justificación estratégica y formato del informe | 15% |
 
-
-#### 15. Conclusiones del Laboratorio
+#### 15. Conclusiones
 
 La ejecución integral de este laboratorio de cierre valida la transición desde los fundamentos académicos hacia las responsabilidades operativas de un Administrador de Bases de Datos (DBA) e Ingeniero de Sistemas en entornos productivos. Los conocimientos adquiridos a lo largo del curso encuentran su aplicación más crítica en la **protección, optimización y operación continua de datos empresariales**.
 
-Como resultado de la implementación del stack tecnológico en el escenario de una empresa ficticia Example.com, se establecen las siguientes conclusiones técnicas y estratégicas:
+Como resultado de la implementación del stack tecnológico en el escenario de Example.com, se establecen las siguientes conclusiones técnicas y estratégicas:
 
 1.  **La seguridad es un proceso continuo, no una configuración estática.** El endurecimiento inicial del sistema (FIPS, SELinux, `fapolicyd`) es insuficiente por sí solo. La implementación de herramientas de auditoría y verificación de integridad como `pgAudit`, AIDE y OpenSCAP demuestra que la postura de seguridad requiere monitoreo constante y validación periódica contra benchmarks (CIS/PCI-DSS).
 2.  **La defensa en profundidad es arquitectónicamente obligatoria.** La efectividad de la seguridad no reside en una sola capa, sino en la integración del stack completo: el control de acceso a nivel de kernel (SELinux), la gestión centralizada de identidades (FreeIPA/LDAP), el cifrado en tránsito (SSL/TLS) y el cifrado a nivel de aplicación (`pgcrypto`). Cada capa mitiga vectores de ataque específicos que las demás no pueden cubrir.
