@@ -89,13 +89,13 @@ Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutar
 *   **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.
 *   **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.
 
-###### Procedimiento para agregar el segundo disco virtual (Almacenamiento para LUKS)
+##### 4.2. Agregar el segundo disco virtual (Almacenamiento para LUKS)
 
 Dado que su sistema anfitrión es Fedora 44, utilizará **Virtual Machine Manager** (`virt-manager`), la herramienta nativa de virtualización basada en KVM/libvirt. Es fundamental agregar este segundo disco antes de iniciar la instalación del sistema operativo o con la MV apagada.
 
-1.  Abra la aplicación **Máquinas Virtuales** (`virt-manager`) en Fedora.
+1.  Abra la aplicación **Virtual Machine Manager** (`virt-manager`) en Fedora.
 2.  Haga doble clic sobre su máquina virtual de Rocky Linux para abrir su consola y asegúrese de que esté **Apagada** (*Powered Off*).
-3.  En el menú superior de la ventana de la MV, haga clic en el icono del **foco** (💡) o seleccione *View -> Details* para abrir la configuración de hardware.
+3.  En el menú superior de la ventana de la MV, haga clic en el segundo icono del **foco** (💡) o seleccione *View -> Details* para abrir la configuración de hardware.
 4.  Haga clic en el botón **Add Hardware** (Agregar hardware) en la esquina inferior izquierda.
 5.  En el asistente, seleccione **Storage** (Almacenamiento) y haga clic en *Forward*.
 6.  Configure los siguientes parámetros:
@@ -105,7 +105,20 @@ Dado que su sistema anfitrión es Fedora 44, utilizará **Virtual Machine Manage
     *   **Bus type:** Seleccione **VirtIO** (es el estándar que ofrece el mejor rendimiento en entornos KVM).
 7.  Haga clic en **Finish**.
 
-Verá que ahora, en el panel izquierdo de detalles de hardware, aparecen dos discos: `Disk 1` (40 GB) para el sistema operativo (`/dev/vda`) y `Disk 2` (20 GB) para los datos cifrados (`/dev/vdb`).
+Verá que ahora, en el panel izquierdo de detalles de hardware, aparecen dos discos: `Disk 1` (40 GB) para el sistema operativo (`/dev/vda`) y `Disk 2` (20 GB) para los datos cifrados (`/dev/vdb`):
+```text
+[alumno@fedora-lab ~]$ lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+zram0  251:0    0  3.8G  0 disk [SWAP]
+vda    253:0    0   20G  0 disk 
+├─vda1 253:1    0    2M  0 part 
+├─vda2 253:2    0  100M  0 part /boot/efi
+└─vda3 253:3    0  4.9G  0 part /var
+                                /home
+                                /boot
+                                /
+vdb    253:16   0   20G  0 disk 
+```
 
 *Nota didáctica:* Una vez instalado Rocky Linux 10 y arrancada la MV, puede verificar que el segundo disco es visible y está sin formato ejecutando el comando `lsblk` dentro de la terminal. Debería ver `vdb` listado sin particiones ni sistema de archivos, listo para ser cifrado con LUKS en la Fase 8.
 
@@ -119,7 +132,7 @@ echo "192.168.122.25 pgsql.example.com tang.example.com ipa.example.com" | sudo 
  
 > En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente. Sin embargo, es fundamental aclarar que en un **entorno de producción real**, como el que requiere *Example.com*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `<empresa>.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
 
-##### 4.2. Instalación de Rocky Linux 10 y Modo FIPS
+##### 4.3. Instalación de Rocky Linux 10 y Modo FIPS
 
 Descargue la ISO de Rocky Linux 10 y cree la MV. Durante la instalación, Patricia Flores (SysAdmin) le indica que, para cumplir con normativas gubernamentales, el sistema debe operar en modo FIPS (Federal Information Processing Standards).
 
@@ -132,7 +145,7 @@ sudo dnf update -y
 sudo reboot
 ```
 
-##### 4.3. Políticas Criptográficas y Cumplimiento (OpenSCAP)
+##### 4.4. Políticas Criptográficas y Cumplimiento (OpenSCAP)
 
 Rocky Linux 10 centraliza la seguridad criptográfica a nivel de sistema operativo. Verifique que el sistema esté usando políticas robustas:
 
@@ -160,7 +173,7 @@ sudo oscap xccdf eval \
 
 *Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example.com para demostrar qué reglas de seguridad fallan y cuáles pasan.
 
-##### 4.4. Control de Aplicaciones e Integridad (AIDE)
+##### 4.5. Control de Aplicaciones e Integridad (AIDE)
 
 ¿Qué pasa si un atacante logra subir un script malicioso o un binario compilado al servidor? Para evitarlo, implementaremos el Control de Aplicaciones (`fapolicyd`), un framework de *allowlisting* que bloquea la ejecución de cualquier binario que no esté en la base de datos oficial de paquetes RPM:
 
@@ -181,7 +194,7 @@ sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 sudo systemctl enable --now aidecheck.timer
 ```
 
-##### 4.5. SELinux, Firewall y Endurecimiento de SSH
+##### 4.6. SELinux, Firewall y Endurecimiento de SSH
 
 SELinux debe permanecer en modo *Enforcing*. Verifique su estado con `sestatus`. Si PostgreSQL se instala en un directorio no estándar (ej. `/datos/pgsql`), debe contextualizar el directorio:
 
