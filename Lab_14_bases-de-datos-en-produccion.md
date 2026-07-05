@@ -1,30 +1,30 @@
 ### Laboratorio 14: Bases de Datos en Producción
 
-**Dr. Jesús Zavala Ruiz**  
-**Última actualización:** 5 de julio de 2026  
+**Dr. Jesús Zavala Ruiz**
+**Última actualización:** 5 de julio de 2026
 
 ---
 
 #### 1. Introducción
 
-Hasta ahora, usted ha trabajado en un entorno académico controlado. Ha diseñado esquemas, escrito consultas SQL y optimizado bases de datos. Sin embargo, en esta sesión final, el objetivo cambia de paradigma: dejaremos el entorno de desarrollo para adentrarnos en la realidad de un entorno de producción. 
+Hasta ahora, usted ha trabajado en un entorno académico controlado. Ha diseñado esquemas, escrito consultas SQL y optimizado bases de datos. Sin embargo, en esta sesión final, el objetivo cambia de paradigma: dejaremos el entorno de desarrollo para adentrarnos en la realidad de un entorno de producción.
 
 Una base de datos en producción no solo debe ser funcional; debe ser segura, auditable, resiliente y operacionalmente sostenible. Los datos que alberga son, en la mayoría de los casos, el activo más valioso de la organización. Este laboratorio le exigirá integrar todos los conocimientos adquiridos y aplicarlos bajo un enfoque de defensa en profundidad (*defense in depth*), donde la seguridad no es un producto ni una capa única, sino un proceso continuo que abarca desde el silicio del servidor hasta la última consulta SQL.
 
-Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de una empresa ficticia especializada en soluciones de gestión empresarial para el sector retail, que identificaremos genéricamente como *Example Company* o *example.com*. La voz de Sofía es urgente pero calmada: 
+Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de una empresa ficticia especializada en soluciones de gestión empresarial para el sector retail, que identificaremos genéricamente como *Example Company* o *example.com*. La voz de Sofía es urgente pero calmada:
 
 > *"Necesitamos que el nuevo sistema del* Programa de Recompensas para Premiar la lealtad de los Clientes *esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
 
 Usted ha sido contratado como Consultor Senior en Seguridad de Bases de Datos. Su misión no es solo hacer que PostgreSQL funcione, sino asegurarla integralmente junto a un equipo multidisciplinario:
 
--   **Roberto Hernández (*DBA Senior*):** 15 años de experiencia. Será su mentor técnico en las entrañas de PostgreSQL.  
--   **Ana Martínez (*DBA Junior*):** Recién egresada, entusiasta, conoce la teoría pero necesita guía en producción.  
--   **Carlos Ramírez (*Developer Lead*):** Lidera el equipo de desarrollo. Necesita que la base de datos sea rápida y confiable.  
--   **Laura Sánchez (*Developer*):** Desarrolladora backend. Trabajarán juntos en la integración de la aplicación.  
--   **Miguel Torres (*QA/Tester*):** Obsesionado con encontrar bugs. Probará cada configuración de seguridad para intentar romperla.  
--   **Patricia Flores (*SysAdmin*):** Experta en Linux. Configurará el sistema operativo, la red y el almacenamiento.  
--   **Javier López (*Security Officer*):** Auditará cada decisión técnica para asegurar el cumplimiento normativo.  
--   **Sofía Vargas (*Project Manager*):** Coordina los tiempos, entregables y la comunicación con la directiva.  
+- **Roberto Hernández (*DBA Senior*):** 15 años de experiencia. Será su mentor técnico en las entrañas de PostgreSQL.
+- **Ana Martínez (*DBA Junior*):** Recién egresada, entusiasta, conoce la teoría pero necesita guía en producción.
+- **Carlos Ramírez (*Developer Lead*):** Lidera el equipo de desarrollo. Necesita que la base de datos sea rápida y confiable.
+- **Laura Sánchez (*Developer*):** Desarrolladora backend. Trabajarán juntos en la integración de la aplicación.
+- **Miguel Torres (*QA/Tester*):** Obsesionado con encontrar bugs. Probará cada configuración de seguridad para intentar romperla.
+- **Patricia Flores (*SysAdmin*):** Experta en Linux. Configurará el sistema operativo, la red y el almacenamiento.
+- **Javier López (*Security Officer*):** Auditará cada decisión técnica para asegurar el cumplimiento normativo.
+- **Sofía Vargas (*Project Manager*):** Coordina los tiempos, entregables y la comunicación con la directiva.
 
 ##### 1.1. El concepto de Hardening (Endurecimiento)
 
@@ -34,9 +34,9 @@ En el contexto de la ciberseguridad y la administración de sistemas, el términ
 
 Carlos Ramírez (*Developer Lead*) le pregunta en la primera reunión: *"¿Podemos probar los cambios de seguridad directamente en el servidor de producción para ir más rápido?"*. Su respuesta debe ser un rotundo NO. En la práctica profesional, es obligatorio separar las bases de datos en al menos tres entornos:
 
--   **Desarrollo (DEV):** Donde los ingenieros construyen nuevas funcionalidades. Usa datos anonimizados o sintéticos. La seguridad es relajada y las caídas son aceptables.  
--   **Pruebas / QA (TEST):** Donde se validan las funcionalidades antes de producción. Usa copias recientes de producción. La seguridad es media y se permiten ventanas de mantenimiento.  
--   **Producción (PROD):** El sistema real que atiende a los usuarios finales. Contiene datos vivos y críticos. La seguridad es máxima (todas las medidas de este laboratorio se aplican aquí). La disponibilidad debe ser del 99.9% o superior.  
+- **Desarrollo (DEV):** Donde los ingenieros construyen nuevas funcionalidades. Usa datos anonimizados o sintéticos. La seguridad es relajada y las caídas son aceptables.
+- **Pruebas / QA (TEST):** Donde se validan las funcionalidades antes de producción. Usa copias recientes de producción. La seguridad es media y se permiten ventanas de mantenimiento.
+- **Producción (PROD):** El sistema real que atiende a los usuarios finales. Contiene datos vivos y críticos. La seguridad es máxima (todas las medidas de este laboratorio se aplican aquí). La disponibilidad debe ser del 99.9% o superior.
 
 *Regla fundamental:* Los cambios nunca pasan directamente de desarrollo a producción. Siempre deben atravesar el entorno de pruebas. Es importante señalar que este laboratorio se enfoca exclusivamente en el endurecimiento de la base de datos en el entorno de producción. Otros aspectos del ciclo de vida del sistema (modelado de datos, diseño de arquitectura, pipelines CI/CD) corresponden a cursos subsecuentes del plan de estudios.
 
@@ -46,38 +46,39 @@ En la administración de sistemas y bases de datos en producción, existe un rie
 
 En la cultura de la ingeniería de software y *DevOps* (cultura y conjunto de prácticas que combina el desarrollo de software (Dev) y las operaciones de TI (Ops)), este riesgo se cuantifica coloquialmente mediante el **"Bus Factor"** (Factor Autobús): el número mínimo de personas que, si desaparecieran repentinamente, dejarían al proyecto sin capacidad operativa. Un *bus factor* de 1 es una vulnerabilidad organizacional grave que viola principios fundamentales establecidos en marcos como ISO 27001 y NIST SP 800-53, específicamente en los controles de Segregación de Funciones, Planes de Sucesión y Gestión de Riesgos del Personal.
 
-**Mitigación:** Por esta razón, este laboratorio presenta un equipo multidisciplinario. La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:  
--   Todo conocimiento crítico debe estar documentado en procedimientos (*runbooks*) accesibles y versionados.  
--   Las credenciales y claves deben gestionarse mediante bóvedas de secretos (*secrets vaults*) con control de acceso basado en roles.  
--   Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de doble control o *four-eyes*).  
--   La rotación de roles y el entrenamiento cruzado (*cross-training*) son obligatorios, no opcionales.  
+**Mitigación:** Por esta razón, este laboratorio presenta un equipo multidisciplinario. La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:
+
+- Todo conocimiento crítico debe estar documentado en procedimientos (*runbooks*) accesibles y versionados.
+- Las credenciales y claves deben gestionarse mediante bóvedas de secretos (*secrets vaults*) con control de acceso basado en roles.
+- Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de doble control o *four-eyes*).
+- La rotación de roles y el entrenamiento cruzado (*cross-training*) son obligatorios, no opcionales.
 
 Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una bomba de tiempo organizacional.**
 
 #### 2. El Stack Empresarial Mínimo: Soberanía Tecnológica
 
-Patricia Flores (*SysAdmin*) y Javier López (*Security Officer*) han definido la arquitectura del sistema. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* (cautiverio tecnológico) representan riesgos financieros, operativos y estratégicos inaceptables para una organización que maneja datos críticos. 
+Patricia Flores (*SysAdmin*) y Javier López (*Security Officer*) han definido la arquitectura del sistema. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* (cautiverio tecnológico) representan riesgos financieros, operativos y estratégicos inaceptables para una organización que maneja datos críticos.
 
-Para Example Company, la adopción de tecnología abierta no es simplemente una estrategia de reducción de costos de licenciamiento; es una **postura de soberanía tecnológica**. Esta soberanía garantiza el control total sobre la infraestructura, permite la auditoría transparente del código, mitiga los riesgos asociados a cambios unilaterales de licencias por parte de proveedores propietarios evitando el *vendor lock-in* y asegura la independencia digital y la continuidad operativa a largo plazo. 
+Para Example Company, la adopción de tecnología abierta no es simplemente una estrategia de reducción de costos de licenciamiento; es una **postura de soberanía tecnológica**. Esta soberanía garantiza el control total sobre la infraestructura, permite la auditoría transparente del código, mitiga los riesgos asociados a cambios unilaterales de licencias por parte de proveedores propietarios evitando el *vendor lock-in* y asegura la independencia digital y la continuidad operativa a largo plazo.
 
 Para materializar esta soberanía, se ha establecido el siguiente triplete tecnológico como el **stack empresarial mínimo de referencia**:
 
--   **Rocky Linux:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con *Red Hat Enterprise Linux* (RHEL). Provee la estabilidad y el soporte a largo plazo necesarios para producción, manteniendo la soberanía sobre el sistema operativo y eliminando la dependencia de suscripciones propietarias, mientras ofrece seguridad nativa y robusta a nivel de kernel mediante *SELinux*.  
--   **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, Example Company mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.  
--   **PostgreSQL:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado y robusto disponible. Garantiza integridad ACID completa, extensibilidad sin límites y mecanismos de seguridad de nivel empresarial, evitando las licencias prohibitivas de motores propietarios. Para este laboratorio, utilizaremos la base de datos de demostración **`Pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos, sirviendo como nuestro campo de pruebas para las configuraciones de *hardening*.
+- **Rocky Linux:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con *Red Hat Enterprise Linux* (RHEL). Provee la estabilidad y el soporte a largo plazo necesarios para producción, manteniendo la soberanía sobre el sistema operativo y eliminando la dependencia de suscripciones propietarias, mientras ofrece seguridad nativa y robusta a nivel de kernel mediante *SELinux*.
+- **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, Example Company mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.
+- **PostgreSQL:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado y robusto disponible. Garantiza integridad ACID completa, extensibilidad sin límites y mecanismos de seguridad de nivel empresarial, evitando las licencias prohibitivas de motores propietarios. Para este laboratorio, utilizaremos la base de datos de demostración **`Pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos, sirviendo como nuestro campo de pruebas para las configuraciones de *hardening*.
 
 #### 3. Panorama de Amenazas
 
 Antes de configurar cualquier parámetro, Javier López (Security Officer) le pide una reunión. Quiere entender contra qué están defendiendo los datos. Los vectores de ataque más comunes en entornos productivos incluyen:
 
--   **Inyección SQL (*SQL Injection*, *SQLi*):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.  
--   **Fuerza Bruta y Ataque de Relleno de Credenciales (*credential stuffing*):** Intentos masivos de autenticación contra el servicio expuesto.  
--   **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.  
--   **Captura de Tráfico de Red (*Sniffing de Red*) o Ataque *Man-in-the-Middle* (*MitM*):** Intercepción de consultas y datos sensibles transmitidos en texto plano.  
--   **Denegación de Servicio (*Denial of Service*, *DoS*):** Saturación de conexiones o ejecución de consultas maliciosas.  
--   **Explotación del Sistema Operativo:** Compromiso del *host* subyacente para acceder directamente a los archivos de datos (`$PGDATA`).  
--   **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas o fuga de información (*leaks*).  
--   **Amenaza Interna (*Insider Threat*):** Empleados con acceso legítimo que abusan de sus privilegios.  
+- **Inyección SQL (*SQL Injection*, *SQLi*):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.
+- **Fuerza Bruta y Ataque de Relleno de Credenciales (*credential stuffing*):** Intentos masivos de autenticación contra el servicio expuesto.
+- **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.
+- **Captura de Tráfico de Red (*Sniffing de Red*) o Ataque *Man-in-the-Middle* (*MitM*):** Intercepción de consultas y datos sensibles transmitidos en texto plano.
+- **Denegación de Servicio (*Denial of Service*, *DoS*):** Saturación de conexiones o ejecución de consultas maliciosas.
+- **Explotación del Sistema Operativo:** Compromiso del *host* subyacente para acceder directamente a los archivos de datos (`$PGDATA`).
+- **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas o fuga de información (*leaks*).
+- **Amenaza Interna (*Insider Threat*):** Empleados con acceso legítimo que abusan de sus privilegios.
 
 #### 4. Fase 1: Creación del Entorno y Endurecimiento del Sistema Operativo
 
@@ -87,41 +88,45 @@ Roberto Hernández (DBA Senior) le advierte: *"La seguridad de una base de datos
 
 Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutaremos PostgreSQL, FreeIPA (como cliente) y servicios de cifrado, necesitaremos una Máquina Virtual (MV) con las siguientes características:
 
-*   **CPU:** 2 a 4 núcleos.
-*   **RAM:** 6 GB a 8 GB (FreeIPA y PostgreSQL consumen memoria).
-*   **Red:** Configurar la interfaz de red con la IP estática **`192.168.122.25`** (máscara `255.255.255.0`).
-*   **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.
-*   **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.
+- **CPU:** 2 a 4 núcleos.
+- **RAM:** 6 GB a 8 GB (FreeIPA y PostgreSQL consumen memoria).
+- **Red:** Configurar la interfaz de red con la IP estática **`192.168.122.25`** (máscara `255.255.255.0`).
+- **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.
+- **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.
 
 ##### 4.2. Agregar el segundo disco virtual (Almacenamiento para LUKS)
 
 Dado que su sistema anfitrión es Fedora 44, utilizará **Virtual Machine Manager** (`virt-manager`), la herramienta nativa de virtualización basada en KVM/libvirt. Es fundamental agregar este segundo disco antes de iniciar la instalación del sistema operativo o con la MV apagada.
 
-1.  Abra la aplicación **Virtual Machine Manager** (`virt-manager`) en Fedora.
-2.  Haga doble clic sobre su máquina virtual de Rocky Linux para abrir su consola y asegúrese de que esté **Apagada** (*Powered Off*).
-3.  En el menú superior de la ventana de la MV, haga clic en el segundo icono del **foco** (💡) o seleccione *View -> Details* para abrir la configuración de hardware.
-4.  Haga clic en el botón **Add Hardware** (Agregar hardware) en la esquina inferior izquierda.
-5.  En el asistente, seleccione **Storage** (Almacenamiento) y haga clic en *Forward*.
-6.  Configure los siguientes parámetros:
-    *   **Create a disk image for the virtual machine:** Seleccione esta opción.
-    *   **Size:** Establezca `20.0` GB.
-    *   **Device type:** Disk device.
-    *   **Bus type:** Seleccione **VirtIO** (es el estándar que ofrece el mejor rendimiento en entornos KVM).
-7.  Haga clic en **Finish**.
+1. Abra la aplicación **Virtual Machine Manager** (`virt-manager`) en Fedora.
+2. Haga doble clic sobre su máquina virtual de Rocky Linux para abrir su consola y asegúrese de que esté **Apagada** (*Powered Off*).
+3. En el menú superior de la ventana de la MV, haga clic en el segundo icono del **foco** (💡) o seleccione *View -> Details* para abrir la configuración de hardware.
+4. Haga clic en el botón **Add Hardware** (Agregar hardware) en la esquina inferior izquierda.
+5. En el asistente, seleccione **Storage** (Almacenamiento) y haga clic en *Forward*.
+6. Configure los siguientes parámetros:
+   - **Create a disk image for the virtual machine:** Seleccione esta opción.
+   - **Size:** Establezca `20.0` GB.
+   - **Device type:** Disk device.
+   - **Bus type:** Seleccione **VirtIO** (es el estándar que ofrece el mejor rendimiento en entornos KVM).
+7. Haga clic en **Finish**.
 
 Verá que ahora, en el panel izquierdo de detalles de hardware, aparecen dos discos: `Disk 1` (40 GB) para el sistema operativo (`/dev/vda`) y `Disk 2` (20 GB) para los datos cifrados (`/dev/vdb`):
+
+La salida de ejemplo se ajustó para reflejar consistentemente los 40 GB especificados para el disco de sistema (`/dev/vda`), en lugar de los 20 GB que aparecían por error en la versión anterior. Tenga en cuenta que el esquema de particionamiento exacto que genere el instalador de Rocky Linux (particiones vs. LVM, tamaños de `/boot`, `/boot/efi`, `/`, `/home`, `/var`) puede variar ligeramente según las opciones elegidas durante la instalación; lo relevante es que la suma de particiones no exceda el tamaño físico del disco (`vda`) y que `vdb` aparezca sin formatear:
+
 ```text
 [alumno@fedora-lab ~]$ lsblk
 NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
 zram0  251:0    0  3.8G  0 disk [SWAP]
-vda    253:0    0   20G  0 disk 
-├─vda1 253:1    0    2M  0 part 
+vda    253:0    0   40G  0 disk
+├─vda1 253:1    0    2M  0 part
 ├─vda2 253:2    0  100M  0 part /boot/efi
-└─vda3 253:3    0  4.9G  0 part /var
+├─vda3 253:3    0    1G  0 part /boot
+└─vda4 253:4    0 38.9G  0 part
+                                /var
                                 /home
-                                /boot
                                 /
-vdb    253:16   0   20G  0 disk 
+vdb    253:16   0   20G  0 disk
 ```
 
 *Nota didáctica:* Una vez instalado Rocky Linux 10 y arrancada la MV, puede verificar que el segundo disco es visible y está sin formato ejecutando el comando `lsblk` dentro de la terminal. Debería ver `vdb` listado sin particiones ni sistema de archivos, listo para ser cifrado con LUKS en la Fase 8.
@@ -133,14 +138,16 @@ echo "192.168.122.25 pgsql.example.com tang.example.com ipa.example.com" | sudo 
 ```
 
 **Nota Técnica: Uso de dominios en documentación vs. producción**
- 
+
 > En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente. Sin embargo, es fundamental aclarar que en un **entorno de producción real**, como el que requiere *Example Company*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `<empresa>.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
 
 ##### 4.3. Instalación de Rocky Linux 10 y Modo FIPS
 
 Descargue la ISO de Rocky Linux 10 y cree la MV. Durante la instalación, Patricia Flores (SysAdmin) le indica que, para cumplir con normativas gubernamentales, el sistema debe operar en modo FIPS (Federal Information Processing Standards).
 
-*Regla de oro:* En RHEL/Rocky Linux 10, FIPS **solo puede habilitarse durante la instalación** agregando `fips=1` en los parámetros del kernel (presionando `e` en el menú de arranque y editando la línea que inicia con `linux`). No se puede habilitar posteriormente sin reinstalar.
+*Recomendación de buena práctica (no una regla absoluta):* En RHEL/Rocky Linux 10, la práctica recomendada es habilitar FIPS **durante la instalación**, agregando `fips=1` en los parámetros del kernel (presionando `e` en el menú de arranque y editando la línea que inicia con `linux`). Esto garantiza que toda clave, certificado o material criptográfico generado desde el primer arranque cumpla estrictamente con los módulos validados FIPS 140-3, sin artefactos generados en un estado no conforme.
+
+Es posible habilitar FIPS *después* de la instalación mediante la utilidad `fips-mode-setup --enable` seguida de la regeneración del `initramfs` y un reinicio; sin embargo, esta ruta **no es la recomendada para producción**, porque cualquier clave criptográfica generada antes de activar el modo FIPS (por ejemplo, llaves SSH del host, certificados SSL autogenerados, o material de LUKS) no puede garantizarse que haya sido producida por un módulo validado, y normativamente esto puede no satisfacer una auditoría estricta de cumplimiento FIPS 140-3. Por esta razón, para el entorno de producción de Example Company, Patricia Flores exige habilitar FIPS desde el arranque del instalador, tal como se describe arriba, y no mediante activación posterior.
 
 Una vez instalado, inicie sesión como el usuario `alumno` (contraseña: `uamIztapalapa`) y actualice el sistema:
 
@@ -154,10 +161,10 @@ sudo reboot
 Rocky Linux 10 centraliza la seguridad criptográfica a nivel de sistema operativo. Verifique que el sistema esté usando políticas robustas:
 
 ```bash
-## Ver política actual
+### Ver política actual
 update-crypto-policies --show
 
-## Si no está en FIPS o FUTURE, establézcalo (requiere reboot)
+### Si no está en FIPS o FUTURE, establézcalo (requiere reboot)
 sudo update-crypto-policies --set FUTURE
 sudo reboot
 ```
@@ -167,15 +174,15 @@ Javier López exige un escaneo de cumplimiento normativo utilizando el estándar
 ```bash
 sudo dnf install -y openscap-scanner scap-security-guide
 
-## Escanear el sistema contra el perfil CIS Server Level 1
+### Escanear el sistema contra el perfil CIS Server Level 1
 sudo oscap xccdf eval \
---profile xccdf_org.ssgproject.content_profile_cis \
---results scan-results.xml \
---report scan-report.html \
-/usr/share/xml/scap/ssg/content/ssg-rl10-ds.xml
+  --profile xccdf_org.ssgproject.content_profile_cis \
+  --results scan-results.xml \
+  --report scan-report.html \
+  /usr/share/xml/scap/ssg/content/ssg-rl10-ds.xml
 ```
 
-*Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example Company para demostrar qué reglas de seguridad fallan y cuáles pasan.
+*Nota didáctica:* El nombre exacto del archivo de contenido SCAP puede variar según la versión del paquete `scap-security-guide` disponible al momento de ejecutar el laboratorio. Verifique el nombre real con `ls /usr/share/xml/scap/ssg/content/` antes de ejecutar el comando anterior. El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example Company para demostrar qué reglas de seguridad fallan y cuáles pasan.
 
 ##### 4.5. Control de Aplicaciones e Integridad (AIDE)
 
@@ -190,11 +197,11 @@ Además, para detectar si un atacante modifica binarios del sistema o archivos d
 
 ```bash
 sudo dnf install -y aide
-## Inicializar la base de datos de integridad (tarda varios minutos)
+### Inicializar la base de datos de integridad (tarda varios minutos)
 sudo aide --init
 sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 
-## Programar verificación diaria
+### Programar verificación diaria
 sudo systemctl enable --now aidecheck.timer
 ```
 
@@ -241,10 +248,10 @@ wget https://github.com/devrimgunduz/pagila/archive/refs/heads/master.zip
 unzip master.zip
 cd pagila-master
 
-## Crear la base de datos (paso crítico que no debe omitirse)
+### Crear la base de datos (paso crítico que no debe omitirse)
 sudo -u postgres psql -c "CREATE DATABASE pagila;"
 
-## Cargar esquema y datos
+### Cargar esquema y datos
 sudo -u postgres psql -d pagila -f pagila-schema.sql
 sudo -u postgres psql -d pagila -f pagila-data.sql
 ```
@@ -258,16 +265,16 @@ Verifique que las tablas (film, customer, payment, etc.) se hayan creado correct
 Edite el archivo de configuración principal (`/var/lib/pgsql/data/postgresql.conf`):
 
 ```ini
-## Limitar exposición de red a la IP asignada al servidor
+### Limitar exposición de red a la IP asignada al servidor
 listen_addresses = '192.168.122.25'
 
-## Migrar a SCRAM-SHA-256 (estándar actual, obligatorio para FIPS)
+### Migrar a SCRAM-SHA-256 (estándar actual, obligatorio para FIPS)
 password_encryption = scram-sha-256
 
-## Límite de conexiones
+### Límite de conexiones
 max_connections = 100
 
-## Logging
+### Logging
 logging_collector = on
 log_directory = 'log'
 log_filename = 'postgresql-%Y-%m-%d.log'
@@ -278,7 +285,7 @@ log_filename = 'postgresql-%Y-%m-%d.log'
 Edite `/var/lib/pgsql/data/pg_hba.conf`. Elimine las reglas permisivas por defecto y configure autenticación estricta:
 
 ```text
-## TYPE  DATABASE        USER            ADDRESS                 METHOD
+### TYPE  DATABASE        USER            ADDRESS                 METHOD
 local   all             postgres                                peer
 local   all             all                                     peer
 host    pagila          all             192.168.122.0/24        scram-sha-256
@@ -353,8 +360,8 @@ psql "host=pgsql.example.com dbname=pagila user=alumno sslmode=verify-full sslro
 Dentro de `psql`, ejecute:
 
 ```sql
-SELECT s.ssl, s.version, s.cipher 
-FROM pg_stat_ssl s JOIN pg_stat_activity a ON s.pid = a.pid 
+SELECT s.ssl, s.version, s.cipher
+FROM pg_stat_ssl s JOIN pg_stat_activity a ON s.pid = a.pid
 WHERE a.usename = current_user;
 ```
 
@@ -365,7 +372,7 @@ WHERE a.usename = current_user;
 Verifique que todas las contraseñas estén almacenadas con SCRAM-SHA-256:
 
 ```sql
-SELECT usename, passwd LIKE 'SCRAM-SHA-256$%' AS es_scram 
+SELECT usename, passwd LIKE 'SCRAM-SHA-256$%' AS es_scram
 FROM pg_shadow WHERE passwd IS NOT NULL;
 ```
 
@@ -397,7 +404,7 @@ VALUES (
 );
 
 -- Consulta de datos cifrados
-SELECT customer_id, pgp_sym_decrypt(dato_confidencial, 'clave_maestra_uamIztapalapa') AS dato_descifrado 
+SELECT customer_id, pgp_sym_decrypt(dato_confidencial, 'clave_maestra_uamIztapalapa') AS dato_descifrado
 FROM public.datos_sensibles_pagila;
 ```
 
@@ -406,11 +413,11 @@ FROM public.datos_sensibles_pagila;
 PostgreSQL Community **no incluye TDE (Transparent Data Encryption) nativo**. Las alternativas son LUKS (que veremos en la Fase 8) o extensiones de terceros. Para backups, utilice `pg_basebackup` combinado con cifrado externo:
 
 ```bash
-## Crear directorio de backups con permisos adecuados
+### Crear directorio de backups con permisos adecuados
 sudo mkdir -p /var/lib/pgsql/backups
 sudo chown postgres:postgres /var/lib/pgsql/backups
 
-## Realizar backup cifrado
+### Realizar backup cifrado
 sudo -u postgres pg_basebackup -D - -Ft -z | \
 openssl enc -aes-256-cbc -salt -pbkdf2 -out /var/lib/pgsql/backups/pagila_backup.tar.gz.enc \
 -pass pass:clave_backup_muy_segura
@@ -424,23 +431,22 @@ Instale las utilidades de cliente de FreeIPA y enrolle el servidor al dominio `e
 
 ```bash
 sudo dnf install -y freeipa-client
-## Nota: En un entorno real, esto requeriría un servidor IPA activo. 
-## Para el laboratorio, se asume que la directiva LDAP se configura manualmente o contra un servidor externo.
+### Nota: En un entorno real, esto requeriría un servidor IPA activo y, típicamente,
+### credenciales de administrador o un OTP (--password / --keytab) para el enrolamiento
+### no interactivo. Para el laboratorio, se asume que la directiva LDAP se configura
+### manualmente o contra un servidor externo ya preparado por el instructor.
 sudo ipa-client-install --domain=example.com --realm=EXAMPLE.COM --server=ipa.example.com
 ```
 
 ##### 10.2. Integración con pg_hba.conf
 
-Edite `pg_hba.conf` para autenticar contra FreeIPA usando LDAPS (puerto 636):
+Edite `pg_hba.conf` para autenticar contra FreeIPA usando LDAPS (puerto 636). A diferencia de `postgresql.conf`, el archivo `pg_hba.conf` **no admite el carácter `\` como continuación de línea**: cada registro debe estar contenido en una sola línea física, o PostgreSQL reportará un error de sintaxis al recargar la configuración (`pg_ctl reload` / `SELECT pg_reload_conf();`). La regla completa debe escribirse así:
 
 ```text
-host    pagila    all    192.168.122.0/24    ldap \
-    ldapserver=ipa.example.com \
-    ldapport=636 \
-    ldapscheme=ldaps \
-    ldapprefix="uid=" \
-    ldapsuffix=",cn=users,cn=accounts,dc=example,dc=com"
+host    pagila    all    192.168.122.0/24    ldap ldapserver=ipa.example.com ldapport=636 ldapscheme=ldaps ldapprefix="uid=" ldapsuffix=",cn=users,cn=accounts,dc=example,dc=com"
 ```
+
+*Nota didáctica:* Si su editor de texto envuelve visualmente la línea (por ejemplo, en `vim` con `wrap` activado), esto es solo una representación visual; el archivo en disco debe contener un único salto de línea al final del registro, no varios. Verifique con `cat -A pg_hba.conf` que no existan caracteres `\` seguidos de salto de línea dentro del registro.
 
 ##### 10.3. Prueba de Revocación Centralizada
 
@@ -469,25 +475,25 @@ sudo firewall-cmd --add-service=tang --permanent && sudo firewall-cmd --reload
 Primero, debe inicializar el disco `/dev/vdb` como LUKS (paso que faltaba desde la Fase 4):
 
 ```bash
-## 1. Formatear el disco como LUKS2 (¡Esto borrará cualquier dato en /dev/vdb!)
+### 1. Formatear el disco como LUKS2 (¡Esto borrará cualquier dato en /dev/vdb!)
 sudo cryptsetup luksFormat --type luks2 /dev/vdb
 
-## 2. Instalar herramientas de Clevis
+### 2. Instalar herramientas de Clevis
 sudo dnf install -y clevis clevis-luks clevis-dracut
 
-## 3. Vincular la partición LUKS al servidor Tang local
+### 3. Vincular la partición LUKS al servidor Tang local
 sudo clevis luks bind -d /dev/vdb tang '{"url":"http://localhost"}'
 
-## 4. Abrir el dispositivo para crear el sistema de archivos
+### 4. Abrir el dispositivo para crear el sistema de archivos
 sudo cryptsetup open /dev/vdb pgdata_crypt
 sudo mkfs.xfs /dev/mapper/pgdata_crypt
 
-## 5. Crear punto de montaje y montar
+### 5. Crear punto de montaje y montar
 sudo mkdir -p /datos/pgsql
 sudo mount /dev/mapper/pgdata_crypt /datos/pgsql
 sudo chown postgres:postgres /datos/pgsql
 
-## 6. Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
+### 6. Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
 sudo dracut -f --regenerate-all
 ```
 
@@ -511,7 +517,7 @@ log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
 Para auditoría detallada a nivel de objeto (requerida por normativas como PCI-DSS):
 
 ```bash
-## Nota: El nombre del paquete puede variar según el repositorio (pgaudit o pgaudit_15)
+### Nota: El nombre del paquete puede variar según el repositorio (pgaudit o pgaudit_15)
 sudo dnf install -y pgaudit
 ```
 
@@ -531,7 +537,7 @@ sudo tail -f /var/lib/pgsql/data/log/postgresql-*.log | grep AUDIT
 
 #### 13. Fase 10: Tuning y Optimización de Rendimiento en Producción
 
-En un entorno de producción, la seguridad y el rendimiento son dos caras de la misma moneda. Un sistema seguro pero inoperante por lentitud es un fracaso, al igual que un sistema rápido pero vulnerable. 
+En un entorno de producción, la seguridad y el rendimiento son dos caras de la misma moneda. Un sistema seguro pero inoperante por lentitud es un fracaso, al igual que un sistema rápido pero vulnerable.
 
 ##### 13.1. Contexto: El Desafío de los 200 Usuarios Concurrentes
 
@@ -543,52 +549,52 @@ Roberto Hernández (DBA Senior) asiente y toma la palabra: *"La configuración p
 
 La memoria es el recurso más crítico para el rendimiento de PostgreSQL. Roberto guía al equipo en la modificación de los siguientes parámetros en `/var/lib/pgsql/data/postgresql.conf`:
 
-*   **`shared_buffers`**: Es la memoria que PostgreSQL dedica exclusivamente a cachear datos de disco. La regla general es asignar el 25% de la RAM total del sistema. Para nuestra MV de 8 GB, asignaremos 2 GB.
-    ```ini
-    shared_buffers = 2GB
-    ```
-*   **`effective_cache_size`**: Este parámetro no asigna memoria, sino que le indica al planificador de consultas cuánta memoria está disponible en el sistema (incluyendo el caché del sistema operativo). Se recomienda entre el 50% y 75% de la RAM total.
-    ```ini
-    effective_cache_size = 6GB
-    ```
-*   **`work_mem`**: Es la memoria utilizada por cada operación de ordenamiento (ORDER BY) o hash (JOIN). Si se establece muy alto y hay 200 conexiones concurrentes, el sistema podría quedarse sin RAM (OOM Killer). Un valor conservador pero eficiente es adecuado.
-    ```ini
-    work_mem = 32MB
-    ```
-*   **`maintenance_work_mem`**: Memoria destinada a tareas de mantenimiento como `VACUUM`, `CREATE INDEX` o `ALTER TABLE`. Al no haber cientos de estas operaciones simultáneas, se puede asignar un valor mayor para acelerar el mantenimiento.
-    ```ini
-    maintenance_work_mem = 512MB
-    ```
+- **`shared_buffers`**: Es la memoria que PostgreSQL dedica exclusivamente a cachear datos de disco. La regla general es asignar el 25% de la RAM total del sistema. Para nuestra MV de 8 GB, asignaremos 2 GB.
+  ```ini
+  shared_buffers = 2GB
+  ```
+- **`effective_cache_size`**: Este parámetro no asigna memoria, sino que le indica al planificador de consultas cuánta memoria está disponible en el sistema (incluyendo el caché del sistema operativo). Se recomienda entre el 50% y 75% de la RAM total.
+  ```ini
+  effective_cache_size = 6GB
+  ```
+- **`work_mem`**: Es la memoria utilizada por cada operación de ordenamiento (ORDER BY) o hash (JOIN). Si se establece muy alto y hay 200 conexiones concurrentes, el sistema podría quedarse sin RAM (OOM Killer). Un valor conservador pero eficiente es adecuado.
+  ```ini
+  work_mem = 32MB
+  ```
+- **`maintenance_work_mem`**: Memoria destinada a tareas de mantenimiento como `VACUUM`, `CREATE INDEX` o `ALTER TABLE`. Al no haber cientos de estas operaciones simultáneas, se puede asignar un valor mayor para acelerar el mantenimiento.
+  ```ini
+  maintenance_work_mem = 512MB
+  ```
 
 ##### 13.3. Optimización de WAL y Checkpoints
 
 El Write-Ahead Logging (WAL) garantiza la durabilidad (la 'D' de ACID), pero una configuración por defecto puede generar cuellos de botella en escrituras intensivas.
 
-*   **`max_wal_size`**: Define el tamaño máximo de los archivos WAL antes de forzar un checkpoint. Aumentarlo reduce la frecuencia de los checkpoints, mejorando el rendimiento de escritura.
-    ```ini
-    max_wal_size = 4GB
-    ```
-*   **`checkpoint_completion_target`**: Indica cuánto tiempo debe tardar un checkpoint en completarse como fracción del intervalo entre checkpoints. Un valor de 0.9 "estira" las escrituras de los checkpoints en el tiempo, evitando picos de I/O que saturen el disco.
-    ```ini
-    checkpoint_completion_target = 0.9
-    ```
-*   **`wal_buffers`**: Memoria para los datos de WAL que aún no se han escrito en disco.
-    ```ini
-    wal_buffers = 64MB
-    ```
+- **`max_wal_size`**: Define el tamaño máximo de los archivos WAL antes de forzar un checkpoint. Aumentarlo reduce la frecuencia de los checkpoints, mejorando el rendimiento de escritura.
+  ```ini
+  max_wal_size = 4GB
+  ```
+- **`checkpoint_completion_target`**: Indica cuánto tiempo debe tardar un checkpoint en completarse como fracción del intervalo entre checkpoints. Un valor de 0.9 "estira" las escrituras de los checkpoints en el tiempo, evitando picos de I/O que saturen el disco.
+  ```ini
+  checkpoint_completion_target = 0.9
+  ```
+- **`wal_buffers`**: Memoria para los datos de WAL que aún no se han escrito en disco.
+  ```ini
+  wal_buffers = 64MB
+  ```
 
 ##### 13.4. Ajuste del Planificador de Consultas (Query Planner)
 
 PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (HDD) lento. Dado que Example Company utiliza almacenamiento moderno (SSD o SAN de alto rendimiento), debemos ajustar las "constantes" del planificador para que prefiera los índices sobre los barridos secuenciales.
 
-*   **`random_page_cost`**: Reduce el costo relativo de las lecturas aleatorias (índices) frente a las secuenciales.
-    ```ini
-    random_page_cost = 1.1
-    ```
-*   **`effective_io_concurrency`**: Indica al sistema cuántas solicitudes de I/O simultáneas puede emitir. Para discos SSD, este valor debe ser alto.
-    ```ini
-    effective_io_concurrency = 200
-    ```
+- **`random_page_cost`**: Reduce el costo relativo de las lecturas aleatorias (índices) frente a las secuenciales.
+  ```ini
+  random_page_cost = 1.1
+  ```
+- **`effective_io_concurrency`**: Indica al sistema cuántas solicitudes de I/O simultáneas puede emitir. Para discos SSD, este valor debe ser alto.
+  ```ini
+  effective_io_concurrency = 200
+  ```
 
 ##### 13.5. Diagnóstico Continuo con pg_stat_statements
 
@@ -597,17 +603,19 @@ PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (H
 Dado que ya estamos cargando `pgaudit` en la Fase 9, debemos agregar esta extensión a la misma directiva (asegúrese de no borrar `pgaudit`):
 
 ```ini
-## En postgresql.conf
+### En postgresql.conf
 shared_preload_libraries = 'pgaudit, pg_stat_statements'
 ```
 
 Reinicie PostgreSQL y active la extensión en la base de datos `pagila`:
+
 ```bash
 sudo systemctl restart postgresql
 sudo -u postgres psql -d pagila -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"
 ```
 
 Para identificar las consultas más lentas o costosas, el equipo de desarrollo ejecutará esta consulta periódicamente:
+
 ```sql
 SELECT query, calls, total_exec_time, mean_exec_time, rows
 FROM pg_stat_statements
@@ -620,28 +628,32 @@ LIMIT 10;
 Roberto hace una última recomendación para el SysAdmin, Patricia Flores: *"Para evitar que el kernel de Rocky Linux fragmente la memoria y para reducir la sobrecarga de la TLB (Translation Lookaside Buffer) al manejar nuestros 2 GB de `shared_buffers`, deberíamos configurar **HugePages** en el sistema operativo."*
 
 Aunque la configuración profunda de HugePages excede el alcance de este laboratorio, Patricia debe asegurar que en el servidor de producción real se configuren en `/etc/sysctl.conf`:
+
 ```ini
-vm.nr_hugepages = 1024  ## Ajustar según shared_buffers
+vm.nr_hugepages = 1024  #### Ajustar según shared_buffers
 ```
+
 Y configurar PostgreSQL para usarlas:
+
 ```ini
 huge_pages = try
 ```
 
-#### 14. Entregables, Validación y Rúbrica
+#### 14. Entregables, Autoevaluación y Rúbrica
 
 ##### 14.1. Informe Técnico de Hardening y Tuning
 
 Usted deberá entregar un informe ejecutivo y técnico que contenga:
-1.  **Justificación Estratégica:** Stack empresarial, soberanía tecnológica y defensa en profundidad.
-2.  **Mapa de Amenazas y Mitigaciones:** Cómo cada fase (SO, Red, DBMS) mitiga los vectores de ataque identificados en la Sección 3.
-3.  **Evidencias de Seguridad:** Capturas de pantalla de `sestatus`, `update-crypto-policies --show`, `clevis luks list`, `fapolicyd` activo, `aide` inicializado, logs de `pgAudit`, y autenticación LDAP.
-4.  **Evidencias de Tuning y Rendimiento:** 
-    *   Captura del archivo `postgresql.conf` con los parámetros de memoria (`shared_buffers`, `work_mem`, etc.).
-    *   Salida de la consulta a `pg_stat_statements` demostrando el rastreo de consultas.
-5.  **Prueba de Cifrado:** Script SQL demostrando la inserción y consulta de datos cifrados con `pgcrypto` sobre la base de datos `pagila`.
-6.  **Prueba de LDAP:** Captura mostrando la autenticación exitosa vía FreeIPA y el rechazo tras la deshabilitación del usuario.
-7.  **Script de Validación:** Entregue un script en Bash (`validar_hardening.sh`) que audite automáticamente el cumplimiento.
+
+1. **Justificación Estratégica:** Stack empresarial, soberanía tecnológica y defensa en profundidad.
+2. **Mapa de Amenazas y Mitigaciones:** Cómo cada fase (SO, Red, DBMS) mitiga los vectores de ataque identificados en la Sección 3.
+3. **Evidencias de Seguridad:** Capturas de pantalla de `sestatus`, `update-crypto-policies --show`, `clevis luks list`, `fapolicyd` activo, `aide` inicializado, logs de `pgAudit`, y autenticación LDAP.
+4. **Evidencias de Tuning y Rendimiento:**
+   - Captura del archivo `postgresql.conf` con los parámetros de memoria (`shared_buffers`, `work_mem`, etc.).
+   - Salida de la consulta a `pg_stat_statements` demostrando el rastreo de consultas.
+5. **Prueba de Cifrado:** Script SQL demostrando la inserción y consulta de datos cifrados con `pgcrypto` sobre la base de datos `pagila`.
+6. **Prueba de LDAP:** Captura mostrando la autenticación exitosa vía FreeIPA y el rechazo tras la deshabilitación del usuario.
+7. **Script de Validación:** Entregue un script en Bash (`validar_hardening.sh`) que audite automáticamente el cumplimiento.
 
 ##### 14.2. Rúbrica de Autoevaluación
 
@@ -661,12 +673,12 @@ La ejecución integral de este laboratorio de cierre valida la transición desde
 
 Como resultado de la implementación del stack tecnológico en el escenario de Example Company, se establecen las siguientes conclusiones técnicas y estratégicas:
 
-1.  **La seguridad es un proceso continuo, no una configuración estática.** El endurecimiento inicial del sistema (FIPS, SELinux, `fapolicyd`) es insuficiente por sí solo. La implementación de herramientas de auditoría y verificación de integridad como `pgAudit`, AIDE y OpenSCAP demuestra que la postura de seguridad requiere monitoreo constante y validación periódica contra benchmarks (CIS/PCI-DSS).
-2.  **La defensa en profundidad es arquitectónicamente obligatoria.** La efectividad de la seguridad no reside en una sola capa, sino en la integración del stack completo: el control de acceso a nivel de kernel (SELinux), la gestión centralizada de identidades (FreeIPA/LDAP), el cifrado en tránsito (SSL/TLS) y el cifrado a nivel de aplicación (`pgcrypto`). Cada capa mitiga vectores de ataque específicos que las demás no pueden cubrir.
-3.  **El rendimiento y la seguridad son objetivos complementarios.** Las prácticas de tuning de PostgreSQL (configuración de `shared_buffers`, `work_mem`, `effective_io_concurrency`) y la habilitación de extensiones de diagnóstico como `pg_stat_statements` demuestran que es posible optimizar el rendimiento de consultas sin comprometer la postura de seguridad, siempre que se apliquen bajo políticas de auditoría estrictas.
-4.  **La soberanía tecnológica es una ventaja estratégica y operativa.** La implementación exitosa del triplete Rocky Linux 10 + FreeIPA + PostgreSQL confirma la viabilidad de construir infraestructura de clase empresarial, altamente segura y auditable, eliminando la dependencia de *vendor lock-in* y reduciendo costos de licenciamiento sin sacrificar cumplimiento normativo (FIPS 140-3).
-5.  **La disponibilidad y confidencialidad de los datos definen la responsabilidad del DBA.** La implementación de cifrado en reposo mediante NBDE (Clevis/Tang) y LUKS, combinada con estrategias de backups cifrados y rotación de claves, establece que la protección del activo más valioso de la organización requiere una gestión proactiva del ciclo de vida de los datos, desde su almacenamiento hasta su destrucción segura.
-6.  **La alineación con los requerimientos del cliente y las normativas de cumplimiento (compliance) es el motor de la arquitectura.** En un entorno real, las decisiones técnicas no se toman en el vacío; responden directamente a las exigencias de auditoría, protección de datos personales y niveles de servicio (SLAs) establecidos por la directiva del cliente. La ingeniería de sistemas exitosa es aquella que traduce estos requerimientos de negocio y legales en controles técnicos tangibles, verificables y auditables.
+1. **La seguridad es un proceso continuo, no una configuración estática.** El endurecimiento inicial del sistema (FIPS, SELinux, `fapolicyd`) es insuficiente por sí solo. La implementación de herramientas de auditoría y verificación de integridad como `pgAudit`, AIDE y OpenSCAP demuestra que la postura de seguridad requiere monitoreo constante y validación periódica contra benchmarks (CIS/PCI-DSS).
+2. **La defensa en profundidad es arquitectónicamente obligatoria.** La efectividad de la seguridad no reside en una sola capa, sino en la integración del stack completo: el control de acceso a nivel de kernel (SELinux), la gestión centralizada de identidades (FreeIPA/LDAP), el cifrado en tránsito (SSL/TLS) y el cifrado a nivel de aplicación (`pgcrypto`). Cada capa mitiga vectores de ataque específicos que las demás no pueden cubrir.
+3. **El rendimiento y la seguridad son objetivos complementarios.** Las prácticas de tuning de PostgreSQL (configuración de `shared_buffers`, `work_mem`, `effective_io_concurrency`) y la habilitación de extensiones de diagnóstico como `pg_stat_statements` demuestran que es posible optimizar el rendimiento de consultas sin comprometer la postura de seguridad, siempre que se apliquen bajo políticas de auditoría estrictas.
+4. **La soberanía tecnológica es una ventaja estratégica y operativa.** La implementación exitosa del triplete Rocky Linux 10 + FreeIPA + PostgreSQL confirma la viabilidad de construir infraestructura de clase empresarial, altamente segura y auditable, eliminando la dependencia de *vendor lock-in* y reduciendo costos de licenciamiento sin sacrificar cumplimiento normativo (FIPS 140-3).
+5. **La disponibilidad y confidencialidad de los datos definen la responsabilidad del DBA.** La implementación de cifrado en reposo mediante NBDE (Clevis/Tang) y LUKS, combinada con estrategias de backups cifrados y rotación de claves, establece que la protección del activo más valioso de la organización requiere una gestión proactiva del ciclo de vida de los datos, desde su almacenamiento hasta su destrucción segura.
+6. **La alineación con los requerimientos del cliente y las normativas de cumplimiento (compliance) es el motor de la arquitectura.** En un entorno real, las decisiones técnicas no se toman en el vacío; responden directamente a las exigencias de auditoría, protección de datos personales y niveles de servicio (SLAs) establecidos por la directiva del cliente. La ingeniería de sistemas exitosa es aquella que traduce estos requerimientos de negocio y legales en controles técnicos tangibles, verificables y auditables.
 
 Este laboratorio consolida la competencia técnica necesaria para diseñar, desplegar y mantener sistemas de bases de datos resilientes, asegurando que la infraestructura de datos no solo sea funcional, sino inherentemente segura, optimizada y preparada para satisfacer las demandas críticas de un entorno de producción real.
 
