@@ -1,7 +1,7 @@
 ### Laboratorio 14: Bases de Datos en Producción
 
 **Dr. Jesús Zavala Ruiz**  
-**Última actualización:** 4 de julio de 2026  
+**Última actualización:** 5 de julio de 2026  
 
 ---
 
@@ -95,11 +95,9 @@ Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutar
 echo "192.168.122.25 pgsql.example.com tang.example.com ipa.example.com" | sudo tee -a /etc/hosts
 ```
 
-> **Nota Técnica: Uso de dominios en documentación vs. producción**
-> 
-> En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente.
-> 
-> **Sin embargo, es fundamental aclarar que en un entorno de producción real**, como el que requiere *Example.com*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `uam.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
+**Nota Técnica: Uso de dominios en documentación vs. producción**
+ 
+> En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente. Sin embargo, es fundamental aclarar que en un **entorno de producción real**, como el que requiere *Example.com*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `<empresa>.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
 
 ##### 4.2. Instalación de Rocky Linux 10 y Modo FIPS
 
@@ -133,23 +131,25 @@ Javier López exige un escaneo de cumplimiento normativo utilizando el estándar
 sudo dnf install -y openscap-scanner scap-security-guide
 
 ## Escanear el sistema contra el perfil CIS Server Level 1
-sudo oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_cis \
---results scan-results.xml --report scan-report.html \
+sudo oscap xccdf eval \
+--profile xccdf_org.ssgproject.content_profile_cis \
+--results scan-results.xml \
+--report scan-report.html \
 /usr/share/xml/scap/ssg/content/ssg-rl10-ds.xml
 ```
 
 *Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example.com para demostrar qué reglas de seguridad fallan y cuáles pasan.
 
-##### 4.4. Control de Aplicaciones (fapolicyd) e Integridad (AIDE)
+##### 4.4. Control de Aplicaciones e Integridad (AIDE)
 
-¿Qué pasa si un atacante logra subir un script malicioso o un binario compilado al servidor? Para evitarlo, implementaremos `fapolicyd`, un framework de *allowlisting* que bloquea la ejecución de cualquier binario que no esté en la base de datos oficial de paquetes RPM:
+¿Qué pasa si un atacante logra subir un script malicioso o un binario compilado al servidor? Para evitarlo, implementaremos Control de Aplicaciones *`fapolicyd`), un framework de *allowlisting* que bloquea la ejecución de cualquier binario que no esté en la base de datos oficial de paquetes RPM:
 
 ```bash
 sudo dnf install -y fapolicyd
 sudo systemctl enable --now fapolicyd
 ```
 
-Además, para detectar si un atacante modifica binarios del sistema o archivos de configuración, utilizaremos AIDE (Advanced Intrusion Detection Environment):
+Además, para detectar si un atacante modifica binarios del sistema o archivos de configuración, utilizaremos AIDE (*Advanced Intrusion Detection Environment*):
 
 ```bash
 sudo dnf install -y aide
@@ -179,7 +179,7 @@ sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address
 sudo firewall-cmd --reload
 ```
 
-Finalmente, endurezca SSH editando `/etc/ssh/sshd_config`: deshabilite el login root por contraseña, habilite solo autenticación por llaves públicas y limite los intentos de autenticación.
+Finalmente, endurezca SSH editando `/etc/ssh/sshd_config`: deshabilite el login root por contraseña, habilite solo autenticación por llaves públicas y limite los intentos de autenticación, tal como lo hizo en el laboratorio 5.
 
 #### 5. Fase 2: Instalación de PostgreSQL y Carga de Datos
 
