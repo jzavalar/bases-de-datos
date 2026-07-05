@@ -161,10 +161,10 @@ sudo reboot
 Rocky Linux 10 centraliza la seguridad criptográfica a nivel de sistema operativo. Verifique que el sistema esté usando políticas robustas:
 
 ```bash
-### Ver política actual
+# Ver política actual
 update-crypto-policies --show
 
-### Si no está en FIPS o FUTURE, establézcalo (requiere reboot)
+# Si no está en FIPS o FUTURE, establézcalo (requiere reboot)
 sudo update-crypto-policies --set FUTURE
 sudo reboot
 ```
@@ -174,7 +174,7 @@ Javier López exige un escaneo de cumplimiento normativo utilizando el estándar
 ```bash
 sudo dnf install -y openscap-scanner scap-security-guide
 
-### Escanear el sistema contra el perfil CIS Server Level 1
+# Escanear el sistema contra el perfil CIS Server Level 1
 sudo oscap xccdf eval \
   --profile xccdf_org.ssgproject.content_profile_cis \
   --results scan-results.xml \
@@ -197,11 +197,11 @@ Además, para detectar si un atacante modifica binarios del sistema o archivos d
 
 ```bash
 sudo dnf install -y aide
-### Inicializar la base de datos de integridad (tarda varios minutos)
+# Inicializar la base de datos de integridad (tarda varios minutos)
 sudo aide --init
 sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 
-### Programar verificación diaria
+# Programar verificación diaria
 sudo systemctl enable --now aidecheck.timer
 ```
 
@@ -229,7 +229,7 @@ Finalmente, endurezca SSH editando `/etc/ssh/sshd_config`: deshabilite el login 
 
 ##### 5.1. Instalación del Motor de Base de Datos
 
-Instale PostgreSQL 15 o 16 desde los repositorios oficiales o PGDG:
+Instale PostgreSQL desde los repositorios oficiales o PGDG:
 
 ```bash
 sudo dnf install -y postgresql-server postgresql-contrib
@@ -248,10 +248,10 @@ wget https://github.com/devrimgunduz/pagila/archive/refs/heads/master.zip
 unzip master.zip
 cd pagila-master
 
-### Crear la base de datos (paso crítico que no debe omitirse)
+# Crear la base de datos (paso crítico que no debe omitirse)
 sudo -u postgres psql -c "CREATE DATABASE pagila;"
 
-### Cargar esquema y datos
+# Cargar esquema y datos
 sudo -u postgres psql -d pagila -f pagila-schema.sql
 sudo -u postgres psql -d pagila -f pagila-data.sql
 ```
@@ -265,16 +265,16 @@ Verifique que las tablas (film, customer, payment, etc.) se hayan creado correct
 Edite el archivo de configuración principal (`/var/lib/pgsql/data/postgresql.conf`):
 
 ```ini
-### Limitar exposición de red a la IP asignada al servidor
+# Limitar exposición de red a la IP asignada al servidor
 listen_addresses = '192.168.122.25'
 
-### Migrar a SCRAM-SHA-256 (estándar actual, obligatorio para FIPS)
+# Migrar a SCRAM-SHA-256 (estándar actual, obligatorio para FIPS)
 password_encryption = scram-sha-256
 
-### Límite de conexiones
+# Límite de conexiones
 max_connections = 100
 
-### Logging
+# Logging
 logging_collector = on
 log_directory = 'log'
 log_filename = 'postgresql-%Y-%m-%d.log'
@@ -285,7 +285,7 @@ log_filename = 'postgresql-%Y-%m-%d.log'
 Edite `/var/lib/pgsql/data/pg_hba.conf`. Elimine las reglas permisivas por defecto y configure autenticación estricta:
 
 ```text
-### TYPE  DATABASE        USER            ADDRESS                 METHOD
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
 local   all             postgres                                peer
 local   all             all                                     peer
 host    pagila          all             192.168.122.0/24        scram-sha-256
@@ -413,11 +413,11 @@ FROM public.datos_sensibles_pagila;
 PostgreSQL Community **no incluye TDE (Transparent Data Encryption) nativo**. Las alternativas son LUKS (que veremos en la Fase 8) o extensiones de terceros. Para backups, utilice `pg_basebackup` combinado con cifrado externo:
 
 ```bash
-### Crear directorio de backups con permisos adecuados
+# Crear directorio de backups con permisos adecuados
 sudo mkdir -p /var/lib/pgsql/backups
 sudo chown postgres:postgres /var/lib/pgsql/backups
 
-### Realizar backup cifrado
+# Realizar backup cifrado
 sudo -u postgres pg_basebackup -D - -Ft -z | \
 openssl enc -aes-256-cbc -salt -pbkdf2 -out /var/lib/pgsql/backups/pagila_backup.tar.gz.enc \
 -pass pass:clave_backup_muy_segura
@@ -431,10 +431,10 @@ Instale las utilidades de cliente de FreeIPA y enrolle el servidor al dominio `e
 
 ```bash
 sudo dnf install -y freeipa-client
-### Nota: En un entorno real, esto requeriría un servidor IPA activo y, típicamente,
-### credenciales de administrador o un OTP (--password / --keytab) para el enrolamiento
-### no interactivo. Para el laboratorio, se asume que la directiva LDAP se configura
-### manualmente o contra un servidor externo ya preparado por el instructor.
+# Nota: En un entorno real, esto requeriría un servidor IPA activo y, típicamente,
+# credenciales de administrador o un OTP (--password / --keytab) para el enrolamiento
+# no interactivo. Para el laboratorio, se asume que la directiva LDAP se configura
+# manualmente o contra un servidor externo ya preparado por el instructor.
 sudo ipa-client-install --domain=example.com --realm=EXAMPLE.COM --server=ipa.example.com
 ```
 
@@ -475,25 +475,25 @@ sudo firewall-cmd --add-service=tang --permanent && sudo firewall-cmd --reload
 Primero, debe inicializar el disco `/dev/vdb` como LUKS (paso que faltaba desde la Fase 4):
 
 ```bash
-### 1. Formatear el disco como LUKS2 (¡Esto borrará cualquier dato en /dev/vdb!)
+# 1. Formatear el disco como LUKS2 (¡Esto borrará cualquier dato en /dev/vdb!)
 sudo cryptsetup luksFormat --type luks2 /dev/vdb
 
-### 2. Instalar herramientas de Clevis
+# 2. Instalar herramientas de Clevis
 sudo dnf install -y clevis clevis-luks clevis-dracut
 
-### 3. Vincular la partición LUKS al servidor Tang local
+# 3. Vincular la partición LUKS al servidor Tang local
 sudo clevis luks bind -d /dev/vdb tang '{"url":"http://localhost"}'
 
-### 4. Abrir el dispositivo para crear el sistema de archivos
+# 4. Abrir el dispositivo para crear el sistema de archivos
 sudo cryptsetup open /dev/vdb pgdata_crypt
 sudo mkfs.xfs /dev/mapper/pgdata_crypt
 
-### 5. Crear punto de montaje y montar
+# 5. Crear punto de montaje y montar
 sudo mkdir -p /datos/pgsql
 sudo mount /dev/mapper/pgdata_crypt /datos/pgsql
 sudo chown postgres:postgres /datos/pgsql
 
-### 6. Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
+# 6. Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
 sudo dracut -f --regenerate-all
 ```
 
@@ -517,7 +517,7 @@ log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
 Para auditoría detallada a nivel de objeto (requerida por normativas como PCI-DSS):
 
 ```bash
-### Nota: El nombre del paquete puede variar según el repositorio (pgaudit o pgaudit_15)
+# Nota: El nombre del paquete puede variar según el repositorio (pgaudit o pgaudit_15)
 sudo dnf install -y pgaudit
 ```
 
@@ -603,7 +603,7 @@ PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (H
 Dado que ya estamos cargando `pgaudit` en la Fase 9, debemos agregar esta extensión a la misma directiva (asegúrese de no borrar `pgaudit`):
 
 ```ini
-### En postgresql.conf
+# En postgresql.conf
 shared_preload_libraries = 'pgaudit, pg_stat_statements'
 ```
 
@@ -630,7 +630,7 @@ Roberto hace una última recomendación para el SysAdmin, Patricia Flores: *"Par
 Aunque la configuración profunda de HugePages excede el alcance de este laboratorio, Patricia debe asegurar que en el servidor de producción real se configuren en `/etc/sysctl.conf`:
 
 ```ini
-vm.nr_hugepages = 1024  #### Ajustar según shared_buffers
+vm.nr_hugepages = 1024  ## Ajustar según shared_buffers
 ```
 
 Y configurar PostgreSQL para usarlas:
