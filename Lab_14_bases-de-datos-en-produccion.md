@@ -11,7 +11,7 @@ Hasta ahora, usted ha trabajado en un entorno académico controlado. Ha diseñad
 
 Una base de datos en producción no solo debe ser funcional; debe ser segura, auditable, resiliente y operacionalmente sostenible. Los datos que alberga son, en la mayoría de los casos, el activo más valioso de la organización. Este laboratorio le exigirá integrar todos los conocimientos adquiridos y aplicarlos bajo un enfoque de defensa en profundidad (*defense in depth*), donde la seguridad no es un producto ni una capa única, sino un proceso continuo que abarca desde el silicio del servidor hasta la última consulta SQL.
 
-Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de Innovatech Solutions, una empresa mexicana especializada en soluciones de gestión empresarial para el sector retail. La voz de Sofía es urgente pero calmada: 
+Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de Example.com, una empresa ficticia especializada en soluciones de gestión empresarial para el sector retail. La voz de Sofía es urgente pero calmada: 
 
 > *"Necesitamos que el nuevo sistema de fidelización de clientes esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
 
@@ -78,7 +78,7 @@ Este laboratorio es una pieza fundamental del rompecabezas, pero la excelencia e
 
 #### 2. El Stack Empresarial Mínimo: Soberanía Tecnológica
 
-Patricia Flores (SysAdmin) y Javier López (Security Officer) han definido la arquitectura. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* representan riesgos financieros y estratégicos. Para Innovatech Solutions, se ha establecido el siguiente triplete tecnológico como el stack empresarial mínimo de referencia para garantizar la soberanía tecnológica:
+Patricia Flores (SysAdmin) y Javier López (Security Officer) han definido la arquitectura. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* representan riesgos financieros y estratégicos. Para Example.com Solutions, se ha establecido el siguiente triplete tecnológico como el stack empresarial mínimo de referencia para garantizar la soberanía tecnológica:
 
 ##### 2.1. Rocky Linux 10 como Base
 
@@ -122,14 +122,14 @@ Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutar
 *Nota didáctica:* En la vida real, el servidor Tang (para NBDE) y el servidor FreeIPA estarían en máquinas separadas. Para este "monolito de laboratorio", simularemos estos servicios en la misma MV. Dado que no contamos con un servidor DNS externo, configure el archivo `/etc/hosts` para resolver los nombres ficticios:
 
 ```bash
-echo "192.168.122.25 pgsql.ejemplo.com tang.ejemplo.com ipa.ejemplo.com" | sudo tee -a /etc/hosts
+echo "192.168.122.25 pgsql.example.com tang.example.com ipa.example.com" | sudo tee -a /etc/hosts
 ```
 
 > **Nota Técnica: Uso de dominios en documentación vs. producción**
 > 
-> En este laboratorio utilizamos el dominio `ejemplo.com` (y sus subdominios como `ipa.ejemplo.com` o `pgsql.ejemplo.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente.
+> En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente.
 > 
-> **Sin embargo, es fundamental aclarar que en un entorno de producción real**, como el que requiere *Innovatech Solutions*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `innovatech.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
+> **Sin embargo, es fundamental aclarar que en un entorno de producción real**, como el que requiere *Example.com*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `uam.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
 
 > **Nota Técnica: El peligro del "Organizational Lock-in" y el Factor Autobús**
 > 
@@ -189,7 +189,7 @@ sudo oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_cis \
 /usr/share/xml/scap/ssg/content/ssg-rl10-ds.xml
 ```
 
-*Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Innovatech para demostrar qué reglas de seguridad fallan y cuáles pasan.
+*Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example.com para demostrar qué reglas de seguridad fallan y cuáles pasan.
 
 ##### 4.4. Control de Aplicaciones (fapolicyd) e Integridad (AIDE)
 
@@ -341,7 +341,7 @@ CREATE ROLE alumno LOGIN PASSWORD 'uamIztapalapa' IN ROLE app_readwrite;
 sudo -u postgres openssl req -new -x509 -days 365 -nodes \
     -out /var/lib/pgsql/data/server.crt \
     -keyout /var/lib/pgsql/data/server.key \
-    -subj "/CN=pgsql.ejemplo.com"
+    -subj "/CN=pgsql.example.com"
 
 sudo chmod 600 /var/lib/pgsql/data/server.key
 sudo chown postgres:postgres /var/lib/pgsql/data/server.crt /var/lib/pgsql/data/server.key
@@ -401,11 +401,11 @@ CREATE TABLE public.datos_sensibles_pagila (
 INSERT INTO public.datos_sensibles_pagila (customer_id, dato_confidencial)
 VALUES (
     1,
-    pgp_sym_encrypt('Tarjeta de crédito: 4111-1111-1111-1111', 'clave_maestra_innovatech')
+    pgp_sym_encrypt('Tarjeta de crédito: 4111-1111-1111-1111', 'clave_maestra_uamIztapalapa')
 );
 
 -- Consulta de datos cifrados
-SELECT customer_id, pgp_sym_decrypt(dato_confidencial, 'clave_maestra_innovatech') AS dato_descifrado 
+SELECT customer_id, pgp_sym_decrypt(dato_confidencial, 'clave_maestra_uamIztapalapa') AS dato_descifrado 
 FROM public.datos_sensibles_pagila;
 ```
 
@@ -428,13 +428,13 @@ openssl enc -aes-256-cbc -salt -pbkdf2 -out /var/lib/pgsql/backups/pagila_backup
 
 ##### 10.1. Configuración del Cliente LDAP
 
-Instale las utilidades de cliente de FreeIPA y enrolle el servidor al dominio `ejemplo.com` (asumiendo que el servidor IPA está accesible en la red o se simula el enrolamiento):
+Instale las utilidades de cliente de FreeIPA y enrolle el servidor al dominio `example.com` (asumiendo que el servidor IPA está accesible en la red o se simula el enrolamiento):
 
 ```bash
 sudo dnf install -y freeipa-client
 ## Nota: En un entorno real, esto requeriría un servidor IPA activo. 
 ## Para el laboratorio, se asume que la directiva LDAP se configura manualmente o contra un servidor externo.
-sudo ipa-client-install --domain=ejemplo.com --realm=EJEMPLO.COM --server=ipa.ejemplo.com
+sudo ipa-client-install --domain=example.com --realm=EXAMPLE.COM --server=ipa.example.com
 ```
 
 ##### 10.2. Integración con pg_hba.conf
@@ -443,11 +443,11 @@ Edite `pg_hba.conf` para autenticar contra FreeIPA usando LDAPS (puerto 636):
 
 ```text
 host    pagila    all    192.168.122.0/24    ldap \
-    ldapserver=ipa.ejemplo.com \
+    ldapserver=ipa.example.com \
     ldapport=636 \
     ldapscheme=ldaps \
     ldapprefix="uid=" \
-    ldapsuffix=",cn=users,cn=accounts,dc=ejemplo,dc=com"
+    ldapsuffix=",cn=users,cn=accounts,dc=example,dc=com"
 ```
 
 ##### 10.3. Prueba de Revocación Centralizada
@@ -578,7 +578,7 @@ El Write-Ahead Logging (WAL) garantiza la durabilidad (la 'D' de ACID), pero una
 
 ##### 13.4. Ajuste del Planificador de Consultas (Query Planner)
 
-PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (HDD) lento. Dado que Innovatech Solutions utiliza almacenamiento moderno (SSD o SAN de alto rendimiento), debemos ajustar las "constantes" del planificador para que prefiera los índices sobre los barridos secuenciales.
+PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (HDD) lento. Dado que Example.com utiliza almacenamiento moderno (SSD o SAN de alto rendimiento), debemos ajustar las "constantes" del planificador para que prefiera los índices sobre los barridos secuenciales.
 
 *   **`random_page_cost`**: Reduce el costo relativo de las lecturas aleatorias (índices) frente a las secuenciales.
     ```ini
@@ -681,7 +681,7 @@ echo "=== Validación Completa ==="
 
 La ejecución integral de este laboratorio de cierre valida la transición desde los fundamentos académicos hacia las responsabilidades operativas de un Administrador de Bases de Datos (DBA) e Ingeniero de Sistemas en entornos productivos. Los conocimientos adquiridos a lo largo del curso encuentran su aplicación más crítica en la **protección, optimización y operación continua de datos empresariales**.
 
-Como resultado de la implementación del stack tecnológico en el escenario de Innovatech Solutions, se establecen las siguientes conclusiones técnicas y estratégicas:
+Como resultado de la implementación del stack tecnológico en el escenario de una empresa ficticia Example.com, se establecen las siguientes conclusiones técnicas y estratégicas:
 
 1.  **La seguridad es un proceso continuo, no una configuración estática.** El endurecimiento inicial del sistema (FIPS, SELinux, `fapolicyd`) es insuficiente por sí solo. La implementación de herramientas de auditoría y verificación de integridad como `pgAudit`, AIDE y OpenSCAP demuestra que la postura de seguridad requiere monitoreo constante y validación periódica contra benchmarks (CIS/PCI-DSS).
 2.  **La defensa en profundidad es arquitectónicamente obligatoria.** La efectividad de la seguridad no reside en una sola capa, sino en la integración del stack completo: el control de acceso a nivel de kernel (SELinux), la gestión centralizada de identidades (FreeIPA/LDAP), el cifrado en tránsito (SSL/TLS) y el cifrado a nivel de aplicación (`pgcrypto`). Cada capa mitiga vectores de ataque específicos que las demás no pueden cubrir.
