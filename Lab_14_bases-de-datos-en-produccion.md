@@ -58,22 +58,22 @@ Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una 
 
 Patricia Flores (*SysAdmin*) y Javier López (*Security Officer*) han definido la arquitectura. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* representan riesgos financieros y estratégicos. Para Example.com, se ha establecido el siguiente triplete tecnológico como el stack empresarial mínimo de referencia para garantizar la soberanía tecnológica:
 
--   **Rocky Linux:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con Red Hat Enterprise Linux (RHEL). Provee estabilidad y soporte a largo plazo, manteniendo la soberanía tecnológica y eliminando costos de licenciamiento, mientras ofrece seguridad nativa a nivel de kernel mediante SELinux.  
--   **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados. FreeIPA centraliza la autenticación, permitiendo la revocación inmediata de accesos y el cumplimiento de políticas corporativas.  
--   **PostgreSQL:** El Sistema Manejador de Bases de Datos relacional de código abierto más avanzado. Garantiza integridad ACID, extensibilidad y mecanismos de seguridad avanzados. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un port a PostgreSQL de la famosa Sakila), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos.
+-   **Rocky Linux:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con *Red Hat Enterprise Linux* (RHEL). Provee estabilidad y soporte a largo plazo, manteniendo la soberanía tecnológica y eliminando costos de licenciamiento, mientras ofrece seguridad nativa a nivel de kernel mediante *SELinux*.  
+-   **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados. FreeIPA centraliza la autenticación, permitiendo la revocación inmediata de accesos y el cumplimiento de políticas corporativas. Con FreeIPA se controlan servidores, servicios y usuarios.  
+-   **PostgreSQL:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado. Garantiza integridad ACID, extensibilidad y mecanismos de seguridad avanzados. Para este laboratorio, utilizaremos la base de datos de demostración **`Pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos.
 
 #### 3. Panorama de Amenazas
 
 Antes de configurar cualquier parámetro, Javier López (Security Officer) le pide una reunión. Quiere entender contra qué están defendiendo los datos. Los vectores de ataque más comunes en entornos productivos incluyen:
 
--   **Inyección SQL (SQLi):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.  
+-   **Inyección SQL (*SQL Injection*, *SQLi*):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.  
 -   **Fuerza Bruta y Credential Stuffing:** Intentos masivos de autenticación contra el servicio expuesto.  
 -   **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.  
 -   **Sniffing de Red (MitM):** Interceptación de consultas y datos sensibles transmitidos en texto plano.  
--   **Denegación de Servicio (DoS):** Saturación de conexiones o ejecución de consultas maliciosas.  
--   **Explotación del Sistema Operativo:** Compromiso del host subyacente para acceder directamente a los archivos de datos (`$PGDATA`).  
--   **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas.  
--   **Insider Threat:** Empleados con acceso legítimo que abusan de sus privilegios.  
+-   **Denegación de Servicio (*Denial of Service*, *DoS*):** Saturación de conexiones o ejecución de consultas maliciosas.  
+-   **Explotación del Sistema Operativo:** Compromiso del *host* subyacente para acceder directamente a los archivos de datos (`$PGDATA`).  
+-   **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas o fuga de información (*leaks*).  
+-   **Amenaza Interna (*Insider Threat*):** Empleados con acceso legítimo que abusan de sus privilegios.  
 
 #### 4. Fase 1: Creación del Entorno y Endurecimiento del Sistema Operativo
 
@@ -88,6 +88,26 @@ Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutar
 *   **Red:** Configurar la interfaz de red con la IP estática **`192.168.122.25`** (máscara `255.255.255.0`).
 *   **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.
 *   **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.
+
+###### Procedimiento para agregar el segundo disco virtual (Almacenamiento para LUKS)
+
+Dado que su sistema anfitrión es Fedora 44, utilizará **Virtual Machine Manager** (`virt-manager`), la herramienta nativa de virtualización basada en KVM/libvirt. Es fundamental agregar este segundo disco antes de iniciar la instalación del sistema operativo o con la MV apagada.
+
+1.  Abra la aplicación **Máquinas Virtuales** (`virt-manager`) en Fedora.
+2.  Haga doble clic sobre su máquina virtual de Rocky Linux para abrir su consola y asegúrese de que esté **Apagada** (*Powered Off*).
+3.  En el menú superior de la ventana de la MV, haga clic en el icono del **foco** (💡) o seleccione *View -> Details* para abrir la configuración de hardware.
+4.  Haga clic en el botón **Add Hardware** (Agregar hardware) en la esquina inferior izquierda.
+5.  En el asistente, seleccione **Storage** (Almacenamiento) y haga clic en *Forward*.
+6.  Configure los siguientes parámetros:
+    *   **Create a disk image for the virtual machine:** Seleccione esta opción.
+    *   **Size:** Establezca `20.0` GB.
+    *   **Device type:** Disk device.
+    *   **Bus type:** Seleccione **VirtIO** (es el estándar que ofrece el mejor rendimiento en entornos KVM).
+7.  Haga clic en **Finish**.
+
+Verá que ahora, en el panel izquierdo de detalles de hardware, aparecen dos discos: `Disk 1` (40 GB) para el sistema operativo (`/dev/vda`) y `Disk 2` (20 GB) para los datos cifrados (`/dev/vdb`).
+
+*Nota didáctica:* Una vez instalado Rocky Linux 10 y arrancada la MV, puede verificar que el segundo disco es visible y está sin formato ejecutando el comando `lsblk` dentro de la terminal. Debería ver `vdb` listado sin particiones ni sistema de archivos, listo para ser cifrado con LUKS en la Fase 8.
 
 *Nota didáctica:* En la vida real, el servidor Tang (para NBDE) y el servidor FreeIPA estarían en máquinas separadas. Para este "monolito de laboratorio", simularemos estos servicios en la misma MV. Dado que no contamos con un servidor DNS externo, configure el archivo `/etc/hosts` para resolver los nombres ficticios:
 
@@ -142,7 +162,7 @@ sudo oscap xccdf eval \
 
 ##### 4.4. Control de Aplicaciones e Integridad (AIDE)
 
-¿Qué pasa si un atacante logra subir un script malicioso o un binario compilado al servidor? Para evitarlo, implementaremos Control de Aplicaciones *`fapolicyd`), un framework de *allowlisting* que bloquea la ejecución de cualquier binario que no esté en la base de datos oficial de paquetes RPM:
+¿Qué pasa si un atacante logra subir un script malicioso o un binario compilado al servidor? Para evitarlo, implementaremos el Control de Aplicaciones (`fapolicyd`), un framework de *allowlisting* que bloquea la ejecución de cualquier binario que no esté en la base de datos oficial de paquetes RPM:
 
 ```bash
 sudo dnf install -y fapolicyd
@@ -423,13 +443,13 @@ sudo firewall-cmd --add-service=tang --permanent && sudo firewall-cmd --reload
 
 ##### 11.2. Vinculación del Volumen LUKS con Clevis
 
-Suponiendo que ya tiene un disco adicional (`/dev/sdb`) formateado con LUKS para alojar `$PGDATA`:
+Suponiendo que ya tiene un disco adicional (`/dev/vdb` o `/dev/sdb` dependiendo de la configuración de KVM) formateado con LUKS para alojar `$PGDATA`:
 
 ```bash
 sudo dnf install -y clevis clevis-luks clevis-dracut
 
 ## Vincular la partición LUKS al servidor Tang local (usando localhost para evitar problemas de DNS en el arranque temprano)
-sudo clevis luks bind -d /dev/sdb tang '{"url":"http://localhost"}'
+sudo clevis luks bind -d /dev/vdb tang '{"url":"http://localhost"}'
 
 ## Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
 sudo dracut -f --regenerate-all
@@ -584,7 +604,7 @@ Usted deberá entregar un informe ejecutivo y técnico que contenga:
     *   Salida de la consulta a `pg_stat_statements` demostrando el rastreo de consultas.
 5.  **Prueba de Cifrado:** Script SQL demostrando la inserción y consulta de datos cifrados con `pgcrypto` sobre la base de datos `pagila`.
 6.  **Prueba de LDAP:** Captura mostrando la autenticación exitosa vía FreeIPA y el rechazo tras la deshabilitación del usuario.
-7.  **Script de Validacion** Entregue un script en Bash (`validar_hardening.sh`) que audite automáticamente el cumplimiento.
+7.  **Script de Validación:** Entregue un script en Bash (`validar_hardening.sh`) que audite automáticamente el cumplimiento.
 
 ##### 14.2. Rúbrica de Autoevaluación
 
@@ -615,16 +635,16 @@ Este laboratorio consolida la competencia técnica necesaria para diseñar, desp
 
 #### 16. Referencias
 
-Center for Internet Security. (2023). *CIS PostgreSQL 16 benchmark v1.0.0*. https://www.cisecurity.org/benchmark/postgresql
+Center for Internet Security. (2023). *CIS PostgreSQL 16 benchmark v1.0.0*. <https://www.cisecurity.org/benchmark/postgresql>
 
 Kumar, V., & Mehra, G. (2024). *RedHat Enterprise Linux 9 for beginners: A comprehensive guide for learning, administration, and deployment*. BPB Publications.
 
-National Institute of Standards and Technology. (2019). *Security requirements for cryptographic modules* (FIPS Publication 140-3). U.S. Department of Commerce. https://doi.org/10.6028/NIST.FIPS.140-3
+National Institute of Standards and Technology. (2019). *Security requirements for cryptographic modules* (FIPS Publication 140-3). U.S. Department of Commerce. <https://doi.org/10.6028/NIST.FIPS.140-3>
 
-PostgreSQL Global Development Group. (2024). *PostgreSQL 16 documentation*. https://www.postgresql.org/docs/current/
+PostgreSQL Global Development Group. (2024). *PostgreSQL 16 documentation*. <https://www.postgresql.org/docs/current/>
 
-Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 configuring and managing networking*. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/configuring_and_managing_networking/
+Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 configuring and managing networking*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/configuring_and_managing_networking/>
 
-Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 security hardening*. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/security_hardening/
+Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 security hardening*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/security_hardening/>
 
-Rocky Enterprise Software Foundation. (2026). *Rocky Linux 10 release notes*. https://docs.rockylinux.org/release_notes/
+Rocky Enterprise Software Foundation. (2026). *Rocky Linux 10 release notes*. <https://docs.rockylinux.org/release_notes/>
