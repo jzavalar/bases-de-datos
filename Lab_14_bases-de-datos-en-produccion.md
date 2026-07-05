@@ -11,7 +11,7 @@ Hasta ahora, usted ha trabajado en un entorno académico controlado. Ha diseñad
 
 Una base de datos en producción no solo debe ser funcional; debe ser segura, auditable, resiliente y operacionalmente sostenible. Los datos que alberga son, en la mayoría de los casos, el activo más valioso de la organización. Este laboratorio le exigirá integrar todos los conocimientos adquiridos y aplicarlos bajo un enfoque de defensa en profundidad (*defense in depth*), donde la seguridad no es un producto ni una capa única, sino un proceso continuo que abarca desde el silicio del servidor hasta la última consulta SQL.
 
-Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de Example.com, una empresa ficticia especializada en soluciones de gestión empresarial para el sector retail. La voz de Sofía es urgente pero calmada: 
+Imagine esta escena: son las 9:00 AM del lunes. Suena su teléfono. Es Sofía Vargas, Project Manager de una empresa ficticia especializada en soluciones de gestión empresarial para el sector retail, que identificaremos genéricamente como *Example Company* o *example.com*. La voz de Sofía es urgente pero calmada: 
 
 > *"Necesitamos que el nuevo sistema del* Programa de Recompensas para Premiar la lealtad de los Clientes *esté en producción en tres semanas. El equipo de desarrollo terminó la aplicación y las pruebas funcionaron bien en QA, pero el equipo de seguridad detectó que nuestra infraestructura base no cumple con los estándares de la industria. No podemos permitirnos un incidente; los datos personales y financieros de nuestros clientes son nuestro activo más valioso."*
 
@@ -58,12 +58,12 @@ Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una 
 
 Patricia Flores (*SysAdmin*) y Javier López (*Security Officer*) han definido la arquitectura del sistema. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* (cautiverio tecnológico) representan riesgos financieros, operativos y estratégicos inaceptables para una organización que maneja datos críticos. 
 
-Para Example.com, la adopción de tecnología abierta no es simplemente una estrategia de reducción de costos de licenciamiento; es una **postura de soberanía tecnológica**. Esta soberanía garantiza el control total sobre la infraestructura, permite la auditoría transparente del código, mitiga los riesgos asociados a cambios unilaterales de licencias por parte de proveedores propietarios evitando el *vendor lock-in* y asegura la independencia digital y la continuidad operativa a largo plazo. 
+Para Example Company, la adopción de tecnología abierta no es simplemente una estrategia de reducción de costos de licenciamiento; es una **postura de soberanía tecnológica**. Esta soberanía garantiza el control total sobre la infraestructura, permite la auditoría transparente del código, mitiga los riesgos asociados a cambios unilaterales de licencias por parte de proveedores propietarios evitando el *vendor lock-in* y asegura la independencia digital y la continuidad operativa a largo plazo. 
 
 Para materializar esta soberanía, se ha establecido el siguiente triplete tecnológico como el **stack empresarial mínimo de referencia**:
 
 -   **Rocky Linux:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con *Red Hat Enterprise Linux* (RHEL). Provee la estabilidad y el soporte a largo plazo necesarios para producción, manteniendo la soberanía sobre el sistema operativo y eliminando la dependencia de suscripciones propietarias, mientras ofrece seguridad nativa y robusta a nivel de kernel mediante *SELinux*.  
--   **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, Example.com mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.  
+-   **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, Example Company mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.  
 -   **PostgreSQL:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado y robusto disponible. Garantiza integridad ACID completa, extensibilidad sin límites y mecanismos de seguridad de nivel empresarial, evitando las licencias prohibitivas de motores propietarios. Para este laboratorio, utilizaremos la base de datos de demostración **`Pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos, sirviendo como nuestro campo de pruebas para las configuraciones de *hardening*.
 
 #### 3. Panorama de Amenazas
@@ -134,7 +134,7 @@ echo "192.168.122.25 pgsql.example.com tang.example.com ipa.example.com" | sudo 
 
 **Nota Técnica: Uso de dominios en documentación vs. producción**
  
-> En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente. Sin embargo, es fundamental aclarar que en un **entorno de producción real**, como el que requiere *Example.com*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `<empresa>.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
+> En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente. Sin embargo, es fundamental aclarar que en un **entorno de producción real**, como el que requiere *Example Company*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `<empresa>.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
 
 ##### 4.3. Instalación de Rocky Linux 10 y Modo FIPS
 
@@ -175,7 +175,7 @@ sudo oscap xccdf eval \
 /usr/share/xml/scap/ssg/content/ssg-rl10-ds.xml
 ```
 
-*Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example.com para demostrar qué reglas de seguridad fallan y cuáles pasan.
+*Nota didáctica:* El archivo `scan-report.html` es un reporte visual que puede presentar a la directiva de Example Company para demostrar qué reglas de seguridad fallan y cuáles pasan.
 
 ##### 4.5. Control de Aplicaciones e Integridad (AIDE)
 
@@ -344,10 +344,10 @@ ssl_key_file = 'server.key'
 ssl_min_protocol_version = 'TLSv1.2'
 ```
 
-Reinicie PostgreSQL y verifique la conexión cifrada desde un cliente:
+Reinicie PostgreSQL y verifique la conexión cifrada desde un cliente. **Nota:** Debe usar el nombre de dominio (`pgsql.example.com`) en lugar de la IP para que `verify-full` valide correctamente el CN del certificado.
 
 ```bash
-psql "host=192.168.122.25 dbname=pagila user=alumno sslmode=verify-full sslrootcert=/var/lib/pgsql/data/server.crt"
+psql "host=pgsql.example.com dbname=pagila user=alumno sslmode=verify-full sslrootcert=/var/lib/pgsql/data/server.crt"
 ```
 
 Dentro de `psql`, ejecute:
@@ -372,6 +372,12 @@ FROM pg_shadow WHERE passwd IS NOT NULL;
 ##### 9.2. Extensión pgcrypto (Cifrado a Nivel de Columna)
 
 *Nota didáctica:* A diferencia del cifrado en reposo (LUKS) que protege todo el disco, `pgcrypto` permite cifrar datos específicos (ej. números de tarjetas) antes de almacenarlos, de modo que ni siquiera un DBA con acceso root a la base de datos pueda leerlos sin la clave maestra.
+
+*Importante:* Dado que en la Fase 7.1 revocamos los permisos de creación en el esquema `public`, debe ejecutar los siguientes comandos como superusuario `postgres`:
+
+```bash
+sudo -u postgres psql -d pagila
+```
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -440,7 +446,7 @@ host    pagila    all    192.168.122.0/24    ldap \
 
 1. Cree un usuario en FreeIPA: `ipa user-add jdoe --first=John --last=Doe`
 2. Agréguelo al grupo de bases de datos: `ipa group-add-member pg_readonly --users=jdoe`
-3. Conecte desde un cliente: `psql -h 192.168.122.25 -U jdoe -d pagila`
+3. Conecte desde un cliente: `psql -h pgsql.example.com -U jdoe -d pagila`
 4. **Prueba de fuego:** Deshabilite el usuario en FreeIPA: `ipa user-disable jdoe`
 5. Intente reconectar inmediatamente. **Debe fallar**, demostrando la revocación centralizada instantánea.
 
@@ -460,15 +466,28 @@ sudo firewall-cmd --add-service=tang --permanent && sudo firewall-cmd --reload
 
 ##### 11.2. Vinculación del Volumen LUKS con Clevis
 
-Suponiendo que ya tiene un disco adicional (`/dev/vdb` o `/dev/sdb` dependiendo de la configuración de KVM) formateado con LUKS para alojar `$PGDATA`:
+Primero, debe inicializar el disco `/dev/vdb` como LUKS (paso que faltaba desde la Fase 4):
 
 ```bash
+## 1. Formatear el disco como LUKS2 (¡Esto borrará cualquier dato en /dev/vdb!)
+sudo cryptsetup luksFormat --type luks2 /dev/vdb
+
+## 2. Instalar herramientas de Clevis
 sudo dnf install -y clevis clevis-luks clevis-dracut
 
-## Vincular la partición LUKS al servidor Tang local (usando localhost para evitar problemas de DNS en el arranque temprano)
+## 3. Vincular la partición LUKS al servidor Tang local
 sudo clevis luks bind -d /dev/vdb tang '{"url":"http://localhost"}'
 
-## Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
+## 4. Abrir el dispositivo para crear el sistema de archivos
+sudo cryptsetup open /dev/vdb pgdata_crypt
+sudo mkfs.xfs /dev/mapper/pgdata_crypt
+
+## 5. Crear punto de montaje y montar
+sudo mkdir -p /datos/pgsql
+sudo mount /dev/mapper/pgdata_crypt /datos/pgsql
+sudo chown postgres:postgres /datos/pgsql
+
+## 6. Regenerar el initramfs para que el sistema pueda desbloquear el disco en el arranque
 sudo dracut -f --regenerate-all
 ```
 
@@ -492,7 +511,8 @@ log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
 Para auditoría detallada a nivel de objeto (requerida por normativas como PCI-DSS):
 
 ```bash
-sudo dnf install -y pgaudit_15
+## Nota: El nombre del paquete puede variar según el repositorio (pgaudit o pgaudit_15)
+sudo dnf install -y pgaudit
 ```
 
 En `postgresql.conf`:
@@ -559,7 +579,7 @@ El Write-Ahead Logging (WAL) garantiza la durabilidad (la 'D' de ACID), pero una
 
 ##### 13.4. Ajuste del Planificador de Consultas (Query Planner)
 
-PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (HDD) lento. Dado que Example.com utiliza almacenamiento moderno (SSD o SAN de alto rendimiento), debemos ajustar las "constantes" del planificador para que prefiera los índices sobre los barridos secuenciales.
+PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (HDD) lento. Dado que Example Company utiliza almacenamiento moderno (SSD o SAN de alto rendimiento), debemos ajustar las "constantes" del planificador para que prefiera los índices sobre los barridos secuenciales.
 
 *   **`random_page_cost`**: Reduce el costo relativo de las lecturas aleatorias (índices) frente a las secuenciales.
     ```ini
@@ -574,7 +594,7 @@ PostgreSQL asume por defecto que el almacenamiento es un disco duro mecánico (H
 
 *"Lo que no se mide, no se puede mejorar"*, advierte Javier López (Security Officer). Para auditar el rendimiento, Roberto activa la extensión `pg_stat_statements`, que rastrea estadísticas de ejecución de todas las consultas SQL.
 
-Dado que ya estamos cargando `pgaudit` en la Fase 9, debemos agregar esta extensión a la misma directiva:
+Dado que ya estamos cargando `pgaudit` en la Fase 9, debemos agregar esta extensión a la misma directiva (asegúrese de no borrar `pgaudit`):
 
 ```ini
 ## En postgresql.conf
@@ -639,7 +659,7 @@ Usted deberá entregar un informe ejecutivo y técnico que contenga:
 
 La ejecución integral de este laboratorio de cierre valida la transición desde los fundamentos académicos hacia las responsabilidades operativas de un Administrador de Bases de Datos (DBA) e Ingeniero de Sistemas en entornos productivos. Los conocimientos adquiridos a lo largo del curso encuentran su aplicación más crítica en la **protección, optimización y operación continua de datos empresariales**.
 
-Como resultado de la implementación del stack tecnológico en el escenario de Example.com, se establecen las siguientes conclusiones técnicas y estratégicas:
+Como resultado de la implementación del stack tecnológico en el escenario de Example Company, se establecen las siguientes conclusiones técnicas y estratégicas:
 
 1.  **La seguridad es un proceso continuo, no una configuración estática.** El endurecimiento inicial del sistema (FIPS, SELinux, `fapolicyd`) es insuficiente por sí solo. La implementación de herramientas de auditoría y verificación de integridad como `pgAudit`, AIDE y OpenSCAP demuestra que la postura de seguridad requiere monitoreo constante y validación periódica contra benchmarks (CIS/PCI-DSS).
 2.  **La defensa en profundidad es arquitectónicamente obligatoria.** La efectividad de la seguridad no reside en una sola capa, sino en la integración del stack completo: el control de acceso a nivel de kernel (SELinux), la gestión centralizada de identidades (FreeIPA/LDAP), el cifrado en tránsito (SSL/TLS) y el cifrado a nivel de aplicación (`pgcrypto`). Cada capa mitiga vectores de ataque específicos que las demás no pueden cubrir.
@@ -660,8 +680,10 @@ National Institute of Standards and Technology. (2019). *Security requirements f
 
 PostgreSQL Global Development Group. (2024). *PostgreSQL 16 documentation*. <https://www.postgresql.org/docs/current/>
 
-Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 configuring and managing networking*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/configuring_and_managing_networking/>
+Red Hat, Inc. (2024). *Red Hat Enterprise Linux 9 configuring and managing networking*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/configuring_and_managing_networking/>
 
 Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 security hardening*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/security_hardening/>
+
+Red Hat, Inc. (2024). *Red Hat Enterprise Linux 9 installing Identity Management*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/installing_identity_management/>
 
 Rocky Enterprise Software Foundation. (2026). *Rocky Linux 10 release notes*. <https://docs.rockylinux.org/release_notes/>
