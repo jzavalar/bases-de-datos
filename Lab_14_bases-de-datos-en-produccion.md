@@ -1,12 +1,12 @@
 ### Laboratorio 14: Bases de Datos en Producción
 (Draft)
 
-**Dr. Jesús Zavala Ruiz**
-**Última actualización:** 6 de julio de 2026
+**Dr. Jesús Zavala Ruiz**  
+**Última actualización:** 6 de julio de 2026  
 
-**Duración estimada:** 6 a 8 horas (sesión de cierre de curso)
-**Modalidad:** Práctica integradora, individual o en parejas.
-**Prerrequisitos:** Haber completado satisfactoriamente los laboratorios 01 al 13, particularmente el Laboratorio 05 (instalación de PostgreSQL en Fedora/Rocky Linux) y el Laboratorio 10 (cifrado de particiones con LUKS).
+**Duración estimada:** 6 a 8 horas (sesión de cierre de curso)  
+**Modalidad:** Práctica integradora, individual o en parejas.  
+**Prerrequisitos:** Haber completado satisfactoriamente los laboratorios 01 al 13, particularmente el Laboratorio 05 (instalación de PostgreSQL en Fedora/Rocky Linux) y el Laboratorio 10 (cifrado de particiones con LUKS).  
 
 ---
 
@@ -59,10 +59,10 @@ En la cultura de la ingeniería de software y *DevOps*, este riesgo se cuantific
 
 **Mitigación:** Por esta razón, este laboratorio presenta un equipo multidisciplinario. La seguridad en producción no es un acto heroico individual, sino un proceso colectivo, documentado y auditable. Las mejores prácticas dictan que:
 
-- Todo conocimiento crítico debe estar documentado en procedimientos (*runbooks*) accesibles y versionados.
-- Las credenciales y claves deben gestionarse mediante bóvedas de secretos (*secrets vaults*) con control de acceso basado en roles.
-- Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de doble control o *four-eyes*).
-- La rotación de roles y el entrenamiento cruzado (*cross-training*) son obligatorios, no opcionales.
+- Todo conocimiento crítico debe estar documentado en procedimientos (*runbooks*) accesibles y versionados.  
+- Las credenciales y claves deben gestionarse mediante bóvedas de secretos (*secrets vaults*) con control de acceso basado en roles.  
+- Al menos dos personas deben ser capaces de ejecutar cualquier procedimiento crítico (principio de doble control o *four-eyes*).  
+- La rotación de roles y el entrenamiento cruzado (*cross-training*) son obligatorios, no opcionales.  
 
 Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una bomba de tiempo organizacional.**
 
@@ -71,8 +71,6 @@ Recuerde: **un sistema seguro operado por una sola persona no es seguro; es una 
 En este laboratorio utilizamos el dominio `example.com` (y sus subdominios como `ipa.example.com` o `pgsql.example.com`). De acuerdo con los estándares de la IETF (RFC 2606 y RFC 6761), estos dominios están reservados exclusivamente para fines de documentación, pruebas y entornos académicos, garantizando que no existan colisiones con dominios reales en internet ni se exponga tráfico accidentalmente.
 
 **Sin embargo, es fundamental aclarar que en un entorno de producción real**, como el que requiere *Example Company*, la organización debe utilizar su **dominio legal y corporativo real** (por ejemplo, `<empresa>.com.mx`). El uso del dominio real es obligatorio en producción para garantizar la resolución DNS interna, la emisión de certificados SSL/TLS válidos por autoridades certificadoras (CA) públicas o privadas, y el cumplimiento estricto de las políticas de seguridad, trazabilidad y auditoría de la empresa.
-
----
 
 ### 2. Objetivos del Laboratorio
 
@@ -91,8 +89,6 @@ Al finalizar esta práctica integradora, el estudiante será capaz de:
 11. **Validar** empíricamente la efectividad de cada capa de seguridad mediante pruebas de intrusión controladas y scripts de validación automatizada.
 12. **Documentar** las decisiones técnicas, amenazas mitigadas y justificaciones estratégicas en un informe ejecutivo y técnico profesional.
 
----
-
 ### 3. El Stack Empresarial Mínimo: Soberanía Tecnológica
 
 Patricia Flores (*SysAdmin*) y Javier López (*Security Officer*) han definido la arquitectura del sistema. En el contexto actual, la dependencia de software propietario y el *vendor lock-in* (cautiverio tecnológico) representan riesgos financieros, operativos y estratégicos inaceptables para una organización que maneja datos críticos.
@@ -101,9 +97,9 @@ Para *Example Company*, la adopción de tecnología abierta no es simplemente un
 
 Para materializar esta soberanía, se ha establecido el siguiente triplete tecnológico como el **stack empresarial mínimo de referencia**:
 
-- **Rocky Linux 10:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con *Red Hat Enterprise Linux* (RHEL). Provee la estabilidad y el soporte a largo plazo necesarios para producción, manteniendo la soberanía sobre el sistema operativo y eliminando la dependencia de suscripciones propietarias, mientras ofrece seguridad nativa y robusta a nivel de kernel mediante *SELinux*.
-- **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, *Example Company* mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.
-- **PostgreSQL 16:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado y robusto disponible. Garantiza integridad ACID completa, extensibilidad sin límites y mecanismos de seguridad de nivel empresarial, evitando las licencias prohibitivas de motores propietarios. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos, sirviendo como nuestro campo de pruebas para las configuraciones de *hardening*.
+- **Rocky Linux 10:** Una distribución de Linux de grado empresarial, construida como reemplazo binario 100% compatible con *Red Hat Enterprise Linux* (RHEL). Provee la estabilidad y el soporte a largo plazo necesarios para producción, manteniendo la soberanía sobre el sistema operativo y eliminando la dependencia de suscripciones propietarias, mientras ofrece seguridad nativa y robusta a nivel de kernel mediante *SELinux*.  
+- **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, *Example Company* mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.  
+- **PostgreSQL 16:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado y robusto disponible. Garantiza integridad ACID completa, extensibilidad sin límites y mecanismos de seguridad de nivel empresarial, evitando las licencias prohibitivas de motores propietarios. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos, sirviendo como nuestro campo de pruebas para las configuraciones de *hardening*.  
 
 ---
 
@@ -111,16 +107,14 @@ Para materializar esta soberanía, se ha establecido el siguiente triplete tecno
 
 Antes de configurar cualquier parámetro, Javier López (*Security Officer*) le pide una reunión. Quiere entender contra qué están defendiendo los datos. Los vectores de ataque más comunes en entornos productivos incluyen:
 
-- **Inyección SQL (*SQL Injection*, *SQLi*):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.
-- **Fuerza Bruta y Ataque de Relleno de Credenciales (*credential stuffing*):** Intentos masivos de autenticación contra el servicio expuesto.
-- **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.
-- **Captura de Tráfico de Red (*Sniffing de Red*) o Ataque *Man-in-the-Middle* (*MitM*):** Intercepción de consultas y datos sensibles transmitidos en texto plano.
-- **Denegación de Servicio (*Denial of Service*, *DoS*):** Saturación de conexiones o ejecución de consultas maliciosas.
-- **Explotación del Sistema Operativo:** Compromiso del *host* subyacente para acceder directamente a los archivos de datos (`$PGDATA`).
-- **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas o fuga de información (*leaks*).
-- **Amenaza Interna (*Insider Threat*):** Empleados con acceso legítimo que abusan de sus privilegios.
-
----
+- **Inyección SQL (*SQL Injection*, *SQLi*):** Explotación de vulnerabilidades en la capa de aplicación para manipular consultas SQL.  
+- **Fuerza Bruta y Ataque de Relleno de Credenciales (*credential stuffing*):** Intentos masivos de autenticación contra el servicio expuesto.  
+- **Escalamiento de Privilegios:** Abuso de configuraciones laxas de roles para obtener acceso administrativo.  
+- **Captura de Tráfico de Red (*Sniffing de Red*) o Ataque *Man-in-the-Middle* (*MitM*):** Intercepción de consultas y datos sensibles transmitidos en texto plano.  
+- **Denegación de Servicio (*Denial of Service*, *DoS*):** Saturación de conexiones o ejecución de consultas maliciosas.  
+- **Explotación del Sistema Operativo:** Compromiso del *host* subyacente para acceder directamente a los archivos de datos (`$PGDATA`).  
+- **Robo de Backups:** Acceso no autorizado a copias de seguridad no cifradas o fuga de información (*leaks*).  
+- **Amenaza Interna (*Insider Threat*):** Empleados con acceso legítimo que abusan de sus privilegios.  
 
 ### 5. Fase 1: Creación del Entorno y Endurecimiento del Sistema Operativo
 
@@ -130,11 +124,11 @@ Roberto Hernández (*DBA Senior*) le advierte: *"La seguridad de una base de dat
 
 Para este laboratorio, usted provisionará su propio servidor. Dado que ejecutaremos PostgreSQL, FreeIPA (como cliente) y servicios de cifrado, necesitaremos una Máquina Virtual (MV) con las siguientes características:
 
-- **CPU:** 2 a 4 núcleos.
-- **RAM:** 6 GB a 8 GB (FreeIPA y PostgreSQL consumen memoria).
-- **Red:** Configurar la interfaz de red con la IP estática **`192.168.122.25`** (máscara `255.255.255.0`).
-- **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.
-- **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.
+- **CPU:** 2 a 4 núcleos.  
+- **RAM:** 6 GB a 8 GB (FreeIPA y PostgreSQL consumen memoria).  
+- **Red:** Configurar la interfaz de red con la IP estática **`192.168.122.25`** (máscara `255.255.255.0`).  
+- **Disco 1 (Sistema):** 40 GB para el sistema operativo Rocky Linux 10.  
+- **Disco 2 (Datos):** 20 GB adicionales (sin formatear) para crear la partición cifrada con LUKS y montar ahí el directorio `$PGDATA`.  
 
 *Nota didáctica:* En la vida real, el servidor Tang (para NBDE) y el servidor FreeIPA estarían en máquinas separadas. Para este "monolito de laboratorio", simularemos estos servicios en la misma MV. Dado que no contamos con un servidor DNS externo, configure el archivo `/etc/hosts` para resolver los nombres ficticios:
 
@@ -235,8 +229,6 @@ sudo firewall-cmd --reload
 
 Finalmente, endurezca SSH editando `/etc/ssh/sshd_config`: deshabilite el login root por contraseña, habilite solo autenticación por llaves públicas y limite los intentos de autenticación, tal como lo hizo en el laboratorio 5.
 
----
-
 ### 6. Fase 2: Instalación de PostgreSQL y Carga de Datos
 
 #### 6.1. Instalación del Motor de Base de Datos
@@ -279,8 +271,6 @@ sudo -u postgres psql -d pagila -f pagila-data.sql
 
 Verifique que las tablas (film, customer, payment, etc.) se hayan creado correctamente.
 
----
-
 ### 7. Fase 3: Control de Acceso de Red y Autenticación Local
 
 #### 7.1. Configuración de postgresql.conf
@@ -317,8 +307,6 @@ host    all             all             0.0.0.0/0               reject
 
 Reinicie PostgreSQL: `sudo systemctl restart postgresql-16`.
 
----
-
 ### 8. Fase 4: Gestión de Identidades y Privilegios (Modelo de Roles)
 
 Conéctese como superusuario: `sudo -u postgres psql`.
@@ -350,8 +338,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_readw
 -- Usuario de aplicación local (para pruebas antes de LDAP)
 CREATE ROLE alumno LOGIN PASSWORD 'uamIztapalapa' IN ROLE app_readwrite;
 ```
-
----
 
 ### 9. Fase 5: Cifrado en Tránsito (SSL/TLS)
 
@@ -391,8 +377,6 @@ SELECT s.ssl, s.version, s.cipher
 FROM pg_stat_ssl s JOIN pg_stat_activity a ON s.pid = a.pid
 WHERE a.usename = current_user;
 ```
-
----
 
 ### 10. Fase 6: Mecanismos de Cifrado Nativo de PostgreSQL
 
@@ -452,8 +436,6 @@ openssl enc -aes-256-cbc -salt -pbkdf2 -out /var/lib/pgsql/backups/pagila_backup
 -pass pass:clave_backup_muy_segura
 ```
 
----
-
 ### 11. Fase 7: Autenticación Centralizada con FreeIPA / LDAP
 
 #### 11.1. Configuración del Cliente LDAP
@@ -502,8 +484,6 @@ Una vez creado el rol, proceda con la prueba de revocación:
 3. Conecte desde un cliente usando la contraseña de FreeIPA: `psql -h pgsql.example.com -U jdoe -d pagila`
 4. **Prueba de fuego:** Deshabilite el usuario en FreeIPA: `ipa user-disable jdoe`
 5. Intente reconectar inmediatamente. **Debe fallar**, demostrando la revocación centralizada instantánea.
-
----
 
 ### 12. Fase 8: Cifrado en Reposo con NBDE (Clevis y Tang)
 
@@ -600,8 +580,6 @@ sudo aide --init
 sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 ```
 
----
-
 ### 13. Fase 9: Auditoría y Monitoreo Continuo
 
 #### 13.1. Logs Nativos
@@ -637,8 +615,6 @@ Reinicie PostgreSQL y verifique los logs:
 ```bash
 sudo tail -f /datos/pgsql/log/postgresql-*.log | grep AUDIT
 ```
-
----
 
 ### 14. Fase 10: Tuning y Optimización de Rendimiento en Producción
 
@@ -744,8 +720,6 @@ Y configurar PostgreSQL para usarlas:
 huge_pages = try
 ```
 
----
-
 ### 15. Entregables, Validación y Rúbrica
 
 #### 15.1. Informe Técnico de Hardening y Tuning
@@ -790,9 +764,7 @@ echo "=== Validación Completa ==="
 | **Tuning de Rendimiento (`postgresql.conf`, `pg_stat_statements`)** | **15%** |
 | Claridad técnica, justificación estratégica y formato del informe | 15% |
 
----
-
-### 16. Conclusiones del Laboratorio
+### 16. Conclusiones
 
 La ejecución integral de este laboratorio de cierre valida la transición desde los fundamentos académicos hacia las responsabilidades operativas de un Administrador de Bases de Datos (DBA) e Ingeniero de Sistemas en entornos productivos. Los conocimientos adquiridos a lo largo del curso encuentran su aplicación más crítica en la **protección, optimización y operación continua de datos empresariales**.
 
@@ -807,30 +779,29 @@ Como resultado de la implementación del stack tecnológico en el escenario de *
 
 Este laboratorio consolida la competencia técnica necesaria para diseñar, desplegar y mantener sistemas de bases de datos resilientes, asegurando que la infraestructura de datos no solo sea funcional, sino inherentemente segura, optimizada y preparada para satisfacer las demandas críticas de un entorno de producción real.
 
----
 
 ### 17. Referencias
 
-Center for Internet Security. (2023). *CIS PostgreSQL 16 benchmark v1.0.0*. https://www.cisecurity.org/benchmark/postgresql
+Center for Internet Security. (2023). *CIS PostgreSQL 16 benchmark v1.0.0*. <https://www.cisecurity.org/benchmark/postgresql>
 
-International Organization for Standardization. (2022). *Information security, cybersecurity and privacy protection — Information security management systems — Requirements* (ISO/IEC 27001:2022). https://www.iso.org/standard/27001
+International Organization for Standardization. (2022). *Information security, cybersecurity and privacy protection — Information security management systems — Requirements* (ISO/IEC 27001:2022). <https://www.iso.org/standard/27001>
 
 Kumar, V., & Mehra, G. (2024). *RedHat Enterprise Linux 9 for beginners: A comprehensive guide for learning, administration, and deployment*. BPB Publications.
 
-National Institute of Standards and Technology. (2019). *Security requirements for cryptographic modules* (FIPS Publication 140-3). U.S. Department of Commerce. https://doi.org/10.6028/NIST.FIPS.140-3
+National Institute of Standards and Technology. (2019). *Security requirements for cryptographic modules* (FIPS Publication 140-3). U.S. Department of Commerce. <https://doi.org/10.6028/NIST.FIPS.140-3>
 
-National Institute of Standards and Technology. (2020). *Security and privacy controls for information systems and organizations* (NIST Special Publication 800-53 Revision 5). U.S. Department of Commerce. https://doi.org/10.6028/NIST.SP.800-53r5
+National Institute of Standards and Technology. (2020). *Security and privacy controls for information systems and organizations* (NIST Special Publication 800-53 Revision 5). U.S. Department of Commerce. <https://doi.org/10.6028/NIST.SP.800-53r5>
 
-Payment Card Industry Security Standards Council. (2022). *PCI DSS v4.0: Payment Card Industry Data Security Standard*. https://www.pcisecuritystandards.org/document_library?category=pcidss&document=pci_dss
+Payment Card Industry Security Standards Council. (2022). *PCI DSS v4.0: Payment Card Industry Data Security Standard*. <https://www.pcisecuritystandards.org/document_library?category=pcidss&document=pci_dss>
 
-PostgreSQL Global Development Group. (2024). *PostgreSQL 16 documentation*. https://www.postgresql.org/docs/current/
+PostgreSQL Global Development Group. (2026). *PostgreSQL 18 documentation*. <https://www.postgresql.org/docs/current/>
 
-Red Hat, Inc. (2024). *Red Hat Enterprise Linux 9 configuring and managing networking*. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/configuring_and_managing_networking/
+Red Hat, Inc. (2024). *Red Hat Enterprise Linux 9 configuring and managing networking*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/configuring_and_managing_networking/>
 
-Red Hat, Inc. (2024). *Red Hat Enterprise Linux 9 installing Identity Management*. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/installing_identity_management/
+Red Hat, Inc. (2024). *Red Hat Enterprise Linux 9 installing Identity Management*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/installing_identity_management/>
 
-Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 security hardening*. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/security_hardening/
+Red Hat, Inc. (2026). *Red Hat Enterprise Linux 10 security hardening*. <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/10/html-single/security_hardening/>
 
-Rocky Enterprise Software Foundation. (2026). *Rocky Linux 10 release notes*. https://docs.rockylinux.org/release_notes/
+Rocky Enterprise Software Foundation. (2026). *Rocky Linux 10 release notes*. <https://docs.rockylinux.org/release_notes/>
 
-Stafford, T., & Center for Internet Security. (2023). *CIS PostgreSQL 16 benchmark v1.0.0*. Center for Internet Security. https://www.cisecurity.org/benchmark/postgresql
+Stafford, T., & Center for Internet Security. (2023). *CIS PostgreSQL 16 benchmark v1.0.0*. Center for Internet Security. <https://www.cisecurity.org/benchmark/postgresql>
