@@ -2,7 +2,7 @@
 (Draft)
 
 **Dr. Jesús Zavala Ruiz**  
-**Última actualización:** 6 de julio de 2026  
+**Última actualización:** 5 de julio de 2026  
 
 **Duración estimada:** 6 a 8 horas (sesión de cierre de curso)  
 **Modalidad:** Práctica integradora, individual o en parejas.  
