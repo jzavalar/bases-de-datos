@@ -10,6 +10,10 @@
 
 ---
 
+###  Objetivo
+
+Al concluir esta práctica integradora, el estudiante habrá consolidado las competencias necesarias para diseñar, desplegar y asegurar una infraestructura de bases de datos en producción bajo un enfoque de defensa en profundidad. Esto implica la aplicación rigurosa de controles de seguridad a nivel de sistema operativo (Rocky Linux 10, FIPS, SELinux), la gestión centralizada de identidades (FreeIPA), el cifrado de datos en tránsito y reposo, así como la implementación de auditoría continua y optimización de rendimiento en PostgreSQL, garantizando la soberanía tecnológica y la protección de los activos de información más críticos de la organización.
+
 ### 1. Introducción: Del Aula al Mundo Real
 
 Hasta ahora, usted ha trabajado en un entorno académico controlado. Ha diseñado esquemas, escrito consultas SQL y optimizado bases de datos. Sin embargo, en esta sesión final, el objetivo cambia de paradigma: dejaremos la seguridad del entorno de desarrollo para adentrarnos en la realidad, a menudo hostil, de un entorno de producción.
