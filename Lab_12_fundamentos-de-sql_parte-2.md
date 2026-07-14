@@ -1016,7 +1016,7 @@ Horario de presentación de la evaluación final:
 | 2243050957    | Miércoles         | 22 de julio        | 17:00          | 17:30       |
 | 2193055660    | Miércoles         | 22 de julio        | 17:30          | 18:00       |
 
-Los estudiantes que no puedan asistir a la sesión del 20 o 22 de julio deberán notificar al profesor con al menos 48 horas de anticipación para programar una sesión extraordinaria, la cual estará sujeta a disponibilidad de agenda.
+Los estudiantes que no puedan asistir a la sesión del 20 o 22 de julio deberán presentar la Evaluación de Recuperación.
 
 #### 13. Referencias Bibliográficas
 
