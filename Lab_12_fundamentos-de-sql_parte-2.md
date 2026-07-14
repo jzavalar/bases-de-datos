@@ -955,7 +955,7 @@ En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los sigu
 
 #### 11. Cronograma y Políticas de Evaluación
 
-**Fecha límite de entrega:** Miércoles 8 de julio de 2026, 24:00 horas.
+**Fecha límite de entrega:** Viernes 17 de julio de 2026, 16:00 horas.
 
 *   **Trabajo estrictamente individual.**
 *   **Integridad Académica:** La detección de patrones generados por IA, o la ausencia de la bitácora física (cuaderno), resultará en la anulación automática del laboratorio y el inicio del procedimiento correspondiente por falta a la ética académica.
