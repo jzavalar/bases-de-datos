@@ -1,7 +1,8 @@
 ### Laboratorio 12. Fundamentos del Lenguaje de Consulta Estructurada (SQL). Parte 2.
 
 **Dr. Jesús Zavala Ruiz**   
-**Última actualización:** 30 de junio de 2026.  
+**Creación:** 30 de junio de 2026.  
+**Última actualización:** 13 de julio de 2026.  
 
 ---
 
@@ -965,9 +966,9 @@ Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige l
 
 #### 12. Sesión de Defensa Oral y Verificación de Competencias
 
-**Fecha:** Miércoles 8 y 10 de julio de 2026, en el horario regular de la clase.
+**Fecha:** Lunes 20 y Miércoles 22 de julio de 2026, en el horario regular de la clase.
 
-Con el propósito de garantizar la integridad académica y verificar la apropiación real de las competencias desarrolladas durante el laboratorio, se llevará a cabo una **sesión de defensa oral individual** durante las sesiones de los días 8 y 10 de julio de 2026. Cada estudiante deberá presentarse con su cuaderno físico (bitácora analógica) y su script SQL (`laboratorio12_pagila.sql`) para participar en un ejercicio de verificación de 10 a 15 minutos, durante el cual el profesor formulará preguntas sobre:
+Con el propósito de garantizar la integridad académica y verificar la apropiación real de las competencias desarrolladas durante el laboratorio, se llevará a cabo una **sesión de defensa oral individual** durante las sesiones de los días 20 y 22 de julio de 2026. Cada estudiante deberá presentarse con su cuaderno físico (bitácora analógica) y su script SQL (`laboratorio12_pagila.sql`) para participar en un ejercicio de verificación de 30 minutos, durante el cual el profesor formulará preguntas sobre:
 
 1. **Explicación del razonamiento lógico:** El estudiante deberá explicar, en sus propias palabras, la lógica detrás de al menos tres consultas de su elección, identificando el orden de ejecución y justificando el uso de `JOIN`, `GROUP BY`, `HAVING` o funciones de ventana.
 
@@ -981,7 +982,7 @@ Con el propósito de garantizar la integridad académica y verificar la apropiac
 
 **Importante:** La sesión de defensa oral constituye parte importente de la calificación final del laboratorio. La incapacidad de explicar el código propio, la ausencia de la bitácora física, o la evidencia de que el estudiante no comprendió las consultas presentadas (independientemente de si fueron generadas con asistencia de IA o no), resultará en la anulación de esta porción de la calificación. El objetivo de esta evaluación no es punitivo, sino pedagógico: garantizar que las competencias declaradas en la rúbrica de autoevaluación (sección 8) hayan sido efectivamente desarrolladas, y que el estudiante esté en capacidad de demostrarlo en un entorno profesional real donde la comprensión profunda del código es indispensable.
 
-Los estudiantes que no puedan asistir a la sesión del 6 de julio deberán notificar al profesor con al menos 48 horas de anticipación para programar una sesión extraordinaria, la cual estará sujeta a disponibilidad de agenda.
+Los estudiantes que no puedan asistir a la sesión del 20 o 22 de julio deberán notificar al profesor con al menos 48 horas de anticipación para programar una sesión extraordinaria, la cual estará sujeta a disponibilidad de agenda.
 
 #### 13. Referencias Bibliográficas
 
