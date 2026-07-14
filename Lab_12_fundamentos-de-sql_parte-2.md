@@ -1002,7 +1002,7 @@ print(evaluacion)
  [1] 3 10 2 8 6
  [6] 9 1 7 5 4
 ```
-Horario de presentación de la evaluación final:
+Horario de presentación de la Evaluación Global:
 
 | Matrícula     | Día               | Fecha               | Hora de inicio | Hora de fin |
 | --------------|-------------------|---------------------|----------------|-------------|
