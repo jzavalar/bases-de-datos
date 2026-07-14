@@ -982,6 +982,8 @@ Con el propósito de garantizar la integridad académica y verificar la apropiac
 
 **Importante:** La sesión de defensa oral constituye parte importente de la calificación final del laboratorio. La incapacidad de explicar el código propio, la ausencia de la bitácora física, o la evidencia de que el estudiante no comprendió las consultas presentadas (independientemente de si fueron generadas con asistencia de IA o no), resultará en la anulación de esta porción de la calificación. El objetivo de esta evaluación no es punitivo, sino pedagógico: garantizar que las competencias declaradas en la rúbrica de autoevaluación (sección 8) hayan sido efectivamente desarrolladas, y que el estudiante esté en capacidad de demostrarlo en un entorno profesional real donde la comprensión profunda del código es indispensable.
 
+Orden de Presentacion de la Evaluación Global, según el número de matrícula, calculado con R: 
+
 ```r
 # Establecer la semilla fija
 set.seed(123)
@@ -993,17 +995,27 @@ matriculas <- c(2213042983, 2243051696, 2222018735, 2193055660, 2243050957,
              2213042572, 2203009190, 2243009245, 2193055777, 2243012733)
 
 # Ordenar aleatoriamente los números
-orden_aleatorio_numeros <- sample(numeros)
-orden_aleatorio_matriculas <- sample(matriculas)
+evaluacion <- sample(matriculas)
 
 # Mostrar el resultado
-print(orden_aleatorio_numeros)
-[1]  3 10  2  8  6  9  1  7  5  4
-
-print(orden_aleatorio_matriculas)
+print(evaluacion)
  [1] 2222018735 2243012733 2243051696 2243009245 2213042572
  [6] 2193055777 2213042983 2203009190 2243050957 2193055660
 ```
+Horario de presentación de la evaluación final:
+
+| Matrícula     | Día               | Fecha               | Hora de inicio | Hora de fin |
+| --------------|-------------------|---------------------|----------------|-------------|
+| 2222018735    | Lunes             | 20 de julio        | 16:00          | 16:30       |
+| 2243012733    | Lunes             | 20 de julio        | 16:30          | 17:00       |
+| 2243051696    | Lunes             | 20 de julio        | 17:00          | 17:30       |
+| 2243009245    | Lunes             | 20 de julio        | 17:30          | 18:00       |
+| 2213042572    | Lunes             | 20 de julio        | 18:00          | 18:30       |
+| 2193055777    | Miércoles         | 22 de julio        | 16:00          | 16:30       |
+| 2213042983    | Miércoles         | 22 de julio        | 16:30          | 17:00       |
+| 2243050957    | Miércoles         | 22 de julio        | 17:00          | 17:30       |
+| 2193055660    | Miércoles         | 22 de julio        | 17:30          | 18:00       |
+
 Los estudiantes que no puedan asistir a la sesión del 20 o 22 de julio deberán notificar al profesor con al menos 48 horas de anticipación para programar una sesión extraordinaria, la cual estará sujeta a disponibilidad de agenda.
 
 #### 13. Referencias Bibliográficas
