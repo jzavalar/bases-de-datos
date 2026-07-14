@@ -1002,7 +1002,7 @@ print(evaluacion)
  [1] 2222018735 2243012733 2243051696 2243009245 2213042572
  [6] 2193055777 2213042983 2203009190 2243050957 2193055660
 ```
-Horario de presentación de la evaluación final:
+Horario de presentación de la Evaluación Global:
 
 | Matrícula     | Día               | Fecha               | Hora de inicio | Hora de fin |
 | --------------|-------------------|---------------------|----------------|-------------|
