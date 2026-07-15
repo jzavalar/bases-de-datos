@@ -2,7 +2,7 @@
 
 **Dr. Jesús Zavala Ruiz**   
 **Creación:** 30 de junio de 2026.  
-**Última actualización:** 13 de julio de 2026.  
+**Última actualización:** 15 de julio de 2026.  
 
 ---
 
@@ -955,34 +955,21 @@ En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los sigu
 
 #### 11. Cronograma y Políticas de Evaluación
 
-**Fecha límite de entrega:** Viernes 17 de julio de 2026, 16:00 horas.
+**Fecha límite de entrega del trabajo escrito:** Viernes 17 de julio de 2026, 16:00 horas.
 
-*   **Trabajo estrictamente individual.**
-*   **Integridad Académica:** La detección de patrones generados por IA, o la ausencia de la bitácora física (cuaderno), resultará en la anulación automática del laboratorio y el inicio del procedimiento correspondiente por falta a la ética académica.
-*   **Entregas tardías:** Se aplicará una penalización del 10% por cada día de retraso.
-*   **Evidencia incompleta:** La ausencia de los archivos de log o de los hashes de integridad se calificará como trabajo no entregado.
+*   **Trabajo estrictamente individual.**  
+*   **Integridad Académica:** La detección de patrones generados por IA sin comprensión, o la ausencia de la bitácora física (cuaderno), resultará en la anulación automática del laboratorio.  
+*   **Entregas tardías:** Se aplicará una penalización del 10% por cada día de retraso.  
+*   **Evidencia incompleta:** La ausencia de los archivos de log o de los hashes de integridad se calificará como trabajo no entregado.  
 
 Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige la ingeniería de datos. La fricción que experimentan hoy en el diseño lógico es la competencia que garantizará su excelencia profesional mañana.
 
 #### 12. Sesión de Defensa Oral y Verificación de Competencias
 
-**Fecha:** Lunes 20 y Miércoles 22 de julio de 2026, en el horario regular de la clase.
+Para garantizar que el rigor metodológico y la apropiación de las competencias descritas en las secciones anteriores sean efectivamente alcanzados, este laboratorio culmina con una evaluación presencial e individual. Esta sesión no busca penalizar, sino validar que el estudiante posee el dominio teórico y práctico necesario para operar, depurar y auditar sistemas de bases de datos en un entorno profesional real, donde la comprensión profunda del código es indispensable.
 
-Con el propósito de garantizar la integridad académica y verificar la apropiación real de las competencias desarrolladas durante el laboratorio, se llevará a cabo una **sesión de defensa oral individual** durante las sesiones de los días 20 y 22 de julio de 2026. Cada estudiante deberá presentarse con su cuaderno físico (bitácora analógica) y su script SQL (`laboratorio12_pagila.sql`) para participar en un ejercicio de verificación de 30 minutos, durante el cual el profesor formulará preguntas sobre:
-
-1. **Explicación del razonamiento lógico:** El estudiante deberá explicar, en sus propias palabras, la lógica detrás de al menos tres consultas de su elección, identificando el orden de ejecución y justificando el uso de `JOIN`, `GROUP BY`, `HAVING` o funciones de ventana.
-
-2. **Modificación en vivo:** A partir de una consulta de su propio script, el profesor solicitará una modificación específica (por ejemplo, agregar un filtro, cambiar un `INNER JOIN` por un `LEFT JOIN`, o incorporar una función de agregación). El estudiante deberá realizar el cambio en la terminal y explicar el resultado.
-
-3. **Relación con la bitácora física:** El estudiante deberá identificar en su cuaderno la consulta donde realizó más correcciones o tachaduras, y explicar qué error conceptual cometió inicialmente y cómo lo resolvió.
-
-4. **Interpretación de evidencia forense:** A partir de los archivos de log entregados, el estudiante deberá identificar una consulta específica ejecutada por él, señalar el timestamp, el usuario y el PID registrado, y explicar cómo esta evidencia garantiza la trazabilidad de su trabajo.
-
-5. **Fundamentos teóricos:** Se formularán entre dos y tres preguntas del cuestionario teórico (sección 7), seleccionadas aleatoriamente, que el estudiante deberá responder oralmente sin consulta de material.
-
-**Importante:** La sesión de defensa oral constituye parte importente de la calificación final del laboratorio. La incapacidad de explicar el código propio, la ausencia de la bitácora física, o la evidencia de que el estudiante no comprendió las consultas presentadas (independientemente de si fueron generadas con asistencia de IA o no), resultará en la anulación de esta porción de la calificación. El objetivo de esta evaluación no es punitivo, sino pedagógico: garantizar que las competencias declaradas en la rúbrica de autoevaluación (sección 8) hayan sido efectivamente desarrolladas, y que el estudiante esté en capacidad de demostrarlo en un entorno profesional real donde la comprensión profunda del código es indispensable.
-
-Orden de Presentacion de la Evaluación Global, según el número de matrícula, calculado con R: 
+**Fechas y Horario de Presentación:**
+La evaluación se llevará a cabo los días **lunes 20 y miércoles 22 de julio de 2026**, en el horario regular de la clase. El orden de presentación se ha determinado mediante un sorteo aleatorio con semilla fija (`set.seed(123)` en R) para garantizar la imparcialidad:
 
 ```r
 # Establecer la semilla fija
@@ -1002,38 +989,95 @@ print(evaluacion)
  [1] 2222018735 2243012733 2243051696 2243009245 2213042572
  [6] 2193055777 2213042983 2203009190 2243050957 2193055660
 ```
-Horario de presentación de la Evaluación Global:
+
+Programación de Evaluación Oral
 
 | Matrícula     | Día               | Fecha               | Hora de inicio | Hora de fin |
-| --------------|-------------------|---------------------|----------------|-------------|
-| 2222018735    | Lunes             | 20 de julio        | 16:00          | 16:30       |
-| 2243012733    | Lunes             | 20 de julio        | 16:30          | 17:00       |
-| 2243051696    | Lunes             | 20 de julio        | 17:00          | 17:30       |
-| 2243009245    | Lunes             | 20 de julio        | 17:30          | 18:00       |
-| 2213042572    | Lunes             | 20 de julio        | 18:00          | 18:30       |
-| 2193055777    | Miércoles         | 22 de julio        | 16:00          | 16:30       |
-| 2213042983    | Miércoles         | 22 de julio        | 16:30          | 17:00       |
-| 2243050957    | Miércoles         | 22 de julio        | 17:00          | 17:30       |
-| 2193055660    | Miércoles         | 22 de julio        | 17:30          | 18:00       |
+|:-------------:|:-----------------:|:-------------------:|:--------------:|:-----------:|
+| 2222018735    | Lunes             | 20 de julio         | 16:00          | 16:30       |
+| 2243012733    | Lunes             | 20 de julio         | 16:30          | 17:00       |
+| 2243051696    | Lunes             | 20 de julio         | 17:00          | 17:30       |
+| 2243009245    | Lunes             | 20 de julio         | 17:30          | 18:00       |
+| 2213042572    | Lunes             | 20 de julio         | 18:00          | 18:30       |
+| 2193055777    | Miércoles         | 22 de julio         | 16:00          | 16:30       |
+| 2213042983    | Miércoles         | 22 de julio         | 16:30          | 17:00       |
+| 2243050957    | Miércoles         | 22 de julio         | 17:00          | 17:30       |
+| 2193055660    | Miércoles         | 22 de julio         | 17:30          | 18:00       |
 
-Los estudiantes que no puedan asistir a la sesión del 20 o 22 de julio deberán presentar la Evaluación de Recuperación.
+*Nota: Los estudiantes que no puedan asistir a su horario asignado deberán presentar la Evaluación de Recuperación.*
 
-#### 13. Referencias Bibliográficas
+##### 12.1. Estructura de la Sesión de Defensa (30 minutos)
+
+Cada sesión se dividirá en cuatro fases estrictas para evaluar de manera integral:
+
+1. **Fase 1: Verificación de Artefactos (5 min):** El estudiante presenta su bitácora física y su script SQL. El evaluador verifica que el código en pantalla coincida con el diseño a mano y que los hashes de la evidencia forense sean válidos (`sha256sum -c`).
+2. **Fase 2: Ejecución y Modificación en Vivo (10 min):** El estudiante ejecuta una consulta de su propio script. El evaluador solicitará una modificación en tiempo real (ej. "Cambie este `INNER JOIN` por un `LEFT JOIN` y explique el cambio en el conjunto de resultados" o "Agregue una función de ventana para calcular el acumulado").
+3. **Fase 3: Interrogatorio Teórico-Práctico (10 min):** El evaluador formulará preguntas específicas del Banco de Líneas de Interrogatorio (ver 12.2), exigiendo al estudiante que explique el orden de ejecución lógica o que interprete un plan de ejecución (`EXPLAIN ANALYZE`).
+4. **Fase 4: Validación Forense (5 min):** El estudiante debe abrir uno de sus archivos de log, localizar la consulta que acaba de ejecutar, identificar el `timestamp`, el `PID` y el `user`, y explicar cómo esta evidencia garantiza la no repudiación de su acción.
+
+##### 12.2. Líneas de Interrogatorio (Banco Ilustrativo)
+
+*Nota para el estudiante: Las siguientes preguntas son ejemplos representativos de las competencias que se evaluarán. El evaluador se reserva el derecho de formular variantes de estas preguntas, profundizar en cualquier línea de código de su script entregado, o solicitar explicaciones sobre decisiones de diseño no contempladas en esta lista. La memorización de respuestas sin comprensión conceptual será evidente durante la fase de modificación en vivo.*
+
+- **Bloque A (Orden Lógico y Agregación):** *"Explique por qué el motor rechaza una consulta que intenta usar un alias definido en el `SELECT` dentro de la cláusula `WHERE`. Describa el orden de ejecución lógico."* / *"¿Por qué utilizó `SUM(CASE WHEN...)` en lugar de un `WHERE` en su agregación condicional?"*
+- **Bloque B (JOINs y Rendimiento):** *"Describa los tres pasos internos que ejecuta PostgreSQL al procesar un `LEFT JOIN`. ¿Por qué la aparición de `NULL` en las columnas de la derecha es información valiosa para la auditoría?"* / *"¿Por qué una subconsulta correlacionada es exponencialmente más lenta que un `JOIN` con tablas derivadas en volúmenes grandes?"*
+- **Bloque C (Funciones de Ventana y Tipos Avanzados):** *"¿Cuál es la diferencia ontológica entre `GROUP BY` y una Función de Ventana (`OVER`)? ¿Por qué `GROUP BY` 'colapsa' las filas y `OVER` preserva el detalle?"* / *"¿Qué funciones nativas debe usar para extraer los límites de un `tsrange` y por qué no puede tratarlo como un `TIMESTAMP` simple?"*
+- **Bloque D (Programación y Administración):** *"Explique la diferencia técnica entre una `FUNCTION` y un `PROCEDURE`. ¿Cuándo es obligatorio usar `START TRANSACTION` y `COMMIT`?"* / *"Explique cómo aplicó el 'principio de mínimo privilegio' en el rol `analista_ventas`."*
+- **Bloque E (Auditoría Forense):** *"¿Por qué fue obligatorio regenerar los hashes con rutas relativas en el host? ¿Qué invalida criptográficamente si un archivo es modificado después de la generación del hash?"*
+
+##### 12.3. Rúbrica de Calificación (100 puntos)
+
+La defensa oral se calificará de forma independiente sobre 100 puntos, los cuales se convertirán al porcentaje asignado en el sílabo de la UEA.
+
+| Criterio de Evaluación | Puntos | Descripción del Desempeño Esperado |
+| :--- | :---: | :--- |
+| **Dominio del Orden Lógico** | 20 | Explica con claridad el orden de ejecución (`FROM` → `WHERE` → `GROUP BY` → `SELECT`). Justifica el uso de cláusulas sin ambigüedades. |
+| **Habilidad Práctica en Vivo** | 25 | Modifica el código en la terminal sin errores de sintaxis. Predice correctamente el cambio en el conjunto de resultados antes de ejecutarlo. |
+| **Comprensión de Rendimiento** | 20 | Diferencia claramente entre subconsultas correlacionadas y `JOINs`. Interpreta correctamente métricas básicas de `EXPLAIN ANALYZE` (loops, tiempo). |
+| **Rigor en Programación y Admin** | 15 | Explica correctamente el flujo transaccional, la sintaxis de triggers y la aplicación del principio de mínimo privilegio. |
+| **Manejo de Evidencia Forense** | 20 | Localiza sin dudar la evidencia en los logs. Explica la cadena de custodia, la regeneración de hashes y la importancia del cierre limpio de sesión. |
+| **TOTAL** | **100** | |
+
+**Criterios de Anulación Automática (Calificación: 0/100 en la defensa):**
+1. El estudiante es sorprendido utilizando cualquier dispositivo electrónico no autorizado (teléfono, otra pestaña del navegador, herramientas de IA) durante la sesión.
+2. El estudiante no puede explicar una línea de código fundamental que está presente en su propio script entregado.
+3. La bitácora física no está presente o no contiene el diseño de las consultas evaluadas.
+4. Los hashes de integridad no coinciden (`FAILED`) y el estudiante no sabe explicar la causa criptográfica.
+
+##### 12.4. Dinámica y Condiciones de la Sesión
+
+Para garantizar la equidad y el rigor del proceso, se aplicarán las siguientes condiciones:
+- **Entorno Controlado:** La defensa debe realizarse compartiendo pantalla en la terminal de la máquina virtual. No se aceptarán capturas de pantalla previas ni archivos pre-grabados.
+- **La Regla del "¿Por qué?":** Ante cada respuesta, el evaluador profundizará con preguntas de seguimiento para verificar que el conocimiento es genuino y no memorizado.
+- **Enfoque en la Bitácora:** Si el estudiante se bloquea en la terminal, se le pedirá que señale en su cuaderno físico dónde diseñó esa lógica. La capacidad de traducir el pensamiento analógico al digital es una competencia evaluada.
+- **Gestión del Tiempo:** Se utilizará un cronómetro. Si el estudiante se estanca más de 2 minutos en una modificación en vivo, el evaluador intervendrá, proporcionará la solución y pasará a la siguiente pregunta, penalizando en el rubro de "Habilidad Práctica".
+
+#### 13. Referencias
 
 Boehm, B. W. (1981). *Software engineering economics*. Prentice-Hall.
 
-Data México. (s.f.). *Observatorio de complejidad económica y laboral*. Secretaría de Economía de México. https://datamexico.org/es/
+Codd, E. F. (1970). A relational model of data for large shared data banks. *Communications of the ACM*, *13*(6), 377–387. <https://doi.org/10.1145/362384.362685>
 
-Evans, J. (2024). *SQL* [Zine]. https://jvns.ca/
+Data México. (s.f.). *Observatorio de complejidad económica y laboral*. Secretaría de Economía de México. <https://datamexico.org/es/>
 
-Instituto Mexicano para la Competitividad. (2024). *Compara Carreras: Herramienta de análisis de educación y mercado laboral*. https://comparacarreras.imco.org.mx/
+Date, C. J. (2003). *An introduction to database systems* (8th ed.). Addison-Wesley.
 
-OCC Mundial. (2026). *Bolsa de trabajo: Tecnología e Informática*. https://www.occ.com.mx/empleos/de-informatica-y-tecnologia/
+Evans, J. (2024). *SQL* [Zine]. <https://jvns.ca/>
 
-Stack Overflow. (2025). *2025 Developer Survey: Technology section*. https://survey.stackoverflow.co/
+Gündüz, D. (s.f.). *Pagila: A sample PostgreSQL database* [Source code]. GitHub. <https://github.com/devrimgunduz/pagila>
 
-The Business Research Company. (2026). *Relational Database Global Market Report 2026*. https://www.thebusinessresearchcompany.com/report/relational-database-global-market-report
+Instituto Mexicano para la Competitividad. (2024). *Compara Carreras: Herramienta de análisis de educación y mercado laboral*. <https://comparacarreras.imco.org.mx/>
 
-U.S. Bureau of Labor Statistics. (2024a). *Database administrators and architects: Occupational Outlook Handbook*. https://www.bls.gov/ooh/computer-and-information-technology/database-administrators.htm
+OCC Mundial. (2026). *Bolsa de trabajo: Tecnología e Informática*. <https://www.occ.com.mx/empleos/de-informatica-y-tecnologia/>
+
+PostgreSQL Global Development Group. (2026). *SQL SELECT: PostgreSQL 18.3 documentation*. <https://www.postgresql.org/docs/current/sql-select.html>
+
+Stack Overflow. (2025). *2025 Developer Survey: Technology section*. <https://survey.stackoverflow.co/>
+
+The Business Research Company. (2026). *Relational Database Global Market Report 2026*. <https://www.thebusinessresearchcompany.com/report/relational-database-global-market-report>
+
+U.S. Bureau of Labor Statistics. (2024a). *Database administrators and architects: Occupational Outlook Handbook*. <https://www.bls.gov/ooh/computer-and-information-technology/database-administrators.htm>
+
+Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for data science* (2nd ed.). O'Reilly Media. <https://r4ds.hadley.nz/>
 
 U.S. Bureau of Labor Statistics. (2024b). *Computer systems analysts: Occupational Outlook Handbook*. https://www.bls.gov/ooh/computer-and-information-technology/computer-systems-analysts.htm
