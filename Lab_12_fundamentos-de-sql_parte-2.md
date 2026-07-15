@@ -962,7 +962,7 @@ En su informe PDF, redacte un ensayo de al menos 500 palabras abordando los sigu
 *   **Entregas tardías:** Se aplicará una penalización del 10% por cada día de retraso.  
 *   **Evidencia incompleta:** La ausencia de los archivos de log o de los hashes de integridad se calificará como trabajo no entregado.  
 
-Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige la ingeniería de datos. La fricción que experimentan hoy en el diseño lógico es la competencia que garantizará su excelencia profesional mañana.
+Se exhorta a los estudiantes a abordar este laboratorio con el rigor que exige la UEA. La fricción que experimentan hoy en el diseño lógico es la competencia que garantizará su excelencia profesional mañana.
 
 #### 12. Sesión de Defensa Oral y Verificación de Competencias
 
@@ -1078,6 +1078,6 @@ The Business Research Company. (2026). *Relational Database Global Market Report
 
 U.S. Bureau of Labor Statistics. (2024a). *Database administrators and architects: Occupational Outlook Handbook*. <https://www.bls.gov/ooh/computer-and-information-technology/database-administrators.htm>
 
-Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for data science* (2nd ed.). O'Reilly Media. <https://r4ds.hadley.nz/>
-
 U.S. Bureau of Labor Statistics. (2024b). *Computer systems analysts: Occupational Outlook Handbook*. https://www.bls.gov/ooh/computer-and-information-technology/computer-systems-analysts.htm
+
+Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for data science* (2nd ed.). O'Reilly Media. <https://r4ds.hadley.nz/>
