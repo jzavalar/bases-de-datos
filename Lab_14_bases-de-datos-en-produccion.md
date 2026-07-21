@@ -1,7 +1,7 @@
 ### Laboratorio 14: Bases de Datos en Producción
 (Draft)
 
-**Dr. Jesús Zavala Ruiz**  
+**dr. Jesús Zavala Ruiz**  
 **Última actualización:** 5 de julio de 2026  
 
 **Duración estimada:** 6 a 8 horas (sesión de cierre de curso)  
