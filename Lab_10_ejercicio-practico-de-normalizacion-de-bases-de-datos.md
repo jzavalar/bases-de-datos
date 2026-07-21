@@ -1,4 +1,4 @@
-### Laboratorio_10. Ejercicio Práctico de Normalización de Bases de Datos
+### Laboratorio 10. Ejercicio Práctico de Normalización de Bases de Datos
 
 **Dr. Jesús Zavala Ruiz**  
 **Creación:** Junio de 2026
