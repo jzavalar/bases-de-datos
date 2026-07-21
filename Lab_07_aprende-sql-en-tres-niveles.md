@@ -2,8 +2,8 @@
 
 **Nivel:** Progresivo (tres módulos independientes de 60 minutos cada uno)  
 **Duración total estimada:** 180 minutos (sesiones modulares)  
-**Autor:** Dr. Jesús Zavala Ruiz  
-**Fecha:** Mayo 2026  
+**Autor:** dr. Jesús Zavala Ruiz  
+**Fecha:** Mayo de 2026  
 
 **Entorno técnico:** Máquina virtual `fedora44-lab` (Fedora 44) + PostgreSQL 18 + Esquema `pagila`
 
