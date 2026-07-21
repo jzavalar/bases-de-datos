@@ -291,7 +291,7 @@ Anson, R. W., & Ormeling, F. J. (Eds.). (2002). *Basic cartography for students 
 Anson, R. W., & Ormeling, F. J. (Eds.). (1996). *Basic cartography for students and technicians Vol. 3*. Butterworth-Heinemann.  
 Deprez, D. (2021). *The art of PostgreSQL*. Manning Publications.  
 Obe, R. O., & Hsu, L. S. (2021). *PostGIS in action* (3rd. ed.). Manning Publications.  
-OSGeo. (2026). Open Source Geospatial Foundation [Computer software]. <https://www.osgeo.org/projects/>
+OSGeo. (2026). Open Source Geospatial Foundation [Computer software]. <https://www.osgeo.org/projects/>  
 PostGIS Project Steering Committee. (2026). *PostGIS getting started guide*. <https://postgis.net/documentation/getting_started/>  
 PostGIS Project Steering Committee. (2026). *Introduction to PostGIS*. PostGIS Workshop. <https://postgis.net/workshops/postgis-intro/index.html>  
 PostGIS Project Steering Committee. (2026). *PostGIS 3.6 manual*. <https://postgis.net/docs/manual-3.6/>  
