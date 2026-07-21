@@ -1,11 +1,10 @@
-### Laboratorio 5: Construcción de un Entorno de Laboratorio con Fedora, PostgreSQL y la Base de Datos Pagila
-### Versión operativa y verificada para Fedora 44 / KVM-libvirt
+### Laboratorio 5: Construcción del Laboratorio `fedora44-lab` en Máquina Virtual con KVM-libvirt en Fedora 44
 
-**Autor:** dr. Jesús Zavala Ruiz  
 **Unidad de Enseñanza-Aprendizaje (UEA):** Bases de Datos (2151106)  
 **Institución:** Universidad Autónoma Metropolitana, Unidad Iztapalapa  
-**Fecha de emisión:** 16 de mayo de 2026
-**Última actualización:** 18 de mayo de 2026
+**Fecha de creaión:** 16 de mayo de 2026
+**Última actualización:** 21 de julio de 2026
+
 **Nivel de competencia:** Principiante a intermedio  
 **Tiempo estimado de ejecución:** 45–60 minutos  
 **Base técnica:** Red Hat "Build a lab quickly" + Esquema Pagila (devrimgunduz/pagila)
