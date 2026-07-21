@@ -1048,7 +1048,7 @@ Para atravesar la restricción de red y conectarse a la máquina virtual, proced
 3. Haga clic en **Aceptar** o **Finalizar** para guardar la configuración.  
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_04_prueba-de-connection-a-bd.png" width="30%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_04_prueba-de-conexion-a-bd.png" width="30%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 5. Prueba de conexión a base de datos Pagila con DBeaver</div>
 </div>
 
