@@ -980,7 +980,7 @@ LIMIT 5;
 
 Los resultados deben coincidir con la versión de PostgreSQL, un conteo de 1000 registros en la tabla `film` y un listado válido de películas y actores.
 
-#### 9.4. Registro del servidor en DBeaver desde el anfitrión
+#### 9.4. Conexión a servidor de base de datos con DBeaver desde el anfitrión
 
 [Dbeaver Community Edition](https://dbeaver.io/about/) es una herramienta de administración de base de datos libre y de código abierto para proyectos personales. Instalar [Dbeaver](https://dbeaver.io/about/) en su equipo Fedora 44 es muy sencillo instalando el paquete rpm de manera directa o usando flatpak:
 ```bash
@@ -1058,7 +1058,6 @@ La conexión aparecerá ahora en el panel de "Navegador de base de datos" a la i
   <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_05_conexion-a-pagila.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 6. Conexión a base de datos Pagila en DBeaver</div>
 </div>
-
 
 #### 10. Script de auditoría de seguridad
 
@@ -1143,9 +1142,9 @@ Mantenga actualizados los paquetes del sistema mediante `sudo dnf update` y rote
 
 #### 12. Referencias
 
-DBeaver Corp. (2026). *DBeaver Community Edition* [Software]. <https://dbeaver.io/>
-Fedora Project. (n.d.). *Fedora documentation* [Documentación de software]. <https://docs.fedoraproject.org/es_419/docs/>
-OpenBSD Project. (n.d.). ssh(1). *OpenBSD manual pages* [Documentación de software]. <https://man.openbsd.org/ssh>
-pgAdmin Development Team. (s. f.). *pgAdmin 4 documentation* [Documentación de software]. <https://www.pgadmin.org/docs/>
-PostgreSQL Global Development Group. (2026). *PostgreSQL 18 documentation* [Documentación de software]. <https://www.postgresql.org/docs/18/>
+DBeaver Corp. (2026). *DBeaver Community Edition* [Software]. <https://dbeaver.io/>  
+Fedora Project. (n.d.). *Fedora documentation* [Documentación de software]. <https://docs.fedoraproject.org/es_419/docs/>  
+OpenBSD Project. (n.d.). ssh(1). *OpenBSD manual pages* [Documentación de software]. <https://man.openbsd.org/ssh>  
+pgAdmin Development Team. (s. f.). *pgAdmin 4 documentation* [Documentación de software]. <https://www.pgadmin.org/docs/>  
+PostgreSQL Global Development Group. (2026). *PostgreSQL 18 documentation* [Documentación de software]. <https://www.postgresql.org/docs/18/>  
 Red Hat, Inc. (n.d.). Using SELinux. *Red Hat Enterprise Linux 9 documentation* [Documentación de software]. <https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index>
