@@ -105,8 +105,6 @@ Para materializar esta soberanía, se ha establecido el siguiente triplete tecno
 - **FreeIPA (*Free Identity, Policy, Audit*):** Una solución integrada de gestión de identidades de código abierto. Combina LDAP, Kerberos, DNS y gestión de certificados en una sola plataforma. FreeIPA centraliza la autenticación y autorización, permitiendo la revocación inmediata de accesos y el cumplimiento estricto de políticas corporativas. Al ser una solución autoalojada y abierta, *Example Company* mantiene la propiedad y el control absoluto sobre sus servidores, servicios y usuarios, sin depender de directorios en la nube de terceros.  
 - **PostgreSQL 16:** El Sistema Manejador de Bases de Datos Relacional de código abierto más avanzado y robusto disponible. Garantiza integridad ACID completa, extensibilidad sin límites y mecanismos de seguridad de nivel empresarial, evitando las licencias prohibitivas de motores propietarios. Para este laboratorio, utilizaremos la base de datos de demostración **`pagila`** (un *port* a PostgreSQL de la famosa base de datos ficticia Sakila, desarrollada originalmente para MySQL), que simula una tienda de renta de DVDs con datos sensibles de clientes, inventario y pagos, sirviendo como nuestro campo de pruebas para las configuraciones de *hardening*.  
 
----
-
 ### 4. Panorama de Amenazas
 
 Antes de configurar cualquier parámetro, Javier López (*Security Officer*) le pide una reunión. Quiere entender contra qué están defendiendo los datos. Los vectores de ataque más comunes en entornos productivos incluyen:
@@ -782,7 +780,6 @@ Como resultado de la implementación del stack tecnológico en el escenario de *
 6. **La alineación con los requerimientos del cliente y las normativas de cumplimiento (compliance) es el motor de la arquitectura.** En un entorno real, las decisiones técnicas no se toman en el vacío; responden directamente a las exigencias de auditoría, protección de datos personales y niveles de servicio (SLAs) establecidos por la directiva del cliente. La ingeniería de sistemas exitosa es aquella que traduce estos requerimientos de negocio y legales en controles técnicos tangibles, verificables y auditables.
 
 Este laboratorio consolida la competencia técnica necesaria para diseñar, desplegar y mantener sistemas de bases de datos resilientes, asegurando que la infraestructura de datos no solo sea funcional, sino inherentemente segura, optimizada y preparada para satisfacer las demandas críticas de un entorno de producción real.
-
 
 ### 17. Referencias
 
