@@ -1,7 +1,9 @@
 ### Laboratorio_10. Ejercicio Práctico de Normalización de Bases de Datos
 
-**Dr. Jesús Zavala Ruiz**
-*Junio de 2026*
+**Dr. Jesús Zavala Ruiz**  
+**Creación:** Junio de 2026
+
+---
 
 #### 1. Introducción
 
@@ -96,12 +98,12 @@ Tras aplicar las tres primeras formas normales, obtenemos el Diagrama Entidad-Re
 Como actividad de consolidación de conocimiento, se solicita al lector dibujar la **Figura 1: Diagrama Entidad-Relación del Modelo Normalizado** con Enterprise Architect y publíquela en el grupo de Telegram de la UEA. Este ejercicio práctico permitirá verificar la comprensión de las relaciones uno-a-muchos y muchos-a-muchos establecidas durante el proceso de normalización, así como la correcta identificación de las claves primarias y foráneas en el esquema final.
 
 Aunque podríamos normalizar aún más creando una tabla maestra para los vehículos, nos detenemos aquí para mantener el enfoque pedagógico en las relaciones principales. Los beneficios de este diseño incluyen:
-*   Eliminación de redundancia de datos.
-*   Integridad referencial reforzada.
-*   Consultas más eficientes.
-*   Mantenimiento simplificado.
+*   Eliminación de redundancia de datos.  
+*   Integridad referencial reforzada.  
+*   Consultas más eficientes.  
+*   Mantenimiento simplificado.  
 
-##### Formas Normales Superiores
+##### 3.1.5. Formas Normales Superiores
 
 Las formas 1FN, 2FN y 3FN cubren la mayoría de los escenarios prácticos. Sin embargo, existen formas superiores como la Forma Normal de Boyce-Codd (BCNF), la 4FN y la 5FN. A continuación, exploramos la BCNF para abordar un caso de borde que la 3FN no resuelve completamente.
 
@@ -110,16 +112,16 @@ Las formas 1FN, 2FN y 3FN cubren la mayoría de los escenarios prácticos. Sin e
 La **Forma Normal de Boyce-Codd (BCNF)** es una versión estricta de la 3FN. Su regla establece que *para cada dependencia funcional no trivial $X \rightarrow Y$, $X$ debe ser una superclave*. 
 
 Para clarificar esta notación:
-*   $X \rightarrow Y$ significa que el atributo (o conjunto de atributos) $X$ determina funcionalmente a $Y$. Es decir, si conocemos el valor de $X$, podemos determinar unívocamente el valor de $Y$.
-*   Una **superclave** es cualquier conjunto de atributos que identifica de manera única una fila en la tabla.
-*   Por lo tanto, la regla exige que **cualquier atributo que sirva para determinar otro atributo debe ser, por sí mismo, capaz de identificar de forma única la fila completa**. Si un determinante no es una superclave, la tabla viola la BCNF.
+*   $X \rightarrow Y$ significa que el atributo (o conjunto de atributos) $X$ determina funcionalmente a $Y$. Es decir, si conocemos el valor de $X$, podemos determinar unívocamente el valor de $Y$.  
+*   Una **superclave** es cualquier conjunto de atributos que identifica de manera única una fila en la tabla.  
+*   Por lo tanto, la regla exige que **cualquier atributo que sirva para determinar otro atributo debe ser, por sí mismo, capaz de identificar de forma única la fila completa**. Si un determinante no es una superclave, la tabla viola la BCNF.  
 
 **Escenario: Gestión de Capacitaciones**
 
 Supongamos que la empresa registra la capacitación de los conductores bajo las siguientes reglas:
-1.  Un conductor toma varios cursos.
-2.  Cada curso tiene un único instructor especializado.
-3.  Cada instructor enseña solo un tipo de curso.
+1.  Un conductor toma varios cursos.  
+2.  Cada curso tiene un único instructor especializado.  
+3.  Cada instructor enseña solo un tipo de curso.  
 
 **Tabla 7: Registro de Capacitación (Cumple 3FN, viola BCNF)**
 | driver_id | course_name | instructor_name |
@@ -130,10 +132,12 @@ Supongamos que la empresa registra la capacitación de los conductores bajo las 
 | 1024 | Hazardous Materials | David Ross |
 
 **Análisis de Dependencias:**
+
 Las claves candidatas compuestas son (`driver_id`, `course_name`) y (`driver_id`, `instructor_name`).
 Sin embargo, existe la dependencia `course_name` $\rightarrow$ `instructor_name` (el curso determina quién lo imparte). Como `course_name` por sí solo no es una superclave (varios conductores toman el mismo curso, por lo que `course_name` no identifica una fila única), la tabla viola la BCNF. Esto genera una anomalía de actualización: si cambiamos el instructor de un curso, debemos actualizar múltiples filas.
 
 **Solución BCNF:**
+
 Descomponemos la tabla en dos: una para la relación muchos-a-muchos y otra para la especialización del instructor.
 
 **Tabla 8: Asignación de Cursos (BCNF)**
@@ -178,8 +182,6 @@ El Diccionario de Datos documenta los metadatos del esquema, definiendo tipos de
 | :--- | :--- | :--- | :--- |
 | `driver_id` | INT | PK, FK, NOT NULL | Hace referencia a conductor. |
 | `car_plate` | VARCHAR(10) | PK, NOT NULL | Placa del vehículo. |
-
----
 
 #### 3.4 Implementación SQL: De la Teoría a la Práctica
 
@@ -235,7 +237,7 @@ Para consolidar los conocimientos adquiridos, se invita al lector a materializar
 
 Como evidencia de la correcta implantación del esquema y como mecanismo de validación colaborativa, se solicita realizar un respaldo completo (*backup*) de la base de datos utilizando la utilidad `pg_dump`. El archivo SQL resultante deberá ser publicado en el grupo de Telegram del curso. Esta práctica no solo verifica la sintaxis de las instrucciones `CREATE TABLE`, sino que también asegura que las restricciones de integridad referencial (Claves Foráneas) hayan sido correctamente establecidas por el sistema gestor. 
 
-##### 3.5. Implementación
+#### 3.5. Implementación
 
 Para consolidar los conocimientos adquiridos, se invita al lector a materializar este diseño creando una base de datos real en **PostgreSQL**. Se sugiere nombrar la base de datos como `fleet_management_db` para mantener la consistencia con el dominio del ejercicio.
 
@@ -261,10 +263,10 @@ journalctl -u postgresql.service --since "today"
 
 Guarde la salida de estos comandos en un archivo de texto (por ejemplo, `evidencia_logs_[matricula].txt`) y adjúntelo junto con el *dump* de la base de datos (`fleet_management_backup_[matricula].sql`). Esto permitirá verificar la secuencia de operaciones realizadas y garantizará la trazabilidad del ejercicio práctico.
 
-### 4. Conclusiones
+#### 4. Conclusiones
 
 Este ejercicio ha demostrado cómo la normalización transforma datos desestructurados en un modelo relacional robusto. Desde la eliminación de grupos repetitivos en la 1FN hasta la resolución de dependencias transitivas en la 3FN y determinantes no clave en la BCNF, cada paso contribuye a la integridad y eficiencia del sistema. La documentación mediante diccionarios de datos y su posterior implementación en SQL cierran el ciclo de desarrollo, asegurando que el diseño teórico se traduzca en una solución técnica fiable y escalable.
 
-### 5.Referencia
+#### 5.Referencia
 
 Koseoglu, K. (2025). *SQL: The practical guide*. Rheinwerk Publishing.
