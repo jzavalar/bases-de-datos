@@ -1,4 +1,4 @@
-### Laboratorio 06. Instalación de pgAdmin y DBeaver en Fedora 44 para Conectarse a la Base de Datos 
+### Laboratorio 06. Conexión a Base de Datos con pgAdmin y DBeaver en Fedora 44  
 
 **Unidad de Enseñanza-Aprendizaje:** Bases de Datos (2151106)  
 **Institución:** Universidad Autónoma Metropolitana, Unidad Iztapalapa  
@@ -9,7 +9,7 @@
 **Entorno de ejecución:** Fedora 44 Cloud Base sobre KVM/libvirt  
 **Dirección de la máquina virtual:** 192.168.122.24  
 **Usuario de acceso:** alumno
-**Acceso:** por túnel SSH con llave privada y passfrase nula
+**Acceso:** por túnel SSH con llave privada `fedora-lab-key` y *passfrase* nula
 
 ---
 
