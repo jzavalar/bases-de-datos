@@ -1,14 +1,15 @@
-### Laboratorio 06. Instalación de pgAdmin en Fedora 44
+### Laboratorio 06. Instalación de pgAdmin y DBeaver en Fedora 44 para Conectarse a la Base de Datos 
 
 **Unidad de Enseñanza-Aprendizaje:** Bases de Datos (2151106)  
 **Institución:** Universidad Autónoma Metropolitana, Unidad Iztapalapa  
 **Autor:** dr. Jesús Zavala Ruiz  
-**Última actualización:** 27 de Mayo 2026  
+**Creación:** 27 de mayo 2026
+**Última actualización:** 21 de julio 2026  
 
 **Entorno de ejecución:** Fedora 44 Cloud Base sobre KVM/libvirt  
 **Dirección de la máquina virtual:** 192.168.122.24  
 **Usuario de acceso:** alumno
-**Acceso:** por PKI
+**Acceso:** por túnel SSH con llave privada y passfrase nula
 
 ---
 
@@ -912,10 +913,8 @@ Salida:
 
                                                    version                          
                           
-------------------------------------------------------------------------------------
---------------------------
- PostgreSQL 18.3 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 16.0.1 20260321 (
-Red Hat 16.0.1-0), 64-bit
+--------------------------------------------------------------------------------------------------------------
+ PostgreSQL 18.3 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 16.0.1 20260321 (Red Hat 16.0.1-0), 64-bit
 (1 row)
 ```
 
@@ -951,6 +950,8 @@ Salida:
 
 #### 9.3. Registro del servidor en pgAdmin desde el anfitrión
 
+Considere que `pgadmin` se encuentra instalado en la máquina virtual y se accede a éste mediante un túnel SSH, tal como ya se configuró anteriormente.
+
 Dentro de la interfaz web de pgAdmin accedida desde el navegador del anfitrión, registre el servidor de bases de datos utilizando la configuración del túnel:
 
 1. En el panel izquierdo, haga clic derecho sobre **Servers** y seleccione **Register** > **Server**.
@@ -979,9 +980,89 @@ LIMIT 5;
 
 Los resultados deben coincidir con la versión de PostgreSQL, un conteo de 1000 registros en la tabla `film` y un listado válido de películas y actores.
 
+#### 9.4. Registro del servidor en DBeaver desde el anfitrión
+
+[Dbeaver Community Edition](https://dbeaver.io/about/) es una herramienta de administración de base de datos libre y de código abierto para proyectos personales. Instalar [Dbeaver](https://dbeaver.io/about/) en su equipo Fedora 44 es muy sencillo instalando el paquete rpm de manera directa o usando flatpak:
+```bash
+sudo dnf install https://dbeaver.io/files/dbeaver-ce-latest-linux-x86_64.rpm
+# o
+flatpak install flathub io.dbeaver.DBeaverCommunity
+```
+
+Cuando ya se tiene `DBeaver` instalado y ejecutándose en su máquina virtual, este se configura de manera semejante a `pgAdmin`, tal como se abordó en la sección anterior. 
+
+Ahora, abordaremos otro caso de uso en que `DBeaver` está instalado y ejecutándose en su sistema anfitrión y no en la máquina virtual y desde ahí se conecta a su base de datos Pagila. A continuación, se detallan las instrucciones formales y paso a paso para configurar `DBeaver` en su sistema local Fedora 44, con el objetivo de establecer una conexión segura hacia una base de datos postgreSQL Pagila alojada en su máquina virtual. 
+
+Dado que la base de datos en la máquina virtual está restringida para aceptar únicamente conexiones desde su propio `localhost`, utilizaremos un túnel SSH para redirigir el tráfico de manera transparente en DBeaver.
+
+**Paso 1: Iniciar la configuración de la conexión**  
+
+1. Abra la aplicación **DBeaver** en su máquina local Fedora 44.  
+2. En el menú superior, haga clic en **Base de datos** y seleccione **Nueva conexión...** (o haga clic en el icono de "Enchufe" con un asterisco en la barra de herramientas superior izquierda).  
+3. En la ventana emergente, seleccione **PostgreSQL** y haga clic en **Siguiente**.  
+
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_01_nueva-conexion-a-bd.png" width="70%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 2. Crear nueva conexión a base de datos con DBeaver</div>
+</div>
+
+**Paso 2: Configurar los parámetros principales (Base de datos)**
+
+En la pestaña **Principal**, ingrese los siguientes datos para la conexión a la base de datos:
+
+*   **Servidor (Host):** `localhost` 
+    *(Nota técnica: Es fundamental dejar `localhost` y no la IP de la máquina virtual. El túnel SSH que configuraremos más adelante se encargará de "hacer creer" a PostgreSQL que la conexión se origina desde su propio localhost).*  
+*   **Puerto:** `5432` *(Puerto predeterminado de PostgreSQL)*.  
+*   **Base de datos:** `pagila`  
+*   **Nombre de usuario:** `alumno`  
+*   **Contraseña:** `uamIztapalapa`  
+
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_02_configuracion-de-bd.png" width="70%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 3. Configuración de acceso a la base de datos con DBeaver</div>
+</div>
+
+**Paso 3: Configurar el Túnel SSH**
+
+Para atravesar la restricción de red y conectarse a la máquina virtual, proceda a configurar el túnel:
+
+1. Dentro de la misma ventana de configuración, haga clic en la pestaña **SSH** (ubicada en la parte superior o lateral, dependiendo de su versión de DBeaver).  
+2. Marque la casilla **Usar túnel SSH** (Use SSH tunnel).  
+3. Complete los siguientes campos para la conexión SSH:  
+   *   **Host/IP:** `192.168.122.24`  
+   *   **Puerto:** `22`  
+   *   **Usuario:** `alumno`  
+   *   **Método de autenticación:** Seleccione **Clave pública** (o *Key file*).  
+   *   **Archivo llave (Key file):** Haga clic en el botón de explorar y seleccione la ruta de su llave privada. La ruta absoluta será: `/home/<su_usuario_local>/.ssh/fedora-lab-key` *(reemplace `<su_usuario_local>` con su nombre de usuario real en su Fedora local.*
+   *   **Contraseña (Passphrase):** Si la llave privada `fedora-lab-key` está protegida con una frase de paso o si el servidor SSH requiere una contraseña como método alternativo/complementario, ingrese: `uamIztapalapa`. *(Si la llave no tiene passphrase, como en nuestro caso, el servidor acepta la llave sin más, puede dejar este campo vacío).*
+
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_03_configuracion-de-tunel-ssh.png" width="70%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 4. Configuración de túnel SSH a la máquina virtual con DBeaver</div>
+</div>
+
+**Paso 4: Probar y guardar la conexión**
+
+1. Una vez completados los campos de la pestaña Principal y SSH, haga clic en el botón **Probar conexión** (Test Connection) en la esquina inferior izquierda.  
+2. Si la configuración es correcta, DBeaver le mostrará un mensaje de éxito con los detalles de la conexión (versión de PostgreSQL, tiempo de respuesta, etc.) ().  
+3. Haga clic en **Aceptar** o **Finalizar** para guardar la configuración.  
+
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_04_prueba-de-connection-a-bd.png" width="30%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 5. Prueba de conexión a base de datos Pagila con DBeaver</div>
+</div>
+
+La conexión aparecerá ahora en el panel de "Navegador de base de datos" a la izquierda. Al hacer doble clic sobre ella, DBeaver establecerá el túnel SSH hacia `192.168.122.24` y conectará el cliente local al puerto `5432` de la máquina virtual de manera segura y transparente.
+
+<div style="text-align: center;">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_04_prueba-de-connection-a-bd.png" width="70%">
+  <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 6. Conexión a base de datos Pagila en DBeaver</div>
+</div>
+
+
 #### 10. Script de auditoría de seguridad
 
-Para verificar de manera sistemática el cumplimiento de los controles implementados, utilice el siguiente script de validación. Este instrumento evalúa el estado de SELinux, contextos de archivos, permisos, configuración de Apache, reglas de cortafuegos y estado de servicios.
+Para verificar de manera sistemática el cumplimiento de los controles implementados, utilice el siguiente script de validación. Este instrumento evalúa el estado de SELinux, contextos de archivos, permisos, configuración de Apache, reglas de cortafuegos (firewall) y estado de servicios.
 
 Guarde el contenido en `validate_pgadmin_security.sh` y asigne permisos de ejecución:
 
@@ -1062,8 +1143,9 @@ Mantenga actualizados los paquetes del sistema mediante `sudo dnf update` y rote
 
 #### 12. Referencias
 
-Fedora Project. (n.d.). Fedora documentation. <https://docs.fedoraproject.org/es_419/docs/>
-OpenBSD Project. (n.d.). ssh(1). OpenBSD manual pages. <https://man.openbsd.org/ssh>
-pgAdmin Development Team. (n.d.). pgAdmin 4 documentation. <https://www.pgadmin.org/docs/>
-PostgreSQL Global Development Group. (2026). PostgreSQL 18 documentation. <https://www.postgresql.org/docs/18/>
-Red Hat, Inc. (n.d.). Using SELinux. Red Hat Enterprise Linux 9 documentation. <https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index>
+DBeaver Corp. (2026). *DBeaver Community Edition* [Software]. <https://dbeaver.io/>
+Fedora Project. (n.d.). *Fedora documentation* [Documentación de software]. <https://docs.fedoraproject.org/es_419/docs/>
+OpenBSD Project. (n.d.). ssh(1). *OpenBSD manual pages* [Documentación de software]. <https://man.openbsd.org/ssh>
+pgAdmin Development Team. (s. f.). *pgAdmin 4 documentation* [Documentación de software]. <https://www.pgadmin.org/docs/>
+PostgreSQL Global Development Group. (2026). *PostgreSQL 18 documentation* [Documentación de software]. <https://www.postgresql.org/docs/18/>
+Red Hat, Inc. (n.d.). Using SELinux. *Red Hat Enterprise Linux 9 documentation* [Documentación de software]. <https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index>
