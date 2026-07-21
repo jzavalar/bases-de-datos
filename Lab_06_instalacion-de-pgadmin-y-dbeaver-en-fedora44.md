@@ -1002,7 +1002,7 @@ Dado que la base de datos en la máquina virtual está restringida para aceptar 
 3. En la ventana emergente, seleccione **PostgreSQL** y haga clic en **Siguiente**.  
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_01_nueva-conexion-a-bd.png" width="70%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_01_nueva-conexion-a-bd.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 2. Crear nueva conexión a base de datos con DBeaver</div>
 </div>
 
@@ -1018,7 +1018,7 @@ En la pestaña **Principal**, ingrese los siguientes datos para la conexión a l
 *   **Contraseña:** `uamIztapalapa`  
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_02_configuracion-de-bd.png" width="70%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_02_configuracion-de-bd.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 3. Configuración de acceso a la base de datos con DBeaver</div>
 </div>
 
@@ -1037,7 +1037,7 @@ Para atravesar la restricción de red y conectarse a la máquina virtual, proced
    *   **Contraseña (Passphrase):** Si la llave privada `fedora-lab-key` está protegida con una frase de paso o si el servidor SSH requiere una contraseña como método alternativo/complementario, ingrese: `uamIztapalapa`. *(Si la llave no tiene passphrase, como en nuestro caso, el servidor acepta la llave sin más, puede dejar este campo vacío).*
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_03_configuracion-de-tunel-ssh.png" width="70%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_03_configuracion-de-tunel-ssh.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 4. Configuración de túnel SSH a la máquina virtual con DBeaver</div>
 </div>
 
@@ -1055,7 +1055,7 @@ Para atravesar la restricción de red y conectarse a la máquina virtual, proced
 La conexión aparecerá ahora en el panel de "Navegador de base de datos" a la izquierda. Al hacer doble clic sobre ella, DBeaver establecerá el túnel SSH hacia `192.168.122.24` y conectará el cliente local al puerto `5432` de la máquina virtual de manera segura y transparente.
 
 <div style="text-align: center;">
-  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_04_prueba-de-connection-a-bd.png" width="70%">
+  <img src="https://github.com/jzavalar/bases-de-datos/blob/main/imagenes/dbeaver_05_conexion-a-pagila.png" width="50%">
   <div style="font-size: 0.9em; margin-top: 0.5em;">Figura 6. Conexión a base de datos Pagila en DBeaver</div>
 </div>
 
