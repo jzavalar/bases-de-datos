@@ -6,7 +6,7 @@
 
 ------------------------------------------------------------------------
 
-#### I. Introducción
+#### 1. Introducción
 
 En la administración contemporánea de sistemas Linux, la protección de la información no constituye un complemento opcional, sino un requisito estructural derivado de la exposición a fallos de hardware, errores operativos y vectores de acceso no autorizado. Este laboratorio presenta una aproximación sistemática y reproducible a la implementación de un volumen de respaldo cifrado mediante el estándar **Linux Unified Key Setup 2** (**LUKS2**), integrado al ciclo de arranque de Fedora y gestionado mediante herramientas nativas de línea de comandos.
 
@@ -14,7 +14,7 @@ El enfoque pedagógico prioriza la comprensión causal de cada intervención té
 
 Al concluir este laboratorio, el alumno habrá adquirido competencia técnica en cifrado de bloques, persistencia de configuración de almacenamiento, sincronización segura de datos y recuperación ante fallos de metadatos criptográficos, consolidando un flujo de trabajo aplicable directamente en contextos institucionales y académicos.
 
-#### II. Entorno de trabajo
+#### 2. Entorno de trabajo
 
 El procedimiento requiere un sistema Fedora Workstation con acceso a un disco de estado sólido o magnético susceptible de particionamiento. La siguiente configuración establece los parámetros base sobre los cuales se desarrollará el laboratorio.
 
@@ -29,14 +29,14 @@ El procedimiento requiere un sistema Fedora Workstation con acceso a un disco de
 > **Nota de diseño:**\
 > El laboratorio parte de la premisa de un disco único que alberga el sistema operativo y requiere la creación de un volumen dedicado para respaldos, dejando espacio para la instalación o reinstalación del sistema operativo Fedora Linux. Esta configuración es habitual en equipos de laboratorio o estaciones de trabajo personales, donde se busca optimizar el medio sin depender de dispositivos externos ni infraestructura de red.
 
-#### III. Fase 1: Gestión y preparación del almacenamiento
+#### 3. Fase 1: Gestión y preparación del almacenamiento
 
 Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloque de almacenamiento crudo, libre de metadatos y sin intervención del sistema de archivos activo. GParted permite modificar la geometría del disco de manera segura, siempre que se respeten los protocolos de precaución.
 
 > **Advertencia crítica:**\
 > Las operaciones de particionamiento alteran la tabla de particiones. Aunque GParted está diseñado para preservar datos existentes, una interrupción eléctrica o un cierre forzado durante el redimensionamiento puede corromper el sistema de archivos. **Se requiere un respaldo previo de toda información crítica antes de ejecutar este paso.**
 
-##### 1. Procedimiento de particionamiento
+##### 3.1. Procedimiento de particionamiento
 
 1.  Ejecute `sudo gparted` desde la sesión instalada o desde un Live USB (evitando modificar la partición raíz activa).
 2.  Seleccione `/dev/sda` o `/dev/nvme0n1` (si es un disco de estado sólido) en el menú superior derecho.
@@ -47,7 +47,7 @@ Antes de aplicar cualquier capa de cifrado, es indispensable disponer de un bloq
     -   **Alinear a:** `MiB` (garantiza compatibilidad óptima con SSD)
 5.  Presione **✓ Aplicar** y espere la finalización sin interrupciones.
 
-##### 2. Verificación inicial
+##### 3.2. Verificación inicial
 
 Con disco duro:
 ``` bash
@@ -85,11 +85,11 @@ nvme0n1                                         1.8T
 > **Interpretación:**\
 > La ausencia de `FSTYPE` y de punto de montaje en `/dev/sda4` o en `/dev/nvme0n1` confirma que se trata de un bloque de almacenamiento sin estructura lógica, condición ideal para la inicialización criptográfica. Con el espacio preparado, se procede a aplicar la capa de cifrado que protegerá los datos del respaldo.
 
-#### IV. Fase 2: Implementación del cifrado LUKS2 y sistema de archivos
+#### 4. Fase 2: Implementación del cifrado LUKS2 y sistema de archivos
 
 LUKS (Linux Unified Key Setup) estandariza el cifrado de bloques en Linux. La versión 2 introduce `argon2id` para la derivación de claves (resistente a ataques por fuerza bruta con GPU) y `aes-xts-plain64` como modo de cifrado por defecto. Es fundamental comprender que **LUKS no cifra los datos directamente**, sino que protege una *clave maestra* almacenada en la cabecera del volumen; la frase contraseña que ingresa el usuario sirve únicamente para desbloquear dicha clave.
 
-##### 1. Inicialización del contenedor LUKS2
+##### 4.1. Inicialización del contenedor LUKS2
 (cambie `/dev/sda4` por `/dev/nvme0n1p4`) 
 
 ``` bash
@@ -109,7 +109,7 @@ Verifique la frase contraseña:
 > **Advertencia de seguridad:**\
 > Guarde y recuerde muy bien la **frase contraseña**, ya que si la pierde, será **imposible** abrir el volumen encriptado. LUKS no posee mecanismos de recuperación ni backdoors criptográficos.
 
-##### 2. Apertura del volumen y creación del mapeador
+##### 4.2. Apertura del volumen y creación del mapeador
 
 Un dispositivo LUKS cerrado es ilegible para el sistema. `luksOpen` descifra la clave maestra en memoria RAM y expone un dispositivo virtual en `/dev/mapper/`. Este mapeador actúa como un filtro transparente: todo dato escrito se cifra antes de alcanzar el disco físico; todo dato leído se descifra antes de llegar a la aplicación.
 
@@ -130,7 +130,7 @@ lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT | grep -E "sda4|datos"
   └─datos                                     673.9G                    
 ```
 
-##### 3. Formateo del sistema de archivos `ext4`
+##### 4.3. Formateo del sistema de archivos `ext4`
 
 Se formatea `/dev/mapper/datos`, **no** `/dev/sda4`, con un sistema de archivos `ext4` por su estabilidad, bajo consumo de memoria y compatibilidad probada con operaciones `discard` (TRIM) en el disco de estado sólido (SSD).
 
@@ -159,11 +159,11 @@ Escribiendo superbloques y la información contable del sistema de ficheros: hec
 
 Con el volumen cifrado y formateado, el siguiente paso consiste en configurar su montaje automático durante el arranque del sistema, para lo cual es necesario registrar su identificación en los archivos de configuración de `systemd`.
 
-#### V. Fase 3: Configuración de persistencia y montaje automático
+#### 5. Fase 3: Configuración de persistencia y montaje automático
 
 Para que el volumen sobreviva a reinicios, `systemd` debe conocer dos parámetros fundamentales: *cómo abrir el cifrado* y *dónde montarlo*. Esta información se registra en `/etc/crypttab` y `/etc/fstab`, respectivamente, y es interpretada por generadores automáticos de unidades de servicio durante la fase de prearranque.
 
-##### 1. Obtención del identificador único (UUID)
+##### 5.1. Obtención del identificador único (UUID)
 
 Antes de registrar el volumen cifrado en los archivos de configuración del sistema, es indispensable obtener su UUID. Este identificador es generado aleatoriamente durante la inicialización del contenedor LUKS y permanece inmutable a lo largo de la vida útil del dispositivo, incluso si el kernel reordena la nomenclatura de los bloques (ej. `/dev/sda4` → `/dev/sdb1` tras conectar un disco externo).
 
@@ -177,7 +177,7 @@ sudo blkid /dev/sda4
 
 El valor que figura tras `UUID=` corresponde al identificador de la partición física cifrada. Debe copiarse íntegramente para ser insertado en `/etc/crypttab`. `systemd-cryptsetup` utiliza este UUID como referencia absoluta durante la fase de `initramfs`, garantizando que el mapeador se asocie correctamente al dispositivo incluso en entornos con múltiples discos o controladores de almacenamiento de distinta arquitectura.
 
-##### 2. Edición de archivos de configuración con `vi`
+##### 5.2. Edición de archivos de configuración con `vi`
 
 **`/etc/crypttab`** (desencriptación en arranque):
 
@@ -217,7 +217,7 @@ sudo vi /etc/fstab
 | `defaults,noatime` | Opciones estándar + omisión de timestamps de lectura para optimizar SSD |
 | `0 2` | Omite `dump`; habilita verificación `fsck` tras el montaje de la raíz |
 
-##### 3. Regeneración de `initramfs` y aplicación de cambios
+##### 5.3. Regeneración de `initramfs` y aplicación de cambios
 
 El kernel carga un sistema mínimo en memoria (`initramfs`) antes de montar la partición raíz. `dracut` reconstruye esta imagen para incluir `systemd-cryptsetup` y leer `crypttab`. Posteriormente, `systemd` debe recargar su configuración para reconocer `fstab`.
 
@@ -255,7 +255,7 @@ drwxr-xr-x 3 alumno alumno 4096 may 29 14:17 /backup
 > **Interpretación:**\
 > Tras recargar `systemd`, el volumen se montó correctamente. La asignación de propiedad garantiza que el usuario `alumno` opere con permisos de lectura/escritura sin requerir privilegios de superusuario.
 
-##### 4. Cerrar correctamente un volumen cifrado LUKS
+##### 5.4. Cerrar correctamente un volumen cifrado LUKS
 
 Para cerrar de forma segura un volumen cifrado en tu sistema Fedora, debe asegurarse que no esté en uso y evitar errores al intentar cerrarlo.
 
@@ -331,11 +331,11 @@ Como no hubo errores, el volumen quedó cerrado correctamente.
 - Si el volumen no se desmonta o sigue en uso, reiniciar el sistema puede liberar cualquier bloqueo residual.
 - Siempre realiza estos pasos con precaución para mantener la integridad de tus datos cifrados.
 
-#### VI. Fase 4: Respaldo de la cabecera LUKS para recuperación ante fallos
+#### 6. Fase 4: Respaldo de la cabecera LUKS para recuperación ante fallos
 
 Hasta este punto, el volumen cifrado está operativo y montado automáticamente. Sin embargo, la arquitectura LUKS introduce un punto de vulnerabilidad crítico: **la cabecera del volumen**. Este bloque de metadatos, ubicado en los primeros 16 MiB del dispositivo, contiene la clave maestra, la configuración de algoritmos y las ranuras de clave. Su corrupción —por fallos de escritura, cortes de energía durante operaciones de particionamiento o sobrescritura accidental— implica la pérdida irreversible de los datos, independientemente de que el bloque de datos cifrados permanezca intacto.
 
-##### 1. Generación del respaldo de cabecera
+##### 6.1. Generación del respaldo de cabecera
 
 El comando `luksHeaderBackup` crea una copia binaria exacta de la cabecera LUKS, preservando todas las claves y configuraciones. Este respaldo debe generarse inmediatamente después de `luksFormat` y actualizarse cada vez que se modifique la configuración de claves.
 
@@ -375,7 +375,7 @@ ls -lh ~/luks-header-datos*
 > **Advertencia:**\
 > El archivo `luks-header-datos.img` contiene información criptográfica sensible. **Guárdelo en un medio físico distinto al disco cifrado** (USB externo, servidor institucional o almacenamiento en la nube cifrado). 
 
-##### 2. Procedimiento de restauración de la cabecera
+##### 6.2. Procedimiento de restauración de la cabecera
 
 Cuando se restaura o modifica la cabecera de un volumen cifrado, es fundamental que el volumen esté cerrado, ya que la cabecera es la parte que **contiene la clave y la estructura de cifrado del volumen**. Si el volumen está abierto (montado o en uso), la cabecera puede estar en uso y en memoria, lo que podría comprometer la integridad de la operación o causar errores. Por lo tanto, antes de realizar la restauración, debe asegurarse de que el volumen esté **cerrado** con el comando:
 
@@ -392,9 +392,10 @@ Luego, se podrás proceder con la restauración de la cabecera.
 > **Advertencia**:\
 > La operación de restauración de la cabecera del dispositivo destino la sobrescribe. Si se ejecuta sobre un **dispositivo incorrecto** o con un archivo de respaldo desactualizado, **los datos serán irrecuperables**. **Verifique tres veces el dispositivo y el archivo antes de proceder.**
 
-##### 2.1. Verificación previa a la restauración
+##### 6.2.1. Verificación previa a la restauración
 
 1. Verificar que el archivo de respaldo existe y tiene tamaño razonable (~16 MiB para LUKS2)  
+
 ``` bash
 ls -lh ~/luks-header-datos.img
 ```
@@ -404,7 +405,8 @@ ls -lh ~/luks-header-datos.img
 ```
 
 2. Confirmar que el dispositivo destino es el esperado  
-``bash
+
+```bash
 sudo blkid /dev/sda4
 ```
 
@@ -417,7 +419,7 @@ sudo blkid /dev/sda4
 sudo cryptsetup luksDump ~/luks-header-datos.img | head -20
 ```
 
-##### 2.2. Verificación de integridad y ejecución de la restauración
+##### 6.2.2. Verificación de integridad y ejecución de la restauración
 
 Dado que la operación de restauración modifica irreversiblemente los metadatos del dispositivo, el procedimiento debe dividirse en dos etapas claramente diferenciadas: una **verificación no destructiva** del archivo de respaldo y la **ejecución controlada** de la sobrescritura.
 
@@ -583,11 +585,11 @@ ls /backup/respaldos_home/
 
 Con el volumen cifrado, configurado para montaje automático y protegido mediante respaldo de cabecera, se procede a ejecutar el respaldo propiamente dicho, empleando herramientas que garanticen la integridad de los datos y la resiliencia ante interrupciones.
 
-#### VII. Fase 5: Ejecución resiliente del respaldo con `tmux` y `rsync`
+#### 7. Fase 5: Ejecución resiliente del respaldo con `tmux` y `rsync`
 
 Un respaldo de \~150 GiB puede extenderse entre 30 y 90 minutos. Si la terminal se cierra, la conexión SSH se interrumpe o el sistema suspende la sesión, `rsync` se terminará abruptamente, corrompiendo potencialmente la copia. `tmux` (terminal multiplexer) ejecuta procesos en sesiones virtuales independientes de la terminal física, permitiendo desconectarse y reconectarse sin perder el progreso ni el contexto de ejecución.
 
-##### 1. Sesión resiliente con `tmux`
+##### 7.1. Sesión resiliente con `tmux`
 
 1. Crear y adjuntar una sesión persistente llamada "respaldo"
    
@@ -621,7 +623,7 @@ tmux attach -t respaldo
 
 El usuario recupera la consola exactamente en el punto donde quedó, sin interrupciones ni pérdida de contexto.
 
-2. Salida final del proceso de respaldo  
+3. Salida final del proceso de respaldo  
 
 ```         
 sent 166,565,358,492 bytes  received 597,485 bytes  39,672,729.78 bytes/sec
@@ -631,17 +633,17 @@ total size is 166,522,513,580  speedup is 1.00
 **Interpretación:**  
 La velocidad promedio (\~39.7 MB/s) es coherente con la sobrecarga mínima introducida por el cifrado LUKS2. `tmux` garantizó la ejecución ininterrumpida, demostrando su valor en operaciones de mantenimiento crítico.
 
-3. Salida de la sesión resiliente `tmux`  
+4. Salida de la sesión resiliente `tmux`  
 
 ``` bash
 exit
 ```
 
-#### VIII. Fase 6: Validación integral y prueba de ciclo completo
+#### 7. Fase 6: Validación integral y prueba de ciclo completo
 
 La validación definitiva consiste en cerrar el volumen, reiniciar el equipo y verificar que el sistema solicita la frase de cifrado durante el arranque, desencripta el medio y lo monta automáticamente.
 
-##### 1. Preparación y reinicio
+##### 7.1. Preparación y reinicio
 
 ``` bash
 sudo umount /backup
@@ -649,7 +651,7 @@ sudo cryptsetup luksClose datos
 sudo reboot
 ```
 
-##### 2. Validación posterior al reinicio
+##### 7.2. Validación posterior al reinicio
 
 ``` bash
 df -h /backup
@@ -711,7 +713,7 @@ sudo grep backup /etc/fstab
 > **Conclusión de la prueba:**\
 > El servicio `systemd-cryptsetup` desencriptó el volumen en fase temprana de arranque, `fstab` lo montó automáticamente y los datos son accesibles. La configuración es persistente, funcional y lista para producción.
 
-#### IX. Registro técnico consolidado
+#### 8. Registro técnico consolidado
 
 | Parámetro                | Valor configurado                                |
 |---------------------------|---------------------------------------------|
@@ -727,7 +729,7 @@ sudo grep backup /etc/fstab
 | **Respaldo de cabecera** | `~/luks-header-datos.img` (16 MiB)               |
 | **Estado operativo**     | alidado en ciclo completo de arranque        |
 
-#### X. Comentarios críticos para recuperación tras reinstalación de Fedora
+#### 9. Comentarios críticos para recuperación tras reinstalación de Fedora
 
 Una reinstalación limpia del sistema operativo **preserva intactos los datos cifrados** en `/dev/sda4`, pero sobrescribe `/etc/crypttab`, `/etc/fstab` y la imagen `initramfs`. Para restablecer el acceso sin perder el respaldo, siga esta secuencia una vez finalizada la nueva instalación:
 
@@ -739,7 +741,7 @@ Una reinstalación limpia del sistema operativo **preserva intactos los datos ci
 
 Esta garantía de recuperación está intrínsecamente ligada a la preservación de la frase de contraseña y del UUID del volumen. Mientras ambos elementos estén disponibles, la reconstrucción de la configuración de montaje es un proceso lineal y reversible.
 
-#### XI. Conclusiones
+#### 10. Conclusiones
 
 Este laboratorio demuestra que la seguridad de datos y la automatización del arranque no requieren infraestructura compleja ni soluciones propietarias. Mediante herramientas nativas de Fedora (`cryptsetup`, `systemd`, `dracut`, `rsync`), es posible construir un flujo de respaldo cifrado, persistente y resiliente a interrupciones de sesión. La integración de `tmux` ilustra una práctica administrativa fundamental: desacoplar la ejecución de procesos críticos de la estabilidad de la terminal cliente, garantizando la finalización exitosa de operaciones de larga duración sin supervisión constante.
 
@@ -747,7 +749,7 @@ El esquema resultante cumple con los principios de confidencialidad (cifrado LUK
 
 Su implementación en entornos académicos y organizacionales no solo protege la información sensible, sino que establece una base reproducible para la adopción de prácticas de ciberseguridad alineadas con estándares internacionales. Se recomienda complementar este flujo con políticas de retención automatizada, verificación de integridad mediante checksums y almacenamiento seguro de la frase de contraseña y la cabecera LUKS en medios externos seguros.
 
-#### XII. Referencias
+#### 11. Referencias
 
 cryptsetup project. (2025). *LUKS2 on-disk format specification* (Version 1.1.4). GitLab. <https://gitlab.com/cryptsetup/LUKS2-docs>
 
