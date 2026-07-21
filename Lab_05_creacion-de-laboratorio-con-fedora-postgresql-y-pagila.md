@@ -342,7 +342,7 @@ cd ~/vm-images/fedora-cloud
 
 ```bash
 sudo virt-install \
-  --name fedora-lab \
+  --name fedora44-lab \
   --description "Fedora 44 Lab - UEA Bases de Datos" \
   --memory 4096 \
   --vcpus 2 \
@@ -374,27 +374,27 @@ virsh list --all
 ```
  Id   Name           State
 -------------------------------
- -    fedora-lab     shut off
+ -    fedora44-lab     shut off
 ```
 
 ##### 4.3 Inicio de la Máquina Virtual y Obtención de Dirección IP
 
 ```bash
 ### Iniciar la VM
-sudo virsh start fedora-lab
+sudo virsh start fedora44-lab
 
 ### Esperar ~30 segundos para el arranque completo
 sleep 30
 
 ### Consultar dirección IP asignada
-sudo virsh domifaddr fedora-lab
+sudo virsh domifaddr fedora44-lab
 ```
 
 **Salida esperada:**
 ```
  Name       MAC address          Protocol     Address
 -------------------------------------------------------------------------------
- vnet4      52:54:00:34:b1:52    ipv4         192.168.122.161/24
+ vnet4      52:54:00:34:b1:52    ipv4         192.168.122.24/24
 ```
 
 ##### 4.4 Conexión SSH a la Máquina Virtual
@@ -402,15 +402,15 @@ sudo virsh domifaddr fedora-lab
 Ajuste la IP de su máquina virtual a la que haya obtenido previamente.
 
 ```bash
-ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.161
+ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.24
 ```
 
 **Primera conexión (mensaje de autenticidad):**
 ```
-The authenticity of host '192.168.122.161 (192.168.122.161)' can't be established.
+The authenticity of host '192.168.122.24 (192.168.122.24)' can't be established.
 ED25519 key fingerprint is SHA256:vWk/nie4fhS0NnCszaYfSpc5pcDWjVrCS2rVqsG/lsA.
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added '192.168.122.161' (ED25519) to the list of known hosts.
+Warning: Permanently added '192.168.122.24' (ED25519) to the list of known hosts.
 [alumno@fedora-lab ~]$
 ```
 
@@ -559,7 +559,7 @@ Ajuste permisos y transfiera el script a la VM:
 ```bash
 ### En el sistema anfitrión
 chmod +x setup_postgres_lab.sh
-scp -i ~/.ssh/fedora-lab-key setup_postgres_lab.sh alumno@192.168.122.161:/home/alumno/
+scp -i ~/.ssh/fedora-lab-key setup_postgres_lab.sh alumno@192.168.122.24:/home/alumno/
 ```
 
 ##### 5.2 Ejecución del Script en la Máquina Virtual
@@ -568,7 +568,7 @@ Conéctese a la VM y ejecute el script:
 
 ```bash
 ### Conexión SSH
-ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.161
+ssh -i ~/.ssh/fedora-lab-key alumno@192.168.122.24
 
 ### Dentro de la VM: preparar y ejecutar el script
 chmod +x setup_postgres_lab.sh
@@ -752,7 +752,7 @@ virsh list --all
 
 ```bash
 ### Eliminar definición anterior (la imagen de disco permanece intacta)
-sudo virsh undefine fedora-lab
+sudo virsh undefine fedora44-lab
 
 ### Recrear definición con nuevo nombre, apuntando al disco existente
 sudo virt-install \
@@ -1056,11 +1056,10 @@ La configuración actual emplea el método de autenticación `trust` en `pg_hba.
 
 #### 14. Referencias
 
-1. Red Hat. (2021). *Build a lab quickly*. Recuperado de https://www.redhat.com/en/blog/build-lab-quickly
-2. devrimgunduz. (2026). *Pagila - Sample Database for PostgreSQL*. Recuperado de https://github.com/devrimgunduz/pagila
-3. PostgreSQL Global Development Group. (2026). *PostgreSQL 16 Documentation*. Recuperado de https://www.postgresql.org/docs/16/
-4. libguestfs Tools. (2026). *virt-customize manual*. Recuperado de https://libguestfs.org/virt-customize.1.html
-5. Universidad Autónoma Metropolitana (2015). *Programa de la UEA Bases de Datos (2151106)*. División de Ciencias Básicas e Ingeniería.
+devrimgunduz. (2026). *Pagila - Sample Database for PostgreSQL*. <https://github.com/devrimgunduz/pagila>  
+libguestfs Tools. (2026). *virt-customize manual*. <https://libguestfs.org/virt-customize.1.html>  
+PostgreSQL Global Development Group. (2026). *PostgreSQL 16 Documentation*. <https://www.postgresql.org/docs/16/>  
+Red Hat. (2021). *Build a lab quickly*. <https://www.redhat.com/en/blog/build-lab-quickly>  
 
 > **Nota final:** Esta arquitectura basada en *Copy-on-Write* permite reiniciar el entorno en menos de dos minutos eliminando el archivo `fedora44-lab.qcow2` y repitiendo las secciones 2.4 y 3.2. La imagen base permanece intacta para iteraciones futuras. Se recomienda documentar las personalizaciones en el repositorio institucional y rotar credenciales al finalizar el trimestre académico.
 
