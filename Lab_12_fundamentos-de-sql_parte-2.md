@@ -978,8 +978,7 @@ set.seed(123)
 # Crear el vector con los números proporcionados
 numeros <- c(1:10)
 
-matriculas <- c(1, 2, 3, 4, 5, 
-             6, 7, 8, 9, 10)
+matriculas <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 # Ordenar aleatoriamente los números
 evaluacion <- sample(matriculas)
@@ -990,19 +989,7 @@ print(evaluacion)
  [6] 9 1 7 5 4
 ```
 
-Programación de Evaluación Oral
-
-| Matrícula     | Día               | Fecha               | Hora de inicio | Hora de fin |
-|:-------------:|:-----------------:|:-------------------:|:--------------:|:-----------:|
-| 3    | Lunes             | 20 de julio         | 16:00          | 16:30       |
-| 10    | Lunes             | 20 de julio         | 16:30          | 17:00       |
-| 2    | Lunes             | 20 de julio         | 17:00          | 17:30       |
-| 8    | Lunes             | 20 de julio         | 17:30          | 18:00       |
-| 6    | Lunes             | 20 de julio         | 18:00          | 18:30       |
-| 9    | Miércoles         | 22 de julio         | 16:00          | 16:30       |
-| 1    | Miércoles         | 22 de julio         | 16:30          | 17:00       |
-| 5    | Miércoles         | 22 de julio         | 17:00          | 17:30       |
-| 4    | Miércoles         | 22 de julio         | 17:30          | 18:00       |
+Programación de Evaluación Oral: 20 de julio de 2026, 16:00 a 18:00 hr
 
 *Nota: Los estudiantes que no puedan asistir a su horario asignado deberán presentar la Evaluación de Recuperación.*
 
@@ -1078,6 +1065,120 @@ The Business Research Company. (2026). *Relational Database Global Market Report
 
 U.S. Bureau of Labor Statistics. (2024a). *Database administrators and architects: Occupational Outlook Handbook*. <https://www.bls.gov/ooh/computer-and-information-technology/database-administrators.htm>
 
-U.S. Bureau of Labor Statistics. (2024b). *Computer systems analysts: Occupational Outlook Handbook*. https://www.bls.gov/ooh/computer-and-information-technology/computer-systems-analysts.htm
+U.S. Bureau of Labor Statistics. (2024b). *Computer systems analysts: Occupational Outlook Handbook*. <https://www.bls.gov/ooh/computer-and-information-technology/computer-systems-analysts.htm>
+
+#### 14. Notas finales *postmortem*
+
+Finalmente la implementación se modificó y adaptó al contexto de desempeño del grupo y se aplicó una evaluación simultánea de todos los alumnos con la ayuda de un script escrito durante las dos horas, todos los alumnos respondiendo de manera simultánea, bajo es siguiente protocolo escrito:
+
+**EXAMEN TEÓRICO-PRÁCTICO - LABORATORIO 12**  
+
+**Instrucciones Generales:**
+1. Lea cuidadosamente cada pregunta antes de responder.  
+2. Las preguntas están diseñadas para evaluar su comprensión conceptual y práctica. Si no recuerda la sintaxis exacta, priorice explicar la lógica y el razonamiento detrás de su respuesta.  
+3. Dispone de 120 minutos para completar el examen.  
+4. No se permite el uso de dispositivos electrónicos, consultas externas ni herramientas de Inteligencia Artificial.  
+
+**Pregunta 1: Orden de Ejecución Lógica**  
+Un estudiante escribe la siguiente consulta para encontrar clientes que han gastado más de $100, trabajando sobre la tabla `payment (payment_id, customer_id, staff_id, rental_id, amount, payment_date)`:
+
+```sql
+SELECT customer_id, SUM(amount) AS total_gastado
+FROM payment
+WHERE total_gastado > 100
+GROUP BY customer_id;
+```
+PostgreSQL arroja un error. Explique:  
+a) ¿Por qué falla esta consulta?  
+b) ¿Cuál es el orden correcto de ejecución que el motor sigue?  
+c) Reescriba la consulta correctamente.
+
+**Pregunta 2: JOINs y Detección de Anomalías**  
+La tienda de rentas quiere identificar películas que nunca han sido rentadas. Trabaja con las siguientes tablas:
+- `film (film_id, title, description, release_year, language_id, rental_duration, rental_rate, length, replacement_cost, rating, last_update)`
+- `inventory (inventory_id, film_id, store_id, last_update)`
+- `rental (rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update)`
+
+Un estudiante propone:
+```sql
+SELECT f.film_id, f.title
+FROM film f
+INNER JOIN rental r ON f.film_id = r.film_id;
+```
+a) ¿Qué resultado arrojará esta consulta? ¿Es correcto para el objetivo?  
+b) Explique por qué.  
+c) Reescriba la consulta usando el tipo de JOIN apropiado.
+
+**Pregunta 3: Rendimiento de Subconsultas**  
+Dos estudiantes resuelven el mismo problema: "Encontrar clientes con más rentas que el promedio". Trabajan con las tablas:
+- `customer (customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date, last_update, active)`
+- `rental (rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update)`
+
+**Estudiante A** usa una subconsulta correlacionada:
+```sql
+SELECT customer_id, first_name
+FROM customer c
+WHERE (SELECT COUNT(*) 
+       FROM rental WHERE customer_id = c.customer_id
+      ) > 
+      (SELECT AVG(cnt) 
+             FROM (SELECT customer_id, COUNT(*) AS cnt 
+                   FROM rental 
+                   GROUP BY customer_id) AS avg
+      );
+```
+
+**Estudiante B** usa un JOIN con tabla derivada:
+```sql
+SELECT c.customer_id, c.first_name
+FROM customer c
+INNER JOIN (SELECT customer_id, COUNT(*) AS rental_count 
+            FROM rental 
+            GROUP BY customer_id
+           ) AS cr 
+      ON c.customer_id = cr.customer_id
+      CROSS JOIN (SELECT AVG(cnt) AS avg_rentals 
+                  FROM (SELECT customer_id, COUNT(*) AS cnt 
+                        FROM rental 
+                        GROUP BY customer_id) AS x
+                 ) AS avg
+                  WHERE cr.rental_count > avg.avg_rentals;
+```
+a) ¿Cuál consulta es más rápida en una base de datos grande?  
+b) Explique por qué, mencionando el concepto de "escaneos de tabla".  
+c) ¿Qué métrica del comando `EXPLAIN ANALYZE` confirmaría su respuesta?
+
+**Pregunta 4: Administración y Control de Accesos**  
+La tienda de rentas necesita crear un rol especial para el departamento de ventas que solo pueda consultar información de clientes, pagos y rentas, pero no pueda modificar ni eliminar datos. Trabaja con las tablas:
+- `customer (customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date, last_update, active)`
+- `payment (payment_id, customer_id, staff_id, rental_id, amount, payment_date)`
+- `rental (rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update)`
+- `film (film_id, title, description, release_year, language_id, rental_duration, rental_rate, length, replacement_cost, rating, last_update)`
+
+Un administrador de base de datos ejecuta los siguientes comandos:
+
+```sql
+CREATE ROLE analista_ventas WITH LOGIN PASSWORD 'ventas2026';
+GRANT SELECT ON customer, payment, rental TO analista_ventas;
+```
+
+a) Explique cómo se aplicó el "principio de mínimo privilegio" en estos comandos.  
+b) Si el usuario `analista_ventas` intenta ejecutar `DELETE FROM payment WHERE amount < 5;`, ¿qué sucederá? Explique por qué.  
+c) ¿Qué comando adicional necesitaría el administrador si quiere que `analista_ventas` también pueda consultar una vista llamada `vista_clientes_activos` que muestra solo clientes activos?
+
+**Pregunta 5: Auditoría Forense**  
+Durante la defensa oral, un estudiante ejecuta la consulta sobre la tabla `customer (customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date, last_update, active)`:
+```sql
+SELECT COUNT(*) FROM customer WHERE active = true;
+```
+Luego abre el archivo `logs_postgresql.txt` y encuentra esta línea:
+```text
+2026-07-15 16:45:23 CST [12345]: [1-1] user=alumno,db=pagila,app=psql,client=[local] LOG:  statement: SELECT COUNT(*) FROM customer WHERE active = true;
+```
+a) Identifique en la línea: el timestamp, el PID del proceso y el usuario.  
+b) Explique cómo esta línea garantiza la "no repudiación" de la acción del estudiante.  
+c) Si el estudiante modificara el archivo `logs_postgresql.txt` después de generar el hash SHA-256, ¿qué sucedería al ejecutar `sha256sum -c`?
+
+
 
 Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for data science* (2nd ed.). O'Reilly Media. <https://r4ds.hadley.nz/>
