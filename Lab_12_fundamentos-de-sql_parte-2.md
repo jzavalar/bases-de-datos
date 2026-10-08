@@ -985,8 +985,7 @@ evaluacion <- sample(matriculas)
 
 # Mostrar el resultado
 print(evaluacion)
- [1] 3 10 2 8 6
- [6] 9 1 7 5 4
+ [1] 3 10 2 8 6 9 1 7 5 4
 ```
 
 Programación de Evaluación Oral: 20 de julio de 2026, 16:00 a 18:00 hr
